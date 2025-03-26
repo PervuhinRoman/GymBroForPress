@@ -1,5 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../tinder/tinder.dart';
+import 'home_content_screen.dart';
+
+abstract class RouteNames {
+  const RouteNames._();
+
+  static const home = '/';
+  static const tinder = 'tinder';
+}
+
+abstract class RoutesBuilder {
+  static final routes = <String, Widget Function(BuildContext)>{
+    RouteNames.home: (context) {
+      final args =
+          ModalRoute.of(context)!.settings.arguments as HomeScreenArgs?;
+      return HomeScreen(
+        setLocale: args?.setLocale ?? (locale) {},
+        setThemeMode: args?.setThemeMode ?? (themeMode) {},
+      );
+    },
+    RouteNames.tinder: (_) => const TinderScreen(),
+  };
+
+  static Route<Object?>? onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case RouteNames.home:
+        return MaterialPageRoute(
+          builder: (_) {
+            final args = settings.arguments as HomeScreenArgs?;
+            return HomeScreen(
+              setLocale: args?.setLocale ?? (locale) {},
+              setThemeMode: args?.setThemeMode ?? (themeMode) {},
+            );
+          },
+          settings: settings,
+        );
+
+      case RouteNames.tinder:
+        return MaterialPageRoute(
+          builder: (_) => const TinderScreen(),
+          settings: settings,
+        );
+    }
+
+    return null;
+  }
+}
+
+class HomeScreenArgs {
+  final Function(Locale) setLocale;
+  final Function(ThemeMode) setThemeMode;
+
+  HomeScreenArgs({
+    required this.setLocale,
+    required this.setThemeMode,
+  });
+}
+
 class HomeScreen extends StatefulWidget {
   final Function(Locale) setLocale;
   final Function(ThemeMode) setThemeMode;
@@ -17,6 +76,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  final List<Widget> _screens = [
+    const HomeContentScreen(),
+    const TinderScreen(),
+    // const ProfileScreen(),
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -32,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(l10n.appTitle),
         actions: [
-          // Переключатель языка
           IconButton(
             icon: const Icon(Icons.language),
             onPressed: () {
@@ -48,21 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              l10n.welcomeMessage,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.appDescription,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[

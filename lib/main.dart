@@ -74,6 +74,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'GymBro',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
@@ -88,10 +89,9 @@ class _MyAppState extends State<MyApp> {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      home: HomeScreen(
-        setLocale: setLocale,
-        setThemeMode: setThemeMode,
-      ),
+      initialRoute: RouteNames.home,
+      onGenerateRoute: RoutesBuilder.onGenerateRoute,
+      routes: RoutesBuilder.routes,
     );
   }
 }
