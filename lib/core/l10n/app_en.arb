@@ -1,0 +1,46 @@
+{
+  "appTitle": "GymBro",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "homePageTitle": "Home",
+  "@homePageTitle": {
+    "description": "Title for the home page"
+  },
+  "workoutPageTitle": "Workouts",
+  "@workoutPageTitle": {
+    "description": "Title for the workout page"
+  },
+  "profilePageTitle": "Profile",
+  "@profilePageTitle": {
+    "description": "Title for the profile page"
+  },
+  "welcomeMessage": "Welcome to GymBro!",
+  "@welcomeMessage": {
+    "description": "Welcome message on the home screen"
+  },
+  "appDescription": "Your personal fitness app",
+  "@appDescription": {
+    "description": "Short description of the app"
+  },
+  "languageSelectionTitle": "Select Language",
+  "@languageSelectionTitle": {
+    "description": "Title for language selection dialog"
+  },
+  "themeSelectionTitle": "Select Theme",
+  "@themeSelectionTitle": {
+    "description": "Title for theme selection dialog"
+  },
+  "systemTheme": "System",
+  "@systemTheme": {
+    "description": "System theme option"
+  },
+  "lightTheme": "Light",
+  "@lightTheme": {
+    "description": "Light theme option"
+  },
+  "darkTheme": "Dark",
+  "@darkTheme": {
+    "description": "Dark theme option"
+  }
+}

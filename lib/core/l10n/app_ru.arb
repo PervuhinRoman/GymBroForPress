@@ -1,0 +1,13 @@
+{
+  "appTitle": "GymBro",
+  "homePageTitle": "Главная",
+  "workoutPageTitle": "Тренировки",
+  "profilePageTitle": "Профиль",
+  "welcomeMessage": "Добро пожаловать в GymBro!",
+  "appDescription": "Ваше личное фитнес-приложение",
+  "languageSelectionTitle": "Выберите язык",
+  "themeSelectionTitle": "Выберите тему",
+  "systemTheme": "Системная",
+  "lightTheme": "Светлая",
+  "darkTheme": "Темная"
+}
