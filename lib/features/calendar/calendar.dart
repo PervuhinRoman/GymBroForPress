@@ -19,6 +19,7 @@ class Calendar extends StatefulWidget {
 class _CalendarState extends State<Calendar> {
   int _selectedIndex = 0;
   String _dropdownMenuItem = 'Gym1';
+  DateTime _todaysDay = DateTime.now();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,8 +35,17 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
+  void _selectedDay(DateTime day, DateTime focusedDay) {
+    setState(() {
+      _todaysDay = day;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
     // Получение локализованных строк
     final l10n = AppLocalizations.of(context)!;
 
@@ -62,7 +72,7 @@ class _CalendarState extends State<Calendar> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(10),
             child: Row(
               children: [
                 Expanded(
@@ -89,12 +99,9 @@ class _CalendarState extends State<Calendar> {
                     ),
                   ),
                 ),
-                // SizedBox(
-                //   width: 1000,
-                // ),
                 Spacer(),
                 Padding(
-                  padding: const EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(right: screenWidth / 200),
                   child: IconButton(
                     icon: Icon(Icons.people),
                     onPressed: () {},
@@ -106,10 +113,49 @@ class _CalendarState extends State<Calendar> {
           SizedBox(
             height: 15,
           ),
-          TableCalendar(
-            firstDay: DateTime.utc(2010, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: DateTime.now(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.amber,
+                  ),
+                  height: screenWidth / 2.5,
+                  width: screenWidth / 2.5,
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.red,
+                  ),
+                  height: screenWidth / 2.5,
+                  width: screenWidth / 2.5,
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TableCalendar(
+              firstDay: DateTime.utc(2010, 10, 16),
+              lastDay: DateTime.utc(2030, 3, 14),
+              focusedDay: _todaysDay,
+              rowHeight: 40,
+              availableGestures: AvailableGestures.all,
+              selectedDayPredicate: (day) => isSameDay(day, _todaysDay),
+              onDaySelected: _selectedDay,
+              headerStyle:
+                  HeaderStyle(formatButtonVisible: false, titleCentered: true),
+            ),
           ),
         ],
       ),
