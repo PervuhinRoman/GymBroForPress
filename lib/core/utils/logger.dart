@@ -4,7 +4,7 @@ import 'package:logger/web.dart';
 class Logger {
   static late logger_package.Logger log;
   
-  static void init() {
+  static void init() async {
     log = logger_package.Logger(
       printer: logger_package.PrettyPrinter(
         methodCount: 2,

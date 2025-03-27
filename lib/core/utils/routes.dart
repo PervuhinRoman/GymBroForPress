@@ -10,7 +10,7 @@ import '../../features/tinder/tinder.dart';
 abstract class RouteNames {
   const RouteNames._();
 
-  static const home = '/';
+  static const home = 'home';
   static const tinder = 'tinder';
   static const auth = 'auth';
   static const login = 'login';

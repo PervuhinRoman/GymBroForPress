@@ -5,23 +5,28 @@ import 'package:gymbro/core/utils/preference_service.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gymbro/firebase_options.dart';
 import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
-import 'package:gymbro/firebase_options.dart';
 import 'core/utils/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Инициализация настроек пользователя
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   Logger.init();
   Logger.log.i('App starting...');
 
-  // Инициализация настроек пользователя
   await PreferencesService.init();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Логирование текущего пользователя при запуске
+  final user = FirebaseAuth.instance.currentUser;
+  Logger.log
+      .i('Current user on app startup: ${user?.email ?? 'Not authenticated'}');
 
   runApp(const MyApp());
 }
@@ -46,6 +51,8 @@ class _MyAppState extends State<MyApp> {
   void _loadSettings() {
     // Загрузка темы
     final themeModeIndex = PreferencesService.getThemeMode();
+    Logger.log.i('Loading theme mode: $themeModeIndex');
+
     setState(() {
       _themeMode = ThemeMode.values[themeModeIndex];
     });
@@ -66,6 +73,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _locale = locale;
     });
+    Logger.log.i('Locale changed to: ${locale.languageCode}');
     PreferencesService.setLocale(locale.languageCode);
   }
 
@@ -74,11 +82,15 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _themeMode = themeMode;
     });
+    Logger.log
+        .i('Theme mode changed to: $themeMode (index: ${themeMode.index})');
     PreferencesService.setThemeMode(themeMode.index);
   }
 
   @override
   Widget build(BuildContext context) {
+    Logger.log.i('Building app with ThemeMode: $_themeMode');
+
     return MaterialApp(
       title: 'GymBro',
       debugShowCheckedModeBanner: false,
@@ -96,19 +108,27 @@ class _MyAppState extends State<MyApp> {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      // home: StreamBuilder<User?>(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const Center(child: CircularProgressIndicator());
-      //     }
-      //     if (snapshot.hasData) {
-      //       return HomeScreen(setLocale: setLocale, setThemeMode: setThemeMode);
-      //     }
-      //     return WelcomeScreen();
-      //   },
-      // ),
-      initialRoute: RouteNames.auth,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasData) {
+            Logger.log.i('User authenticated: ${snapshot.data?.email}');
+            return HomeScreen(
+              setLocale: setLocale,
+              setThemeMode: setThemeMode,
+            );
+          }
+
+          Logger.log.i('User not authenticated, showing WelcomeScreen');
+          return const WelcomeScreen();
+        },
+      ),
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
     );
