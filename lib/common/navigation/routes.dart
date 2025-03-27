@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../home/presentation/screens/home_screen.dart';
-import '../tinder/tinder.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/tinder/tinder.dart';
 
 abstract class RouteNames {
   const RouteNames._();
@@ -14,7 +14,7 @@ abstract class RoutesBuilder {
   static final routes = <String, Widget Function(BuildContext)>{
     RouteNames.home: (context) {
       final args =
-      ModalRoute.of(context)!.settings.arguments as HomeScreenArgs?;
+          ModalRoute.of(context)!.settings.arguments as HomeScreenArgs?;
       return HomeScreen(
         setLocale: args?.setLocale ?? (locale) {},
         setThemeMode: args?.setThemeMode ?? (themeMode) {},

@@ -5,11 +5,10 @@ import 'package:gymbro/core/utils/preference_service.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'features/navigation/routes.dart';
+import 'common/navigation/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   Logger.init();
   Logger.log.i('App starting...');
