@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
 import 'package:gymbro/core/utils/preference_service.dart';
-import 'package:gymbro/features/calendar/calendar.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'common/navigation/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +74,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'GymBro',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
@@ -87,10 +89,10 @@ class _MyAppState extends State<MyApp> {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      home: Calendar(
-        setLocale: setLocale,
-        setThemeMode: setThemeMode,
-      ),
+      initialRoute: RouteNames.home,
+      onGenerateRoute: RoutesBuilder.onGenerateRoute,
+      routes: RoutesBuilder.routes,
+
     );
   }
 }

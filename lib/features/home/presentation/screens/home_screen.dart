@@ -1,5 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../calendar/calendar.dart';
+import '../../../tinder/tinder.dart';
+import 'home_content_screen.dart';
+
+class HomeScreenArgs {
+  final Function(Locale) setLocale;
+  final Function(ThemeMode) setThemeMode;
+
+  HomeScreenArgs({
+    required this.setLocale,
+    required this.setThemeMode,
+  });
+}
+
 class HomeScreen extends StatefulWidget {
   final Function(Locale) setLocale;
   final Function(ThemeMode) setThemeMode;
@@ -17,11 +32,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              l10n.welcomeMessage,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.appDescription,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [Calendar(), TinderScreen()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
