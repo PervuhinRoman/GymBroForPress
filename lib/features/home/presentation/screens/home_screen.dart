@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../calendar/calendar.dart';
 import '../../../tinder/tinder.dart';
-import 'home_content_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
@@ -65,7 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: [Calendar(), TinderScreen(), TinderScreen()], //ToDo: third screen
+        children: [
+          Calendar(),
+          TinderScreen(),
+          TinderScreen()
+        ], //ToDo: third screen
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
