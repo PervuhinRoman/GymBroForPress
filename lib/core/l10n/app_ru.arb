@@ -9,5 +9,9 @@
   "themeSelectionTitle": "Выберите тему",
   "systemTheme": "Системная",
   "lightTheme": "Светлая",
-  "darkTheme": "Темная"
+  "darkTheme": "Темная",
+  "welcomeDescription": "УЛУЧШАТЬ ФИЗИЧЕСКОЕ ЗДОРОВЬЕ С GymBro ПРОСТО И ЭФФЕКТИВНО",
+  "signUp": "Зарегистрироваться",
+  "accountExistence": "Уже есть аккаунт? ",
+  "signIn": "Войти"
 }

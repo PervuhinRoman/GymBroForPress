@@ -42,5 +42,9 @@
   "darkTheme": "Dark",
   "@darkTheme": {
     "description": "Dark theme option"
-  }
+  },
+  "welcomeDescription": "IMPROVE PHYSICAL HEALTH WITH GymBro SIMPLY AND EFFECTIVELY",
+  "signUp": "Sign Up",
+  "accountExistence": "Already have an account? ",
+  "signIn": "Sign In"
 }
