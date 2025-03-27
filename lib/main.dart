@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
 import 'package:gymbro/core/utils/preference_service.dart';
-import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'features/navigation/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
