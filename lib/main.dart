@@ -92,6 +92,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: RouteNames.home,
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
+
     );
   }
 }
