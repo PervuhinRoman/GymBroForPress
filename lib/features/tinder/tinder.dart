@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymbro/features/tinder/tags.dart';
 
 class TinderScreen extends StatefulWidget {
   const TinderScreen({super.key});
@@ -9,27 +10,16 @@ class TinderScreen extends StatefulWidget {
 
 class _TinderScreenState extends State<TinderScreen> {
   final List<String> images = [
-    'assets/cat.jpeg',
-    'assets/dog.jpeg',
+    'assets/images/cat.jpeg',
+    'assets/images/dog.jpeg',
+    'assets/images/myles.jpeg',
   ];
 
   int currentIndex = 0;
   double offsetX = 0.0;
   double opacity = 1.0;
+  bool isVisible = true;
 
-  void onSwipeComplete(bool isRightSwipe) {
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() {
-          offsetX = 0.0;
-          opacity = 1.0;
-          currentIndex = (currentIndex + 1) % images.length;
-        });
-      }
-    });
-  }
-
-//https://stackoverflow.com/questions/51343735/flutter-image-preload
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -45,12 +35,17 @@ class _TinderScreenState extends State<TinderScreen> {
       body: Center(
         child: Stack(
           children: [
-            if (currentIndex < images.length)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: buildCard(images[(currentIndex + 1) % images.length]),
+              ),
+            ),
+            if (isVisible)
               GestureDetector(
                 onHorizontalDragUpdate: (details) {
                   setState(() {
                     offsetX += details.primaryDelta ?? 0;
-                    opacity = 1 - (offsetX.abs() / 300).clamp(0.0, 1.0);
                   });
                 },
                 onHorizontalDragEnd: (details) {
@@ -93,22 +88,77 @@ class _TinderScreenState extends State<TinderScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
-                child: Image(
-                    image: AssetImage(imagePath), width: 300, height: 400)),
-            Center(child: Text('ill do it later')),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: SizedBox(
+                  width: 300,
+                  height: 400,
+                  child: Image(
+                    image: AssetImage(imagePath),
+                    width: 300,
+                    height: 400,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Center(
+                child: Wrap(
+                    direction: Axis.horizontal,
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      Tag(
+                        text: '8 am',
+                        category: TagCategory.hours,
+                      ),
+                      Tag(
+                        text: 'Friday, Sunday',
+                        category: TagCategory.days,
+                      ),
+                      Tag(
+                        text: 'legs, abs',
+                        category: TagCategory.trainType,
+                      ),
+                      Tag(
+                        text: 'some text about me ',
+                        category: TagCategory.textInfo,
+                      )
+                    ]),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  void onSwipeComplete(bool isRightSwipe) {
+    setState(() {
+      isVisible = false;
+    });
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        currentIndex = (currentIndex + 1) % images.length;
+        offsetX = 0.0;
+        opacity = 1.0;
+        isVisible = true;
+      });
+    });
+  }
+
   void animateCardAway(bool isRightSwipe) {
     setState(() {
-      offsetX = isRightSwipe ? 500 : -500;
+      offsetX = isRightSwipe ? 300 : -300;
       opacity = 0.0;
     });
 
-    onSwipeComplete(isRightSwipe);
+    Future.delayed(const Duration(milliseconds: 200), () {
+      onSwipeComplete(isRightSwipe);
+    });
   }
 
   void resetCardPosition() {
