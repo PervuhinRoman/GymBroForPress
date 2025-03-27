@@ -13,5 +13,21 @@
   "welcomeDescription": "УЛУЧШАТЬ ФИЗИЧЕСКОЕ ЗДОРОВЬЕ С GymBro ПРОСТО И ЭФФЕКТИВНО",
   "signUp": "Зарегистрироваться",
   "accountExistence": "Уже есть аккаунт? ",
-  "signIn": "Войти"
+  "signIn": "Войти",
+  "createAccount": "СОЗДАЙТЕ АККАУНТ",
+  "googleSignIn": "Войдите через Google",
+  "or": "или",
+  "enterLogin": "Введите логин",
+  "enterPassword": "Введите пароль",
+  "repeatPassword": "Повторите пароль",
+  "personalData": "Я согласен с обработкой персональных данных",
+  "logIn": "Войти",
+  "phoneNumberOrEmail": "Номер телефона / email",
+  "password": "Пароль",
+  "next": "Далее",
+  "forgotPassword": "Забыл пароль",
+  "resetPassword": "ВОССТАНОВИТЬ ПАРОЛЬ",
+  "enterEmail": "Введите почту, привязанную к аккаунту",
+  "accessCode": "Получить код доступа"
+
 }

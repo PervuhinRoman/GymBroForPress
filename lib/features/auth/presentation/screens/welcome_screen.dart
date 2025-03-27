@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/theme/text_styles.dart';
+import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/background_wrapper.dart';
-import 'package:gymbro/features/auth/presentation/screens/login_screen.dart';
-import 'package:gymbro/features/auth/presentation/screens/registration_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -28,7 +27,8 @@ class WelcomeScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+              padding:
+                  const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 12),
               child: Column(
                 children: [
                   const Expanded(
@@ -73,12 +73,9 @@ class WelcomeScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const RegistrationScreen(),
-                                ),
+                                RouteNames.registration,
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -109,12 +106,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                );
+                                Navigator.pushNamed(context, RouteNames.login);
                               },
                               child: Text(
                                 l10n.signIn,

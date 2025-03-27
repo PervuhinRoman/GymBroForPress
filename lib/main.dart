@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
 import 'package:gymbro/core/utils/preference_service.dart';
-import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'common/navigation/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
+import 'package:gymbro/firebase_options.dart';
+import 'core/utils/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   Logger.init();
   Logger.log.i('App starting...');
 
@@ -90,10 +96,21 @@ class _MyAppState extends State<MyApp> {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      initialRoute: RouteNames.home,
+      // home: StreamBuilder<User?>(
+      //   stream: FirebaseAuth.instance.authStateChanges(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Center(child: CircularProgressIndicator());
+      //     }
+      //     if (snapshot.hasData) {
+      //       return HomeScreen(setLocale: setLocale, setThemeMode: setThemeMode);
+      //     }
+      //     return WelcomeScreen();
+      //   },
+      // ),
+      initialRoute: RouteNames.auth,
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
-
     );
   }
 }

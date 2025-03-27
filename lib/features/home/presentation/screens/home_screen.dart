@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../calendar/calendar.dart';
 import '../../../tinder/tinder.dart';
-import 'home_content_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
