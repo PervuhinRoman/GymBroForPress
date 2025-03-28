@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gymbro/features/tinder/tags.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/tinder/tinderCard.dart';
 
-class TinderScreen extends StatefulWidget {
+class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});
 
   @override
   _TinderScreenState createState() => _TinderScreenState();
 }
 
-class _TinderScreenState extends State<TinderScreen> {
+class _TinderScreenState extends ConsumerState<TinderScreen> {
   final List<String> images = [
     'assets/images/cat.jpeg',
     'assets/images/dog.jpeg',
@@ -38,7 +39,7 @@ class _TinderScreenState extends State<TinderScreen> {
             Positioned.fill(
               child: Align(
                 alignment: Alignment.center,
-                child: buildCard(images[(currentIndex + 1) % images.length]),
+                child: TinderCard(imagePath: images[(currentIndex + 1) % images.length]),
               ),
             ),
             if (isVisible)
@@ -63,7 +64,7 @@ class _TinderScreenState extends State<TinderScreen> {
                     ..rotateZ(0.02 * offsetX / 150),
                   child: Opacity(
                     opacity: opacity,
-                    child: buildCard(images[currentIndex]),
+                    child: TinderCard(imagePath: images[currentIndex]),
                   ),
                 ),
               ),
@@ -72,69 +73,6 @@ class _TinderScreenState extends State<TinderScreen> {
       ),
     );
   }
-
-  Widget buildCard(String imagePath) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.primary,
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 6,
-      child: SizedBox(
-        width: 340,
-        height: 600,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: SizedBox(
-                  width: 300,
-                  height: 400,
-                  child: Image(
-                    image: AssetImage(imagePath),
-                    width: 300,
-                    height: 400,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: Center(
-                child: Wrap(
-                    direction: Axis.horizontal,
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: [
-                      Tag(
-                        text: '8 am',
-                        category: TagCategory.hours,
-                      ),
-                      Tag(
-                        text: 'Friday, Sunday',
-                        category: TagCategory.days,
-                      ),
-                      Tag(
-                        text: 'legs, abs',
-                        category: TagCategory.trainType,
-                      ),
-                      Tag(
-                        text: 'some text about me ',
-                        category: TagCategory.textInfo,
-                      )
-                    ]),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void onSwipeComplete(bool isRightSwipe) {
     setState(() {
       isVisible = false;

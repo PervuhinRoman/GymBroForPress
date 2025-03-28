@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
 import 'package:gymbro/core/utils/preference_service.dart';
 import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 import 'common/navigation/routes.dart';
 
@@ -13,20 +15,21 @@ void main() async {
   Logger.init();
   Logger.log.i('App starting...');
 
-  // Инициализация настроек пользователя
   await PreferencesService.init();
 
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(child: const MyApp()),
+  );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
   Locale? _locale;
 
@@ -37,13 +40,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _loadSettings() {
-    // Загрузка темы
     final themeModeIndex = PreferencesService.getThemeMode();
     setState(() {
       _themeMode = ThemeMode.values[themeModeIndex];
     });
 
-    // Загрузка языка
     final savedLocale = PreferencesService.getLocale();
     if (savedLocale != null) {
       setState(() {
@@ -54,7 +55,6 @@ class _MyAppState extends State<MyApp> {
     Logger.log.i('Settings loaded. ThemeMode: $_themeMode, Locale: $_locale');
   }
 
-  // Метод для смены языка приложения
   void setLocale(Locale locale) {
     setState(() {
       _locale = locale;
@@ -62,7 +62,6 @@ class _MyAppState extends State<MyApp> {
     PreferencesService.setLocale(locale.languageCode);
   }
 
-  // Метод для смены темы приложения
   void setThemeMode(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
@@ -92,7 +91,6 @@ class _MyAppState extends State<MyApp> {
       initialRoute: RouteNames.home,
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
-
     );
   }
 }
