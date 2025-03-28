@@ -24,12 +24,6 @@ class BackgroundWrapper extends StatelessWidget {
 
     return Stack(
       children: [
-        // Фоновый цвет
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: AppColors.background,
-        ),
         // Верхняя ветка
         Positioned(
           top: topBranchPadding?.top ?? 0,

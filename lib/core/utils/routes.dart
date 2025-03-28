@@ -21,12 +21,7 @@ abstract class RouteNames {
 abstract class RoutesBuilder {
   static final routes = <String, Widget Function(BuildContext)>{
     RouteNames.home: (context) {
-      final args =
-          ModalRoute.of(context)!.settings.arguments as HomeScreenArgs?;
-      return HomeScreen(
-        // setLocale: args?.setLocale ?? (locale) {},
-        // setThemeMode: args?.setThemeMode ?? (themeMode) {},
-      );
+      return HomeScreen();
     },
     RouteNames.tinder: (_) => const TinderScreen(),
   };
@@ -36,11 +31,7 @@ abstract class RoutesBuilder {
       case RouteNames.home:
         return MaterialPageRoute(
           builder: (_) {
-            final args = settings.arguments as HomeScreenArgs?;
-            return HomeScreen(
-              // setLocale: args?.setLocale ?? (locale) {},
-              // setThemeMode: args?.setThemeMode ?? (themeMode) {},
-            );
+            return HomeScreen();
           },
           settings: settings,
         );

@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:gymbro/core/providers/tab_provider.dart';
+import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 
 import '../../../calendar/calendar.dart';
 import '../../../tinder/tinder.dart';
@@ -96,7 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         children: const [
           Calendar(),
           TinderScreen(),
-          TinderScreen(),
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

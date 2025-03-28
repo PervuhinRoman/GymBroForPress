@@ -4,9 +4,11 @@ import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/theme/text_styles.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/background_wrapper.dart';
+import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/core/widgets/custom_text_field.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gymbro/features/auth/services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -31,34 +33,27 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BackgroundWrapper(
-      topBranchPadding: const EdgeInsets.only(
-        top: 50,
-        left: 10,
-      ),
-      bottomBranchPadding: const EdgeInsets.only(
-        bottom: 10,
-        right: -20,
-      ),
-      topBranchWidth: MediaQuery.of(context).size.width * 0.6,
-      bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.primaryText),
-            onPressed: () => Navigator.pop(context),
-          ),
+    return Scaffold(
+      // backgroundColor: Colors.transparent,
+      appBar: CustomAppBar(),
+      body: BackgroundWrapper(
+        topBranchPadding: const EdgeInsets.only(
+          top: 0,
+          left: 10,
         ),
-        body: SingleChildScrollView(
+        bottomBranchPadding: const EdgeInsets.only(
+          bottom: 10,
+          right: -20,
+        ),
+        topBranchWidth: MediaQuery.of(context).size.width * 0.6,
+        bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                  Center(
-                    child: Text(
+              Center(
+                child: Text(
                   l10n.logIn,
                   style: AppTextStyles.robotoSemiBold.copyWith(fontSize: 24),
                   textAlign: TextAlign.center,
@@ -68,16 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Google Sign In Button
               OutlinedButton(
-      
                 onPressed: () async {
                   setState(() => _isLoading = true);
                   try {
                     final user = await _authService.signInWithGoogle();
                     if (user != null && mounted) {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.home
-                        );
+                      Navigator.pushNamed(context, RouteNames.home);
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -138,13 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 },
               ),
-              const SizedBox(height: 70),
+              const SizedBox(height: 40),
 
               // Login Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-            
                   onPressed: _isLoading
                       ? null
                       : () async {

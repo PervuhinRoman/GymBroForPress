@@ -4,6 +4,7 @@ import 'package:gymbro/core/theme/text_styles.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/background_wrapper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/core/widgets/custom_text_field.dart';
 import 'package:gymbro/features/auth/services/auth_service.dart';
 
@@ -40,28 +41,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BackgroundWrapper(
-        topBranchPadding: const EdgeInsets.only(
-          top: 50,
-          left: 10,
-        ),
-        bottomBranchPadding: const EdgeInsets.only(
-          bottom: 10,
-          right: -20,
-        ),
-        topBranchWidth: MediaQuery.of(context).size.width * 0.6,
-        bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.primaryText),
-              onPressed: () => Navigator.pop(context),
-            ),
+    return Scaffold(
+        appBar: CustomAppBar(),
+        body: BackgroundWrapper(
+          topBranchPadding: const EdgeInsets.only(
+            top: 50,
+            left: 10,
           ),
-          body: SingleChildScrollView(
+          bottomBranchPadding: const EdgeInsets.only(
+            bottom: 10,
+            right: -20,
+          ),
+          topBranchWidth: MediaQuery.of(context).size.width * 0.6,
+          bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
+          child: SingleChildScrollView(
             padding: const EdgeInsets.only(left: 24, right: 24),
             child: SizedBox(
               height: MediaQuery.of(context).size.height -
@@ -200,12 +193,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   _passwordController.text,
                                 );
                                 if (user != null && mounted) {
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         const QuestionnaireScreen(),
-                                  //   ),
                                   Navigator.pushNamed(
                                     context,
                                     RouteNames.login,
