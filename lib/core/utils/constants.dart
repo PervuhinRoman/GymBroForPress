@@ -8,7 +8,7 @@ final constantsProvider = Provider<Constants>((ref) {
   final screenWidth =
       mediaQuery.physicalSize.width / mediaQuery.devicePixelRatio;
 
-  final paddingUnit = screenHeight / 49;
+  final paddingUnit = screenHeight / 100;
 
   return Constants(
       paddingUnit: paddingUnit,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
+
+import '../../core/utils/constants.dart';
 
 enum TagCategory { trainType, hours, days, textInfo }
 
-class Tag extends StatelessWidget {
+class Tag extends ConsumerWidget {
   final String text;
   final TagCategory category;
 
@@ -18,29 +21,32 @@ class Tag extends StatelessWidget {
       case TagCategory.trainType:
         return AppColors.bluePale;
       case TagCategory.hours:
-        return  AppColors.violetPale;
+        return AppColors.violetPale;
       case TagCategory.days:
         return AppColors.greenSecondary;
       case TagCategory.textInfo:
-        return  AppColors.redPale;
+        return AppColors.redPale;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var constants = ref.read(constantsProvider);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: _getBackgroundColor(),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+      padding: EdgeInsets.zero,
+        decoration: BoxDecoration(
+          color: _getBackgroundColor(),
+          borderRadius: BorderRadius.circular(16),
         ),
-      ),
-    );
+        child: Padding(
+          padding: EdgeInsets.all(constants.paddingUnit),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+        ));
   }
 }
