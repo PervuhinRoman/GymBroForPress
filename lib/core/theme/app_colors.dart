@@ -14,4 +14,7 @@ class AppColors {
   static const Color disabledText = Color(0xFFC0C8DE);
   static const Color textSecondary = Color(0xFF8A90A2);
   static const Color constantError = Color(0xFFE95C5C);
+  static const Color redPale = Color(0xFFFFCDD2);
+  static const Color bluePale = Color(0xFFBBDEFB);
+
 }

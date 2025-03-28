@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymbro/core/theme/app_colors.dart';
 
 enum TagCategory { trainType, hours, days, textInfo }
 
@@ -15,13 +16,13 @@ class Tag extends StatelessWidget {
   Color _getBackgroundColor() {
     switch (category) {
       case TagCategory.trainType:
-        return Colors.blue.shade100;
+        return AppColors.bluePale;
       case TagCategory.hours:
-        return Colors.grey.shade300;
+        return  AppColors.violetPale;
       case TagCategory.days:
-        return Colors.green.shade100;
+        return AppColors.greenSecondary;
       case TagCategory.textInfo:
-        return Colors.red.shade100;
+        return  AppColors.redPale;
     }
   }
 
