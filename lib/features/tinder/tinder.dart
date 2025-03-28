@@ -1,6 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/features/tinder/tinderCard.dart';
+
+class ApiConfig {
+  // Для Android эмулятора
+  static const baseUrl = 'http://10.0.2.2:8080';
+
+// Для iOS симулятора или теста на том же компьютере
+// static const baseUrl = 'http://localhost:8080';
+
+// Для реального устройства (замените на IP вашего компьютера)
+// static const baseUrl = 'http://192.168.1.100:8080';
+}
 
 class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});
@@ -10,11 +22,10 @@ class TinderScreen extends ConsumerStatefulWidget {
 }
 
 class _TinderScreenState extends ConsumerState<TinderScreen> {
-  final List<String> images = [
-    'assets/images/cat.jpeg',
-    'assets/images/dog.jpeg',
-    'assets/images/myles.jpeg',
-  ];
+  final Dio _dio = Dio();
+  List<String> images = [];
+  bool isLoading = true;
+  String? error;
 
   int currentIndex = 0;
   double offsetX = 0.0;
@@ -22,26 +33,98 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
   bool isVisible = true;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    for (var imagePath in images) {
-      precacheImage(AssetImage(imagePath), context);
+  void initState() {
+    super.initState();
+    _fetchUsers();
+  }
+
+  Future<void> _fetchUsers() async {
+    try {
+
+      setState(() {
+        isLoading = true;
+        error = null;
+      });
+
+      final url = '${ApiConfig.baseUrl}/api/next-user/0';
+      debugPrint('$url');
+
+      final response = await _dio.get(
+        url,
+        options: Options(
+          headers: {'Accept': 'application/json'},
+        ),
+      );
+
+      debugPrint(' Response: ${response.statusCode}');
+      debugPrint('Main response: ${response.data}');
+
+      final user = response.data as Map<String, dynamic>;
+      final imageUrl = '${ApiConfig.baseUrl}/${user['imageUrl']}';
+      debugPrint(' URL image: $imageUrl');
+
+      final imageResponse = await _dio.head(imageUrl);
+
+      if (imageResponse.statusCode != 200) {
+        throw Exception('Изображение не найдено (${imageResponse.statusCode})');
+      }
+
+      setState(() {
+        images = [imageUrl];
+        isLoading = false;
+      });
+
+      await precacheImage(NetworkImage(imageUrl), context);
+
+    } catch (e, stackTrace) {
+      debugPrint('$e');
+      debugPrint('$stackTrace');
+
+      setState(() {
+        // error = 'Ошибка: ${e.toString().replaceAll('DioException', '')}';
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (error != null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(error!),
+              ElevatedButton(
+                onPressed: _fetchUsers,
+                child: const Text('Repeat'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Center(
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: TinderCard(imagePath: images[(currentIndex + 1) % images.length]),
+            if (images.length > 1)
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TinderCard(
+                      imageUrl: images[(currentIndex + 1) % images.length]),
+                ),
               ),
-            ),
             if (isVisible)
               GestureDetector(
                 onHorizontalDragUpdate: (details) {
@@ -64,15 +147,20 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
                     ..rotateZ(0.02 * offsetX / 150),
                   child: Opacity(
                     opacity: opacity,
-                    child: TinderCard(imagePath: images[currentIndex]),
+                    child: TinderCard(imageUrl: images[currentIndex]),
                   ),
                 ),
               ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _fetchUsers,
+        child: const Icon(Icons.refresh),
+      ),
     );
   }
+
   void onSwipeComplete(bool isRightSwipe) {
     setState(() {
       isVisible = false;
