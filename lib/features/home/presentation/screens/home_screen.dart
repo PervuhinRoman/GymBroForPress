@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/core/providers/app_settings_provider.dart';
+import 'package:gymbro/core/providers/tab_provider.dart';
 
 import '../../../calendar/calendar.dart';
 import '../../../tinder/tinder.dart';
@@ -14,33 +17,58 @@ class HomeScreenArgs {
   });
 }
 
-class HomeScreen extends StatefulWidget {
-  final Function(Locale) setLocale;
-  final Function(ThemeMode) setThemeMode;
-
-  const HomeScreen({
-    super.key,
-    required this.setLocale,
-    required this.setThemeMode,
-  });
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+  @override
+  void initState() {
+    super.initState();
+    // Инициализация TabController с сохраненной вкладкой
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: ref.read(tabProvider),
+    );
+
+    // Слушаем изменения TabController
+    _tabController.addListener(() {
+      // Обновляем провайдер при изменении вкладки через TabController
+      if (_tabController.indexIsChanging) {
+        ref.read(tabProvider.notifier).setTab(_tabController.index);
+      }
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Синхронизируем TabController с провайдером при изменении зависимостей
+    _tabController.index = ref.read(tabProvider);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Получение локализованных строк
     final l10n = AppLocalizations.of(context)!;
+    final selectedTab = ref.watch(tabProvider);
+
+    // Синхронизируем TabController с провайдером
+    if (_tabController.index != selectedTab) {
+      _tabController.animateTo(selectedTab);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -50,21 +78,26 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.language),
             onPressed: () {
-              _showLanguageSelector(context);
+              _showLanguageSelector(context, ref);
             },
           ),
           // Переключатель темы
           IconButton(
             icon: const Icon(Icons.brightness_6),
             onPressed: () {
-              _showThemeSelector(context);
+              _showThemeSelector(context, ref);
             },
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [Calendar(), TinderScreen(), TinderScreen()], //ToDo: third screen
+      body: TabBarView(
+        controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(), // Отключаем свайп
+        children: const [
+          Calendar(),
+          TinderScreen(),
+          TinderScreen(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
@@ -81,15 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
             label: l10n.profilePageTitle,
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedTab,
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          ref.read(tabProvider.notifier).setTab(index);
+        },
       ),
     );
   }
 
   // Диалоговое окно для выбора языка
-  void _showLanguageSelector(BuildContext context) {
+  void _showLanguageSelector(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) {
@@ -101,14 +136,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 title: const Text('English'),
                 onTap: () {
-                  widget.setLocale(const Locale('en'));
+                  ref
+                      .read(appSettingsNotifierProvider.notifier)
+                      .setLocale(const Locale('en'));
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text('Русский'),
                 onTap: () {
-                  widget.setLocale(const Locale('ru'));
+                  ref
+                      .read(appSettingsNotifierProvider.notifier)
+                      .setLocale(const Locale('ru'));
                   Navigator.pop(context);
                 },
               ),
@@ -120,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Диалоговое окно для выбора темы
-  void _showThemeSelector(BuildContext context) {
+  void _showThemeSelector(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) {
@@ -132,21 +171,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 title: const Text('System'),
                 onTap: () {
-                  widget.setThemeMode(ThemeMode.system);
+                  ref
+                      .read(appSettingsNotifierProvider.notifier)
+                      .setThemeMode(ThemeMode.system);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text('Light'),
                 onTap: () {
-                  widget.setThemeMode(ThemeMode.light);
+                  ref
+                      .read(appSettingsNotifierProvider.notifier)
+                      .setThemeMode(ThemeMode.light);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text('Dark'),
                 onTap: () {
-                  widget.setThemeMode(ThemeMode.dark);
+                  ref
+                      .read(appSettingsNotifierProvider.notifier)
+                      .setThemeMode(ThemeMode.dark);
                   Navigator.pop(context);
                 },
               ),

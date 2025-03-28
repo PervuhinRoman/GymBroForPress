@@ -24,8 +24,8 @@ abstract class RoutesBuilder {
       final args =
           ModalRoute.of(context)!.settings.arguments as HomeScreenArgs?;
       return HomeScreen(
-        setLocale: args?.setLocale ?? (locale) {},
-        setThemeMode: args?.setThemeMode ?? (themeMode) {},
+        // setLocale: args?.setLocale ?? (locale) {},
+        // setThemeMode: args?.setThemeMode ?? (themeMode) {},
       );
     },
     RouteNames.tinder: (_) => const TinderScreen(),
@@ -38,8 +38,8 @@ abstract class RoutesBuilder {
           builder: (_) {
             final args = settings.arguments as HomeScreenArgs?;
             return HomeScreen(
-              setLocale: args?.setLocale ?? (locale) {},
-              setThemeMode: args?.setThemeMode ?? (themeMode) {},
+              // setLocale: args?.setLocale ?? (locale) {},
+              // setThemeMode: args?.setThemeMode ?? (themeMode) {},
             );
           },
           settings: settings,
