@@ -4,11 +4,19 @@ import 'package:gymbro/core/utils/constants.dart';
 import 'package:gymbro/features/tinder/tags.dart';
 
 class TinderCard extends ConsumerWidget {
-  final String imagePath;
+  final String imageUrl;
+  final String time;
+  final String day;
+  final String textInfo;
+  final String trainType;
 
   const TinderCard({
     super.key,
-    required this.imagePath,
+    required this.imageUrl,
+    required this.time,
+    required this.day,
+    required this.textInfo,
+    required this.trainType,
   });
 
   @override
@@ -32,12 +40,27 @@ class TinderCard extends ConsumerWidget {
             children: [
               ClipRRect(
                 borderRadius:
-                    BorderRadius.circular(constants.paddingUnit * 1.5),
-                child: Image(
-                  image: AssetImage(imagePath),
+                BorderRadius.circular(constants.paddingUnit * 1.5),
+                child: Image.network(
+                  imageUrl,
                   width: constants.screenHeight / 2.2,
                   height: constants.screenHeight / 1.8,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.error),
+                  ),
                 ),
               ),
               Padding(
@@ -51,19 +74,19 @@ class TinderCard extends ConsumerWidget {
                       runSpacing: constants.paddingUnit,
                       children: [
                         Tag(
-                          text: '8 am',
+                          text: time,
                           category: TagCategory.hours,
                         ),
                         Tag(
-                          text: 'Friday, Sunday',
+                          text: day,
                           category: TagCategory.days,
                         ),
                         Tag(
-                          text: 'legs, abs',
+                          text: trainType,
                           category: TagCategory.trainType,
                         ),
                         Tag(
-                          text: 'some text about me ',
+                          text: textInfo,
                           category: TagCategory.textInfo,
                         ),
                       ]),
