@@ -67,7 +67,6 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-
 class AppContent extends StatelessWidget {
   const AppContent({super.key});
 

@@ -28,6 +28,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isTabControllerListenerActive = true; // Флаг для контроля слушателя
 
   @override
   void initState() {
@@ -40,23 +41,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     // Слушаем изменения TabController
-    _tabController.addListener(() {
-      // Обновляем провайдер при изменении вкладки через TabController
-      if (_tabController.indexIsChanging) {
-        ref.read(tabProvider.notifier).setTab(_tabController.index);
-      }
-    });
+    _tabController.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    // Проверяем флаг перед обновлением провайдера
+    if (_tabController.indexIsChanging && _isTabControllerListenerActive) {
+      ref.read(tabProvider.notifier).setTab(_tabController.index);
+    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Синхронизируем TabController с провайдером при изменении зависимостей
-    _tabController.index = ref.read(tabProvider);
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Синхронизация TabController с провайдером после обновления виджета
+    _syncTabControllerWithProvider();
+  }
+
+  // Синхронизируем TabController с провайдером безопасно
+  void _syncTabControllerWithProvider() {
+    final selectedTab = ref.read(tabProvider);
+    if (_tabController.index != selectedTab) {
+      // Временно отключаем слушатель, чтобы избежать цикла обратной связи
+      _isTabControllerListenerActive = false;
+      // Используем Future.microtask, чтобы обновление произошло после построения виджета
+      Future.microtask(() {
+        if (mounted) {
+          _tabController.animateTo(selectedTab);
+          // Восстанавливаем слушатель
+          _isTabControllerListenerActive = true;
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
   }
@@ -66,10 +92,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final l10n = AppLocalizations.of(context)!;
     final selectedTab = ref.watch(tabProvider);
 
-    // Синхронизируем TabController с провайдером
-    if (_tabController.index != selectedTab) {
-      _tabController.animateTo(selectedTab);
-    }
+    // Безопасная синхронизация TabController после построения
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _tabController.index != selectedTab) {
+        _syncTabControllerWithProvider();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
