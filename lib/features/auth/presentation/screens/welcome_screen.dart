@@ -15,8 +15,8 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
         body: BackgroundWrapper(
       topBranchPadding: const EdgeInsets.only(
-        top: 50,
-        left: 10,
+        top: 40,
+        left: 0,
       ),
       bottomBranchPadding: const EdgeInsets.only(
         bottom: 10,
@@ -77,18 +77,18 @@ class WelcomeScreen extends StatelessWidget {
                             RouteNames.registration,
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.greenSecondary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
+                        // style: ElevatedButton.styleFrom(
+                        //   backgroundColor: AppColors.greenSecondary,
+                        //   padding: const EdgeInsets.symmetric(vertical: 16),
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(15),
+                        //   ),
+                        // ),
                         child: Text(
                           l10n.signUp,
-                          style: AppTextStyles.robotoMedium.copyWith(
-                            fontSize: 16,
-                          ),
+                          // style: AppTextStyles.robotoMedium.copyWith(
+                          //   fontSize: 16,
+                          // ),
                         ),
                       ),
                     ),
@@ -99,9 +99,9 @@ class WelcomeScreen extends StatelessWidget {
                       children: [
                         Text(
                           l10n.accountExistence,
-                          style: AppTextStyles.robotoRegular.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                          // style: AppTextStyles.robotoRegular.copyWith(
+                          //   color: AppColors.textSecondary,
+                          // ),
                         ),
                         GestureDetector(
                           onTap: () {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/theme/text_styles.dart';
+
 class CustomTextField extends StatefulWidget {
   final String labelText;
   final bool isPassword;
@@ -64,9 +64,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       onChanged: widget.onChanged,
       decoration: InputDecoration(
         labelText: widget.labelText,
-        labelStyle: AppTextStyles.robotoRegular.copyWith(
-          color: AppColors.textSecondary,
-        ),
+        labelStyle: Theme.of(context).textTheme.bodyMedium,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
           borderSide: BorderSide(
