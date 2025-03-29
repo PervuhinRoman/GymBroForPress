@@ -30,7 +30,9 @@ void main() async {
   Logger.log
       .i('Current user on app startup: ${user?.email ?? 'Not authenticated'}');
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+      ProviderScope(child: const MyApp()),
+  );
 }
 
 class MyApp extends ConsumerWidget {

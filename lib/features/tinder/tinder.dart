@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/tinder/tinderCard.dart';
 
-class TinderScreen extends StatefulWidget {
+class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});
 
   @override
   _TinderScreenState createState() => _TinderScreenState();
 }
 
-class _TinderScreenState extends State<TinderScreen> {
+class _TinderScreenState extends ConsumerState<TinderScreen> {
   final List<String> images = [
-    'assets/cat.jpeg',
-    'assets/dog.jpeg',
+    'assets/images/cat.jpeg',
+    'assets/images/dog.jpeg',
+    'assets/images/myles.jpeg',
   ];
 
   int currentIndex = 0;
   double offsetX = 0.0;
   double opacity = 1.0;
+  bool isVisible = true;
 
-  void onSwipeComplete(bool isRightSwipe) {
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() {
-          offsetX = 0.0;
-          opacity = 1.0;
-          currentIndex = (currentIndex + 1) % images.length;
-        });
-      }
-    });
-  }
-
-//https://stackoverflow.com/questions/51343735/flutter-image-preload
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -45,12 +36,17 @@ class _TinderScreenState extends State<TinderScreen> {
       body: Center(
         child: Stack(
           children: [
-            if (currentIndex < images.length)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: TinderCard(imagePath: images[(currentIndex + 1) % images.length]),
+              ),
+            ),
+            if (isVisible)
               GestureDetector(
                 onHorizontalDragUpdate: (details) {
                   setState(() {
                     offsetX += details.primaryDelta ?? 0;
-                    opacity = 1 - (offsetX.abs() / 300).clamp(0.0, 1.0);
                   });
                 },
                 onHorizontalDragEnd: (details) {
@@ -68,7 +64,7 @@ class _TinderScreenState extends State<TinderScreen> {
                     ..rotateZ(0.02 * offsetX / 150),
                   child: Opacity(
                     opacity: opacity,
-                    child: buildCard(images[currentIndex]),
+                    child: TinderCard(imagePath: images[currentIndex]),
                   ),
                 ),
               ),
@@ -77,38 +73,30 @@ class _TinderScreenState extends State<TinderScreen> {
       ),
     );
   }
+  void onSwipeComplete(bool isRightSwipe) {
+    setState(() {
+      isVisible = false;
+    });
 
-  Widget buildCard(String imagePath) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.primary,
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 6,
-      child: SizedBox(
-        width: 340,
-        height: 600,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-                child: Image(
-                    image: AssetImage(imagePath), width: 300, height: 400)),
-            Center(child: Text('ill do it later')),
-          ],
-        ),
-      ),
-    );
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        currentIndex = (currentIndex + 1) % images.length;
+        offsetX = 0.0;
+        opacity = 1.0;
+        isVisible = true;
+      });
+    });
   }
 
   void animateCardAway(bool isRightSwipe) {
     setState(() {
-      offsetX = isRightSwipe ? 500 : -500;
+      offsetX = isRightSwipe ? 300 : -300;
       opacity = 0.0;
     });
 
-    onSwipeComplete(isRightSwipe);
+    Future.delayed(const Duration(milliseconds: 200), () {
+      onSwipeComplete(isRightSwipe);
+    });
   }
 
   void resetCardPosition() {
