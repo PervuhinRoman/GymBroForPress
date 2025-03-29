@@ -3,8 +3,7 @@ import 'package:gymbro/core/theme/app_colors.dart';
 
 class AppTextStyles {
   static const String _fontFamily = 'Roboto';
-
-
+  
   static const TextStyle robotoRegular = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 15,

@@ -42,5 +42,25 @@
   "darkTheme": "Dark",
   "@darkTheme": {
     "description": "Dark theme option"
-  }
+  },
+  "welcomeDescription": "IMPROVE PHYSICAL HEALTH WITH GymBro SIMPLY AND EFFECTIVELY",
+  "signUp": "Sign Up",
+  "accountExistence": "Already have an account? ",
+  "signIn": "Sign In",
+  "createAccount": "CREATE ACCOUNT",
+  "googleSignIn": "Sign In with Google",
+  "or": "or",
+  "enterLogin": "Enter login",
+  "enterPassword": "Enter password",
+  "repeatPassword": "Repeat password",
+  "personalData": "I agree to the processing of personal data",
+  "logIn": "Log In",
+  "phoneNumberOrEmail": "Phone number / email",
+  "password": "Password",
+  "next": "Next",
+  "forgotPassword": "I forgot password",
+  "resetPassword": "RESET PASSWORD",
+  "enterEmail": "Enter the E-mail account",
+  "accessCode": "Get an access code"
+
 }
