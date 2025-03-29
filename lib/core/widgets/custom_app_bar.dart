@@ -59,8 +59,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 24.0),
           child: Image.asset(
-            'assets/images/vita_logo.png',
-            height: 20,
+            'assets/images/gymbro_logo.png',
+            height: 50,
           ),
         ),
       ],

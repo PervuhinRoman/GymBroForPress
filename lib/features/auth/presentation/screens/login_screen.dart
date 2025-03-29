@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:gymbro/core/services/auth_service.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/theme/text_styles.dart';
+// import 'package:gymbro/core/theme/text_styles.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/background_wrapper.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
@@ -38,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: CustomAppBar(),
       body: BackgroundWrapper(
         topBranchPadding: const EdgeInsets.only(
-          top: 0,
-          left: 10,
+          top: 10,
+          left: 0,
         ),
         bottomBranchPadding: const EdgeInsets.only(
           bottom: 10,
@@ -48,14 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
         topBranchWidth: MediaQuery.of(context).size.width * 0.6,
         bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                 child: Text(
                   l10n.logIn,
-                  style: AppTextStyles.robotoSemiBold.copyWith(fontSize: 24),
+                  style: Theme.of(context).textTheme.headlineLarge,
+                  // style: AppTextStyles.robotoSemiBold.copyWith(fontSize: 24),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -92,9 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(width: 8),
                     Text(
                       l10n.googleSignIn,
-                      style: AppTextStyles.robotoMedium.copyWith(
-                        color: AppColors.primaryText,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -104,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Text(
                   l10n.or,
-                  style: TextStyle(color: AppColors.textSecondary),
+                  // style: TextStyle(color: AppColors.textSecondary),
                 ),
               ),
               const SizedBox(height: 24),
@@ -173,9 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
                           l10n.next,
-                          style: AppTextStyles.robotoMedium.copyWith(
-                            color: AppColors.primaryText,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          // style: AppTextStyles.robotoMedium.copyWith(
+                          //   color: AppColors.primaryText,
+                          // ),
                         ),
                 ),
               ),
@@ -187,10 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Text(
                     l10n.forgotPassword,
-                    style: AppTextStyles.robotoRegular.copyWith(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    // style: AppTextStyles.robotoRegular.copyWith(
+                    //   color: AppColors.textSecondary,
+                    //   fontSize: 13,
+                    // ),
                   ),
                 ),
               ),

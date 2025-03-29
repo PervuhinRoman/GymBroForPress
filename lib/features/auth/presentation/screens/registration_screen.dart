@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/theme/text_styles.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/background_wrapper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -55,7 +54,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           topBranchWidth: MediaQuery.of(context).size.width * 0.6,
           bottomBranchWidth: MediaQuery.of(context).size.width * 0.6,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 24, right: 24),
+            padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
             child: SizedBox(
               height: MediaQuery.of(context).size.height -
                   AppBar().preferredSize.height -
@@ -67,8 +66,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   Center(
                     child: Text(
                       l10n.createAccount,
-                      style:
-                          AppTextStyles.robotoSemiBold.copyWith(fontSize: 24),
+                      style: Theme.of(context).textTheme.headlineLarge,
+                      // style:
+                      //     AppTextStyles.robotoSemiBold.copyWith(fontSize: 24),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -92,9 +92,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(width: 8),
                         Text(
                           l10n.googleSignIn,
-                          style: AppTextStyles.robotoMedium.copyWith(
-                            color: AppColors.primaryText,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          // style: AppTextStyles.robotoMedium.copyWith(
+                          //   color: AppColors.primaryText,
+                          // ),
                         ),
                       ],
                     ),
@@ -151,10 +152,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Expanded(
                         child: Text(
                           l10n.personalData,
-                          style: AppTextStyles.robotoRegular.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 13,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall,
+                          // style: AppTextStyles.robotoRegular.copyWith(
+                          //   color: AppColors.textSecondary,
+                          //   fontSize: 13,
+                          // ),
                         ),
                       ),
                       Transform.scale(
@@ -212,13 +214,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        disabledBackgroundColor: AppColors.disabledText,
                       ),
                       child: Text(
                         l10n.signUp,
-                        style: AppTextStyles.robotoMedium.copyWith(
-                          color: AppColors.primaryText,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        // style: AppTextStyles.robotoMedium.copyWith(
+                        //   color: AppColors.primaryText,
+                        // ),
                       ),
                     ),
                   ),
