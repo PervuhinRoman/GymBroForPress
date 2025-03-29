@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/auth/services/auth_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -8,7 +7,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _authService = AuthService();
+    final authService = AuthService();
     return Scaffold(
         body: Center(
       child: Column(
@@ -26,7 +25,7 @@ class ProfileScreen extends ConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await _authService.signOut();
+                await authService.signOut();
                 // Navigate to login screen after logout
                 if (context.mounted) {
                   Navigator.pushNamed(context, 'login');
