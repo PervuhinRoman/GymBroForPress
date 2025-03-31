@@ -28,10 +28,48 @@ class _FormScreenState extends State<FormScreen> {
     super.initState();
     _loadFormData();
   }
-
   Future<void> _saveFormData() async {
     if (!_formKey.currentState!.validate()) return;
 
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://10.0.2.2:8080/api/profiles'),
+    );
+
+    if (_imageFile != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          _imageFile!.path,
+        ),
+      );
+    }
+
+    request.fields['time'] = _hoursController.text;
+    request.fields['day'] = _daysController.text;
+    request.fields['textInfo'] = _textInfoController.text;
+    request.fields['trainType'] = _trainTypeController.text;
+
+    try {
+      var response = await request.send();
+      var responseString = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile saved successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $responseString')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+
+    // Save to local storage
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('name', _nameController.text);
     await prefs.setString('trainType', _trainTypeController.text);
@@ -40,34 +78,6 @@ class _FormScreenState extends State<FormScreen> {
     await prefs.setString('textInfo', _textInfoController.text);
     if (_imageFile != null) {
       await prefs.setString('imagePath', _imageFile!.path);
-    }
-
-    try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/api/profiles'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'time': _hoursController.text,
-          'day': _daysController.text,
-          'textInfo': _textInfoController.text,
-          'trainType': _trainTypeController.text,
-          'imageUrl': '/images/default.jpg',
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile saved successfully!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${response.body}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
     }
   }
 
