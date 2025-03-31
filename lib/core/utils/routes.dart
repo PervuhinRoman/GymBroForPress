@@ -5,7 +5,7 @@ import 'package:gymbro/features/auth/presentation/screens/registration_screen.da
 import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/tinder/tinder.dart';
+import '../../features/tinder/presentation/tinder.dart';
 
 abstract class RouteNames {
   const RouteNames._();

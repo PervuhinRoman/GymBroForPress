@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
+import 'package:gymbro/features/tinder/presentation/form.dart';
 
 import '../../../calendar/calendar.dart';
-import '../../../tinder/tinder.dart';
+import '../../../tinder/presentation/tinder.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
@@ -80,6 +81,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void _navigateToQuestionnaire(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FormScreen(),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tabController.removeListener(_handleTabChange);
@@ -103,25 +113,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       appBar: AppBar(
         title: Text(l10n.appTitle),
         actions: [
-          // Переключатель языка
+          if (selectedTab == 1)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => _navigateToQuestionnaire(context),
+              tooltip: 'Моя анкета',
+            ),
           IconButton(
             icon: const Icon(Icons.language),
-            onPressed: () {
-              _showLanguageSelector(context, ref);
-            },
+            onPressed: () => _showLanguageSelector(context, ref),
           ),
-          // Переключатель темы
           IconButton(
             icon: const Icon(Icons.brightness_6),
-            onPressed: () {
-              _showThemeSelector(context, ref);
-            },
+            onPressed: () => _showThemeSelector(context, ref),
           ),
         ],
       ),
       body: TabBarView(
         controller: _tabController,
-        physics: const NeverScrollableScrollPhysics(), // Отключаем свайп
+        physics: const NeverScrollableScrollPhysics(),
         children: const [
           Calendar(),
           TinderScreen(),
@@ -145,9 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ],
         currentIndex: selectedTab,
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: (index) {
-          ref.read(tabProvider.notifier).setTab(index);
-        },
+        onTap: (index) => ref.read(tabProvider.notifier).setTab(index),
       ),
     );
   }
