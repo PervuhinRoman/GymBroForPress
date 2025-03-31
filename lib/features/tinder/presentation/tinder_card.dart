@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/utils/constants.dart';
-import 'package:gymbro/features/tinder/tags.dart';
+import 'package:gymbro/features/tinder/presentation/tags.dart';
 
 class TinderCard extends ConsumerWidget {
   final String imagePath;

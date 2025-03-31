@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/features/tinder/tinder_card.dart';
+import 'package:gymbro/features/tinder/presentation/tinder_card.dart';
 
 class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});

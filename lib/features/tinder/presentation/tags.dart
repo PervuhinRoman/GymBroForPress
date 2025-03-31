@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 
-import '../../core/utils/constants.dart';
+import '../../../core/utils/constants.dart';
 
 enum TagCategory { trainType, hours, days, textInfo }
 

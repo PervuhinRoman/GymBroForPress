@@ -85,7 +85,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Анкета'),
+        title: const Text('Form'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -109,7 +109,7 @@ class _FormScreenState extends State<FormScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.photo_library),
-                      label: const Text('Галерея'),
+                      label: const Text('Gallery'),
                       onPressed: () => _pickImage(ImageSource.gallery),
                     ),
                   ],
