@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/utils/constants.dart';
 import 'package:gymbro/features/tinder/presentation/tags.dart';
+import 'package:gymbro/features/tinder/presentation/tinder.dart';
 
 class TinderCard extends ConsumerWidget {
-  final String imagePath;
+  final User user;
 
   const TinderCard({
     super.key,
-    required this.imagePath,
+    required this.user,
   });
 
   @override
@@ -32,11 +33,13 @@ class TinderCard extends ConsumerWidget {
               ClipRRect(
                 borderRadius:
                     BorderRadius.circular(constants.paddingUnit * 1.5),
-                child: Image(
-                  image: AssetImage(imagePath),
+                child: Image.network(
+                  'http://10.0.2.2:8080/${user.imageUrl}',
                   width: constants.screenHeight / 2.2,
                   height: constants.screenHeight / 1.8,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.error),
                 ),
               ),
               Padding(
@@ -50,19 +53,19 @@ class TinderCard extends ConsumerWidget {
                       runSpacing: constants.paddingUnit,
                       children: [
                         Tag(
-                          text: '8 am',
+                          text: user.time,
                           category: TagCategory.hours,
                         ),
                         Tag(
-                          text: 'Friday, Sunday',
+                          text: user.day,
                           category: TagCategory.days,
                         ),
                         Tag(
-                          text: 'legs, abs',
+                          text: user.trainType,
                           category: TagCategory.trainType,
                         ),
                         Tag(
-                          text: 'some text about me ',
+                          text: user.textInfo,
                           category: TagCategory.textInfo,
                         ),
                       ]),
