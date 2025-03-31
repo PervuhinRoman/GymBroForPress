@@ -67,7 +67,7 @@ class AimlApiService {
         }),
       );
       
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         return data['choices'][0]['message']['content'];
       } else {

@@ -141,6 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         // iconSize: 12,
         // selectedFontSize: 12,
         // unselectedFontSize: 12,

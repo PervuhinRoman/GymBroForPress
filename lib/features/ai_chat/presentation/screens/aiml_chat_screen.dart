@@ -3,9 +3,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/aiml_chat_provider.dart';
-
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/widgets/custom_app_bar.dart';
 
 class AimlChatScreen extends ConsumerWidget {
   const AimlChatScreen({super.key});
@@ -45,8 +43,8 @@ class AimlChatScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(aimlChatMessagesProvider.notifier).clearChat(),
-        child: const Icon(Icons.refresh),
         backgroundColor: AppColors.violetPrimary,
+        child: const Icon(Icons.refresh),
       ),
     );
   }
