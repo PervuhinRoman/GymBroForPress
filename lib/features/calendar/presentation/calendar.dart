@@ -54,9 +54,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   List<TrainingTemplate> _getTrainsForConcreteDay(DateTime day) {
-    final matchingKey =
-        events.keys.firstWhere((d) => _isSameDay(d, day), orElse: () => day);
-    return events[matchingKey] ?? [];
+    final normalizedDay = normalizeDate(day);
+    return events[normalizedDay] ?? [];
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -72,8 +71,18 @@ class _CalendarState extends State<Calendar> {
   );
 
   List<TrainingTemplate> _getTrainingsByTag(TrainingType tag) {
-    return (events[_selectedDay] ?? [])
-        .where((val) => val.trainType == tag || tag == TrainingType.all)
+    final dayEvents = events.keys.firstWhere(
+      (d) => _isSameDay(d, _selectedDay),
+      orElse: () => _selectedDay,
+    );
+
+    if (tag == TrainingType.all) {
+      return (events[dayEvents] ?? [])
+        ..sort((a, b) => a.textTime.compareTo(b.textTime));
+    }
+
+    return (events[dayEvents] ?? [])
+        .where((val) => val.trainType == tag)
         .toList()
       ..sort((a, b) => a.textTime.compareTo(b.textTime));
   }
@@ -106,6 +115,9 @@ class _CalendarState extends State<Calendar> {
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
+
+  DateTime normalizeDate(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   @override
   Widget build(BuildContext context) {
@@ -164,16 +176,8 @@ class _CalendarState extends State<Calendar> {
                     onPressed: () {
                       if (_newEventContriller.text.isNotEmpty &&
                           _newTimeEventContriller.text.isNotEmpty) {
-                        final newEventMy = TrainingTemplate(
+                        final newEvent = TrainingTemplate(
                           trainType: TrainingType.my,
-                          borderColor: AppColors.greenPrimary,
-                          mainColor: AppColors.greenSecondary,
-                          text: _newEventContriller.text,
-                          textTime: DateFormat('HH:mm')
-                              .parse(_newTimeEventContriller.text),
-                        );
-                        final newEventAll = TrainingTemplate(
-                          trainType: TrainingType.all,
                           borderColor: AppColors.greenPrimary,
                           mainColor: AppColors.greenSecondary,
                           text: _newEventContriller.text,
@@ -182,12 +186,11 @@ class _CalendarState extends State<Calendar> {
                         );
 
                         setState(() {
-                          if (events[_selectedDay] != null) {
-                            events[_selectedDay]
-                                ?.addAll([newEventMy, newEventAll]);
-                          } else {
-                            events[_selectedDay] = [newEventMy, newEventAll];
-                          }
+                          final normalizedDay = normalizeDate(_selectedDay);
+                          events[normalizedDay] = [
+                            ...(events[normalizedDay] ?? []),
+                            newEvent
+                          ];
                         });
                       }
                       Navigator.of(context).pop();
