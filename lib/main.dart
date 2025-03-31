@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
@@ -17,6 +18,7 @@ import 'core/providers/app_settings_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Инициализация настроек пользователя
+  await dotenv.load(fileName: '.env');
 
   Logger.init();
   Logger.log.i('App starting...');
