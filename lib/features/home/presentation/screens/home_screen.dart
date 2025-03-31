@@ -6,7 +6,7 @@ import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 import 'package:gymbro/features/tinder/presentation/form.dart';
 
-import '../../../calendar/calendar.dart';
+import '../../../calendar/presentation/calendar.dart';
 import '../../../tinder/presentation/tinder.dart';
 
 class HomeScreenArgs {

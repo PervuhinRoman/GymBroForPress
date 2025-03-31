@@ -7,6 +7,7 @@ import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gymbro/features/calendar/presentation/calendar.dart';
 import 'package:gymbro/firebase_options.dart';
 import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
@@ -31,7 +32,7 @@ void main() async {
       .i('Current user on app startup: ${user?.email ?? 'Not authenticated'}');
 
   runApp(
-      ProviderScope(child: const MyApp()),
+    ProviderScope(child: const MyApp()),
   );
 }
 
@@ -62,7 +63,7 @@ class MyApp extends ConsumerWidget {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      home: const AppContent(),
+      home: const Calendar(),
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
     );
