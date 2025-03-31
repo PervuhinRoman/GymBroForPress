@@ -109,7 +109,7 @@ class _FormScreenState extends State<FormScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.photo_library),
-                      label: const Text('Gallery'),
+                      label: const Text('Change image'), //ToDo: string resources
                       onPressed: () => _pickImage(ImageSource.gallery),
                     ),
                   ],
@@ -162,7 +162,7 @@ class _FormScreenState extends State<FormScreen> {
                       }
                     }
                   },
-                  child: const Text('Сохранить'),
+                  child: const Text('Save'),
                 ),
               ),
             ],
