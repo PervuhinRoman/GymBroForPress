@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 
-import '../../core/utils/constants.dart';
+import '../../../core/utils/constants.dart';
 
 enum TagCategory { trainType, hours, days, textInfo }
 
@@ -33,20 +33,20 @@ class Tag extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var constants = ref.read(constantsProvider);
     return Container(
-      padding: EdgeInsets.zero,
+        padding: EdgeInsets.zero,
         decoration: BoxDecoration(
           color: _getBackgroundColor(),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
           padding: EdgeInsets.all(constants.paddingUnit),
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
+          ),
         ));
   }
 }
