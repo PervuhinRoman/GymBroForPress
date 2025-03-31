@@ -18,7 +18,7 @@ class TinderCard extends ConsumerWidget {
       padding: EdgeInsets.all(constants.paddingUnit * 2),
       child: Card(
         shadowColor: Theme.of(context).colorScheme.primary,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        // color: Theme.of(context).colorScheme.onPrimaryContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(constants.paddingUnit),
         ),

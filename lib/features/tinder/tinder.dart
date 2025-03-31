@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/features/tinder/tinderCard.dart';
+import 'package:gymbro/features/tinder/tinder_card.dart';
 
 class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});
@@ -32,14 +32,14 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: Center(
         child: Stack(
           children: [
             Positioned.fill(
               child: Align(
                 alignment: Alignment.center,
-                child: TinderCard(imagePath: images[(currentIndex + 1) % images.length]),
+                child: TinderCard(
+                    imagePath: images[(currentIndex + 1) % images.length]),
               ),
             ),
             if (isVisible)
@@ -73,6 +73,7 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
       ),
     );
   }
+
   void onSwipeComplete(bool isRightSwipe) {
     setState(() {
       isVisible = false;
