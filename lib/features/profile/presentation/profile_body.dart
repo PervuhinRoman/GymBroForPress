@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import '_dev/debug_tools.dart';
-import 'gallery.dart';
-import 'entries.dart';
+import 'package:gymbro/core/_dev/debug_tools.dart';
+import 'gallery_block.dart';
+import 'entries_block.dart';
 import 'profile_info.dart';
-import 'shared/widgets/double_text.dart';
-import 'edit.dart';
-import 'settings.dart';
+import 'package:gymbro/core/widgets/double_text.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({

@@ -1,47 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/features/auth/services/auth_service.dart';
+import 'profile_page.dart';
 
-class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({super.key});
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authService = AuthService();
-    return Scaffold(
-        body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 300,
-            height: 300,
-            decoration: BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await authService.signOut();
-                // Navigate to login screen after logout
-                if (context.mounted) {
-                  Navigator.pushNamed(context, 'login');
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error signing out: $e')),
-                  );
-                }
-              }
-            },
-            child: const Text('Sign Out'),
-          ),
-        ],
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Profile Demo',
+      theme: ThemeData(
+        useMaterial3: true,
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(fontFamily: 'Roboto', fontSize: 18),
+          bodySmall: TextStyle(fontFamily: 'Roboto', fontSize: 14),
+          titleLarge: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
-    ));
+      home: ProfilePage(),
+    );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '_dev/debug_tools.dart';
+import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'profile_info.dart';
-import 'shared/widgets/double_text.dart';
+import 'package:gymbro/core/widgets/double_text.dart';
 
 
 class Entries extends InfoBody {

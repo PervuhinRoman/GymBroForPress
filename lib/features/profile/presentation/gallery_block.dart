@@ -18,6 +18,7 @@ ShaderCallback galleryShaderCallback() {
 
 class Gallery extends InfoBody {
   const Gallery({
+    super.key,
     required this.photosUrls,
   });
 
