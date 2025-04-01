@@ -18,14 +18,15 @@ class ProfilePage extends ConsumerWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            ref.read(debugProvider.notifier).toggleDebug(); // TODO REDO
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
           },
         ),
         
         actions: [
           SettingsMenu(),
         ],
-        title: Text(""),
       ),
       body: ProfileBody(),
     );

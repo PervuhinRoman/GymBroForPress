@@ -11,9 +11,9 @@ class ProfileBody extends StatelessWidget {
     super.key,
   });
 
-  static const double pbgHeight = 100.0;
+  static const double pbgHeight = 60.0;
 
-  static const double radius = 100;
+  static const double radius = 110;
   static const double leftPadding = 45;
   static const double topRelPadding = 0.4;
 

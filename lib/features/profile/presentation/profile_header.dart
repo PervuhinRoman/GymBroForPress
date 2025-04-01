@@ -16,7 +16,7 @@ class ProfileHeader extends StatelessWidget {
     
     final pbgHeight = ProfileBody.pbgHeight;
 
-    final double nameLeftPadding = ((0.8 - topRelPadding) * radius / 2).abs();
+    final double nameLeftPadding = ((0.7 - topRelPadding) * radius / 2).abs();
 
     final ThemeData contextTheme = Theme.of(context); 
 
@@ -30,7 +30,7 @@ class ProfileHeader extends StatelessWidget {
           ProfileAvatar(),
           DebugGizmo(
             child: Padding(
-              padding: EdgeInsets.only(left: nameLeftPadding),
+              padding: EdgeInsets.only(left: nameLeftPadding, bottom: radius*0.08),
               child: Column(
                 children: [
                   DoubleTextDisplay(
