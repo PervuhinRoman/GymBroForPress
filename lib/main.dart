@@ -63,7 +63,7 @@ class MyApp extends ConsumerWidget {
         Locale('en', ''),
         Locale('ru', ''),
       ],
-      home: const Calendar(),
+      home: const AppContent(),
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
     );

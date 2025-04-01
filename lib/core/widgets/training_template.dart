@@ -37,8 +37,11 @@ class _TrainingTemplateState extends State<TrainingTemplate> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(DateFormat('HH:mm').format(widget.textTime)),
-          Text(widget.text),
+          Text(
+            DateFormat('HH:mm').format(widget.textTime),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          Text(widget.text, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

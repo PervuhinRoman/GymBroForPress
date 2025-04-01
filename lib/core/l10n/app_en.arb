@@ -61,6 +61,16 @@
   "forgotPassword": "I forgot password",
   "resetPassword": "RESET PASSWORD",
   "enterEmail": "Enter the E-mail account",
-  "accessCode": "Get an access code"
-
+  "accessCode": "Get an access code",
+  "submit" : "Submit",
+  "choose" : "Choose",
+  "my" : "My",
+  "gym" : "Gym",
+  "all" : "All",
+  "hhmm" : "HH:mm",
+  "description" : "Description",
+  "newTraining" : "New training:",
+  "week" : "Week",
+  "fortnight" : "Two weeks",
+  "month" : "Month"
 }
