@@ -15,6 +15,9 @@ migrate_working_dir/
 *.env
 devtools_options.yaml
 
+# Unused platform
+/linux
+
 # IntelliJ related
 *.iml
 *.ipr
