@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:gymbro/features/map/presentation/ontap_dialog.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class GymPlace {
   final double latitude;
   final double longitude;
   final String mapObjectId;
-  final void tapFunc;
+  final TapCallback<PlacemarkMapObject> tapFunc;
 
   GymPlace({
     required this.mapObjectId,
@@ -17,7 +19,9 @@ class GymPlace {
     PlacemarkMapObject obj = PlacemarkMapObject(
       mapId: MapObjectId(mapObjectId),
       point: Point(latitude: latitude, longitude: longitude),
-      onTap: (PlacemarkMapObject self, Point point) => tapFunc,
+      //onTap: (PlacemarkMapObject self, Point point) => tapFunc,
+        onTap: tapFunc,
+        // onTap: (PlacemarkMapObject obj, Point point) => print("WTF"),
       icon: PlacemarkIcon.single(
         PlacemarkIconStyle(
           image: BitmapDescriptor.fromAssetImage(

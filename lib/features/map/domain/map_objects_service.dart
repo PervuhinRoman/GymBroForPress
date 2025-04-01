@@ -5,39 +5,39 @@ final mapService = MapObjectsService();
 
 class MapObjectsService {
   List<GymPlace> mapObjects = [];
-  Future<List<MapObject>> getMapObjectsList(void tapFunc) async {
+  Future<List<MapObject>> getMapObjectsList(TapCallback<PlacemarkMapObject> tapFunc) async {
     // TODO: получение избранных плейсов из Firebase
     final gym1 = GymPlace(mapObjectId: 'Gym1',
         latitude: 43.408760, longitude: 39.952869,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     final gym2 = GymPlace(mapObjectId: 'Gym2',
         latitude: 43.408846, longitude: 39.956273,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     final gym3 = GymPlace(mapObjectId: 'Gym3',
         latitude: 43.407339,  longitude: 39.958438,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     final gym4 = GymPlace(mapObjectId: 'Gym4',
         latitude: 43.401772,  longitude: 39.954755,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     var gym5 = GymPlace(mapObjectId: 'Gym5',
         latitude: 43.402466,  longitude: 39.951818,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     var gym6 = GymPlace(mapObjectId: 'Gym6',
         latitude: 43.401353,   longitude: 39.951036,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     var gym7 = GymPlace(mapObjectId: 'Gym7',
         latitude: 43.404536,   longitude: 39.949868,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     var gym8 = GymPlace(mapObjectId: 'Gym8',
         latitude: 43.406907,   longitude: 39.949572,
-        tapFunc: (){}
+        tapFunc: tapFunc
     );
     // TODO: final или var
     mapObjects = [
