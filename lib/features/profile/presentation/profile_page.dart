@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings.dart';
-import '_dev/debug_tools.dart';
+import 'settings_button.dart';
+import '../_dev/debug_tools.dart';
 import 'profile_body.dart';
 
 class ProfilePage extends ConsumerWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'profile_body.dart';
-import '_dev/debug_tools.dart';
+import 'package:gymbro/core/_dev/debug_tools.dart';
 
 // Umbrella class for Gallery, Entries
 abstract class InfoBody extends StatelessWidget {
