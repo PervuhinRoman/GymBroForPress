@@ -14,6 +14,9 @@
 migrate_working_dir/
 *.env
 
+# Unused platform
+/linux
+
 # IntelliJ related
 *.iml
 *.ipr
