@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,14 +28,15 @@ class _FormScreenState extends State<FormScreen> {
     super.initState();
     _loadFormData();
   }
-
   Future<void> _saveFormData() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(
-          'https://5d4116670875e6e657f76b3ca78c219e.serveo.net/api/profiles'),
+      Uri.parse('https://5d4116670875e6e657f76b3ca78c219e.serveo.net/api/profiles'),
     );
 
     if (_imageFile != null) {
@@ -51,13 +53,22 @@ class _FormScreenState extends State<FormScreen> {
     request.fields['textInfo'] = _textInfoController.text;
     request.fields['trainType'] = _trainTypeController.text;
 
+    if (userId != null) {
+      request.fields['id'] = userId;
+    }
+
     try {
       var response = await request.send();
       var responseString = await response.stream.bytesToString();
 
-      if (!context.mounted) return; // Add this check
+      if (!context.mounted) return;
 
       if (response.statusCode == 200) {
+        if (userId == null) {
+          final responseData = json.decode(responseString);
+          await prefs.setString('userId', responseData['id'].toString());
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile saved successfully!')),
         );
@@ -73,8 +84,6 @@ class _FormScreenState extends State<FormScreen> {
       );
     }
 
-    // Save to local storage
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setString('name', _nameController.text);
     await prefs.setString('trainType', _trainTypeController.text);
     await prefs.setString('hours', _hoursController.text);
@@ -99,6 +108,10 @@ class _FormScreenState extends State<FormScreen> {
         _imageFile = File(imagePath);
       }
     });
+
+    final userId = prefs.getString('userId');
+    if (userId != null) {
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
