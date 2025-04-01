@@ -23,7 +23,7 @@ class GymPlace {
           image: BitmapDescriptor.fromAssetImage(
             'assets/images/placemark.png',
           ),
-          scale: 1,
+          scale: 1.5,
         ),
       ),
       opacity: 1

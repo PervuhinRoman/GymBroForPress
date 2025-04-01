@@ -50,17 +50,26 @@ class _SelectButtonState extends State<SelectButton> {
                     });
                   },
                   child: Center(
-                    child: Text(
-                      'Все',
-                      style: TextStyle(
-                        // TODO: использовать ресурсы цветов
-                        // TODO: использовать ресурсы текста
-                        color: isLeftSelected ? Color(0xFF353a48) : Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                      child: AnimatedDefaultTextStyle(
+                        duration: Duration(milliseconds: 300),
+                        style: TextStyle(
+                            color: isLeftSelected ? Color(0xFF353a48) : Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold
+                        ),
+                        child: Text('Все'),
+                  )
+                      // child: Text(
+                      //   'Все',
+                      //   style: TextStyle(
+                      //     // TODO: использовать ресурсы цветов
+                      //     // TODO: использовать ресурсы текста
+                      //     color: isLeftSelected ? Color(0xFF353a48) : Colors.white,
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 24,
+                      //   ),
+                      // ),
                       ),
-                    ),
-                  ),
                 ),
               ),
               Expanded(
@@ -71,17 +80,26 @@ class _SelectButtonState extends State<SelectButton> {
                     });
                   },
                   child: Center(
-                    child: Text(
-                      'Избранные',
-                      style: TextStyle(
-                        // TODO: использовать ресурсы цветов
-                        // TODO: использовать ресурсы текста
-                        color: !isLeftSelected ? Color(0xFF353a48) : Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                      child: AnimatedDefaultTextStyle(
+                        duration: Duration(milliseconds: 300),
+                        style: TextStyle(
+                          color: !isLeftSelected ? Color(0xFF353a48) : Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold
+                        ),
+                        child: Text('Избранные'),
+                  )
+                      // child: Text(
+                      //   'Избранные',
+                      //   style: TextStyle(
+                      //     // TODO: использовать ресурсы цветов
+                      //     // TODO: использовать ресурсы текста
+                      //     color: !isLeftSelected ? Color(0xFF353a48) : Colors.white,
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 24,
+                      //   ),
+                      // ),
                       ),
-                    ),
-                  ),
                 ),
               ),
             ],
