@@ -33,8 +33,8 @@ class TinderCard extends ConsumerWidget {
               ClipRRect(
                 borderRadius:
                     BorderRadius.circular(constants.paddingUnit * 1.5),
-                child: Image.network(
-                  'http://10.0.2.2:8080/${user.imageUrl}',
+                child:
+                Image.network('https://5d4116670875e6e657f76b3ca78c219e.serveo.net${user.imageUrl}',
                   width: constants.screenHeight / 2.2,
                   height: constants.screenHeight / 1.8,
                   fit: BoxFit.cover,

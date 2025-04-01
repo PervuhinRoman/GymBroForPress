@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -28,12 +27,14 @@ class _FormScreenState extends State<FormScreen> {
     super.initState();
     _loadFormData();
   }
+
   Future<void> _saveFormData() async {
     if (!_formKey.currentState!.validate()) return;
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:8080/api/profiles'),
+      Uri.parse(
+          'https://5d4116670875e6e657f76b3ca78c219e.serveo.net/api/profiles'),
     );
 
     if (_imageFile != null) {
@@ -54,6 +55,8 @@ class _FormScreenState extends State<FormScreen> {
       var response = await request.send();
       var responseString = await response.stream.bytesToString();
 
+      if (!context.mounted) return; // Add this check
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile saved successfully!')),
@@ -64,6 +67,7 @@ class _FormScreenState extends State<FormScreen> {
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
