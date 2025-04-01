@@ -1,15 +1,13 @@
+// Class for objects for visual presentation of Entries and Gallery
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'profile_body.dart';
+import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
+import '../profile_body.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
 
-// Umbrella class for Gallery, Entries
-abstract class InfoBody extends StatelessWidget {
-  const InfoBody({super.key});
-}
-
-class InfoSection extends StatelessWidget {
-  const InfoSection({
+class InfoWrapper extends StatelessWidget {
+  const InfoWrapper({
     super.key,
     required this.header,
     this.optionalButton,
