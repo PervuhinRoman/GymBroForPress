@@ -197,7 +197,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 if (user != null && mounted) {
                                   Navigator.pushNamed(
                                     context,
-                                    RouteNames.login,
+                                    RouteNames.questionnare,
                                   );
                                 }
                               } catch (e) {
