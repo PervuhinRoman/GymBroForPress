@@ -1,11 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/theme/text_styles.dart';
-import 'training_template.dart';
+import '../../../core/widgets/training_template.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
@@ -17,8 +20,6 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  String _dropdownMenuItem = 'Gym1';
-
   int _selectedTrainingIndex = 0;
   late double _calendarHeight =
       _getCalendarHeightByFormat(_calendarFormat, context);
@@ -31,13 +32,8 @@ class _CalendarState extends State<Calendar> {
 
   Map<DateTime, List<TrainingTemplate>> events = {};
 
-  void _dropDownMenuItemChange(String? newValue) {
-    if (newValue is String) {
-      setState(() {
-        _dropdownMenuItem = newValue;
-      });
-    }
-  }
+  String? _selectedGym;
+  List<String> _gyms = [];
 
   double _getCalendarHeightByFormat(CalendarFormat format, context) {
     final size = MediaQuery.of(context).size;
@@ -110,6 +106,8 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
+    loadGyms();
+    // _selectedValue = _gyms.first;
   }
 
   bool _isSameDay(DateTime a, DateTime b) {
@@ -119,8 +117,17 @@ class _CalendarState extends State<Calendar> {
   DateTime normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
+  void loadGyms() {
+    setState(() {
+      _gyms = ["Gym2", "Gym2", "Gym3"];
+      _selectedGym = _gyms.isNotEmpty ? _gyms.first : null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // _selectedValue = _gyms.first;
+    final l10n = AppLocalizations.of(context)!;
     List<Widget> currentTrainings = [];
     if (_selectedTrainingIndex == 0) {
       currentTrainings = _getTrainingsByTag(TrainingType.my);
@@ -129,14 +136,15 @@ class _CalendarState extends State<Calendar> {
     } else {
       currentTrainings = _getTrainingsByTag(TrainingType.all);
     }
-    print('curr index is $_selectedTrainingIndex');
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.violetPrimary,
+        backgroundColor:
+            Theme.of(context).floatingActionButtonTheme.backgroundColor,
         child: Icon(Icons.add),
         onPressed: () {
           showDialog(
@@ -144,18 +152,18 @@ class _CalendarState extends State<Calendar> {
             builder: (context) {
               return AlertDialog(
                 scrollable: true,
-                title: Text('New training:'),
+                title: Text(l10n.newTraining),
                 content: Padding(
                   padding: EdgeInsets.all(8),
                   child: Column(
                     children: [
                       TextField(
-                        style: AppTextStyles.robotoBold,
+                        style: Theme.of(context).textTheme.bodyMedium,
                         controller: _newTimeEventContriller,
                         keyboardType: TextInputType.number,
                         inputFormatters: [timeMaskFormatter],
                         decoration: InputDecoration(
-                          hintText: 'ЧЧ:ММ',
+                          hintText: l10n.hhmm,
                           hintStyle: TextStyle(color: AppColors.violetPale),
                         ),
                       ),
@@ -164,7 +172,7 @@ class _CalendarState extends State<Calendar> {
                         maxLines: null,
                         controller: _newEventContriller,
                         decoration: InputDecoration(
-                          hintText: 'Описание',
+                          hintText: l10n.description,
                           hintStyle: TextStyle(color: AppColors.violetPale),
                         ),
                       ),
@@ -178,8 +186,8 @@ class _CalendarState extends State<Calendar> {
                           _newTimeEventContriller.text.isNotEmpty) {
                         final newEvent = TrainingTemplate(
                           trainType: TrainingType.my,
-                          borderColor: AppColors.greenPrimary,
-                          mainColor: AppColors.greenSecondary,
+                          borderColor: AppColors.bluePale,
+                          mainColor: AppColors.violetPrimary,
                           text: _newEventContriller.text,
                           textTime: DateFormat('HH:mm')
                               .parse(_newTimeEventContriller.text),
@@ -195,7 +203,7 @@ class _CalendarState extends State<Calendar> {
                       }
                       Navigator.of(context).pop();
                     },
-                    child: Text('Submit'),
+                    child: Text(l10n.submit),
                   ),
                 ],
               );
@@ -203,249 +211,282 @@ class _CalendarState extends State<Calendar> {
           );
         },
       ),
-      body: CustomScrollView(
-        physics: ClampingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: screenHeight / 3.5,
-            backgroundColor: Colors.white,
-            pinned: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Column(
-                children: [
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                    color: Colors.black26, width: 1)),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: const Center(child: Text('Choose')),
-                                value: _dropdownMenuItem,
-                                isExpanded: true,
-                                icon: const Icon(Icons.arrow_downward),
-                                onChanged: _dropDownMenuItemChange,
-                                items: const [
-                                  DropdownMenuItem(
-                                      value: 'Gym1',
-                                      child: Center(child: Text('Gym1'))),
-                                  DropdownMenuItem(
-                                      value: 'Gym2',
-                                      child: Center(child: Text('Gym2'))),
-                                ],
+      body: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: CustomScrollView(
+          physics: ClampingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: screenHeight / 3.5,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              pinned: false,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      width: 1)),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: Center(child: Text(l10n.choose)),
+                                  value: _selectedGym,
+                                  isExpanded: true,
+                                  icon: Transform.translate(
+                                    offset: Offset(-20, 0),
+                                    child:
+                                        const Icon(Icons.keyboard_arrow_down),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGym = value;
+                                    });
+                                  },
+                                  items: [
+                                    DropdownMenuItem(
+                                        value: 'Gym1',
+                                        child: Center(child: Text('Gym1'))),
+                                    DropdownMenuItem(
+                                        value: 'Gym2',
+                                        child: Center(child: Text('Gym2'))),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                          Spacer(),
+                          Padding(
+                            padding: EdgeInsets.only(right: screenWidth / 200),
+                            child: IconButton(
+                              icon: Icon(Icons.people),
+                              onPressed: () {
+                                setState(() {
+                                  _calendarFormat = CalendarFormat.twoWeeks;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.amber,
+                            ),
+                            height: screenWidth / 2.7,
+                            width: screenWidth / 2.7,
+                          ),
                         ),
-                        Spacer(),
-                        Padding(
-                          padding: EdgeInsets.only(right: screenWidth / 200),
-                          child: IconButton(
-                            icon: Icon(Icons.people),
-                            onPressed: () {
-                              setState(() {
-                                _calendarFormat = CalendarFormat.twoWeeks;
-                              });
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.greenPrimary,
+                            ),
+                            height: screenWidth / 2.7,
+                            width: screenWidth / 2.7,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverAppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              expandedHeight: screenHeight / 16,
+              toolbarHeight: screenHeight / 16,
+              elevation: 0,
+              pinned: true,
+              shadowColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Center(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                      ),
+                      hint: Center(child: Text(l10n.choose)),
+                      value: _calendarFormat,
+                      items: [
+                        DropdownMenuItem(
+                          value: CalendarFormat.week,
+                          child: Text(l10n.week),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarFormat.twoWeeks,
+                          child: Text(l10n.fortnight),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarFormat.month,
+                          child: Text(l10n.month),
+                        ),
+                      ],
+                      onChanged: (format) {
+                        if (format != null) {
+                          setState(() {
+                            _calendarFormat = format;
+                            _calendarHeight =
+                                _getCalendarHeightByFormat(format, context);
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverAppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              expandedHeight: _calendarHeight - 100,
+              toolbarHeight: _calendarHeight - 100,
+              elevation: 0,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Container(
+                    color: Theme.of(context)
+                        .scaffoldBackgroundColor, // задаём фон, чтобы скрыть артефакты
+
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: AnimatedSize(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: ClipRect(
+                          child: TableCalendar(
+                            selectedDayPredicate: (day) =>
+                                isSameDay(_selectedDay, day),
+                            calendarStyle: CalendarStyle(
+                              outsideDecoration: BoxDecoration(
+                                color: AppColors
+                                    .disabledText, // цвет выбранного дня
+                                shape: BoxShape.circle,
+                              ),
+                              outsideTextStyle:
+                                  TextStyle(color: AppColors.textSecondary),
+                              selectedDecoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // цвет выбранного дня
+                                shape: BoxShape.circle, // форма выбранного дня
+                              ),
+                              selectedTextStyle: TextStyle(
+                                  color: AppColors
+                                      .primaryText // стиль текста выбранного дня
+                                  ),
+                            ),
+                            formatAnimationDuration:
+                                Duration(milliseconds: 100),
+                            calendarFormat: _calendarFormat,
+                            firstDay: DateTime.utc(2010, 10, 16),
+                            lastDay: DateTime.utc(2030, 3, 14),
+                            focusedDay: _focusedDay,
+                            rowHeight: 35,
+                            availableGestures:
+                                AvailableGestures.horizontalSwipe,
+                            startingDayOfWeek: StartingDayOfWeek.monday,
+                            onDaySelected: _onDaySelected,
+                            eventLoader: _getTrainsForConcreteDay,
+                            headerStyle: HeaderStyle(
+                              formatButtonVisible: false,
+                              titleCentered: true,
+                            ),
+                            onPageChanged: (focusedDay) {
+                              _focusedDay = focusedDay;
                             },
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.amber,
-                          ),
-                          height: screenWidth / 2.5,
-                          width: screenWidth / 2.5,
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.greenPrimary,
-                          ),
-                          height: screenWidth / 2.5,
-                          width: screenWidth / 2.5,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            expandedHeight: screenHeight / 12,
-            toolbarHeight: screenHeight / 12,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Center(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    icon: Icon(Icons.arrow_downward_outlined),
-                    hint: const Center(child: Text('Choose')),
-                    value: _calendarFormat,
-                    items: [
-                      DropdownMenuItem(
-                        value: CalendarFormat.month,
-                        child: Text('Месяц'),
-                      ),
-                      DropdownMenuItem(
-                        value: CalendarFormat.twoWeeks,
-                        child: Text('Две недели'),
-                      ),
-                      DropdownMenuItem(
-                        value: CalendarFormat.week,
-                        child: Text('Неделя'),
-                      ),
-                    ],
-                    onChanged: (format) {
-                      if (format != null) {
+            SliverAppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              // expandedHeight: _calendarHeight,
+              toolbarHeight: screenHeight / 13,
+              elevation: 0,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
                         setState(() {
-                          _calendarFormat = format;
-                          _calendarHeight =
-                              _getCalendarHeightByFormat(format, context);
+                          _selectedTrainingIndex = 0;
                         });
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            expandedHeight: _calendarHeight - 100,
-            toolbarHeight: _calendarHeight - 60,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                child: Container(
-                  color: Colors.white, // задаём фон, чтобы скрыть артефакты
-
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: AppColors.greenSecondary,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.black26, width: 1)),
-                    child: AnimatedSize(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      child: TableCalendar(
-                        selectedDayPredicate: (day) =>
-                            isSameDay(_selectedDay, day),
-                        calendarStyle: CalendarStyle(
-                          selectedDecoration: BoxDecoration(
-                            color:
-                                AppColors.violetPrimary, // цвет выбранного дня
-                            shape: BoxShape.circle, // форма выбранного дня
-                          ),
-                          selectedTextStyle: TextStyle(
-                            color: AppColors
-                                .violetPaleX2, // стиль текста выбранного дня
-                          ),
-                        ),
-                        formatAnimationDuration: Duration(milliseconds: 100),
-                        calendarFormat: _calendarFormat,
-                        firstDay: DateTime.utc(2010, 10, 16),
-                        lastDay: DateTime.utc(2030, 3, 14),
-                        focusedDay: _focusedDay,
-                        rowHeight: 40,
-                        availableGestures: AvailableGestures.horizontalSwipe,
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        onDaySelected: _onDaySelected,
-                        eventLoader: _getTrainsForConcreteDay,
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                        ),
-                        onPageChanged: (focusedDay) {
-                          _focusedDay = focusedDay;
-                        },
-                      ),
+                      },
+                      child: Text(l10n.my),
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTrainingIndex = 1;
+                        });
+                      },
+                      child: Text(l10n.gym),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTrainingIndex = 2;
+                        });
+                      },
+                      child: Text(l10n.all),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            // expandedHeight: _calendarHeight,
-            toolbarHeight: screenHeight / 10,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 0;
-                      });
-                    },
-                    child: const Text('Моё'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 1;
-                      });
-                    },
-                    child: const Text('Зал'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 2;
-                      });
-                    },
-                    child: const Text('Всё'),
-                  ),
-                ],
+            SliverPadding(
+              padding: EdgeInsets.only(top: screenHeight / 300),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15),
+                      child: Column(
+                        children:
+                            _buildTrainingListWithSpacing(currentTrainings),
+                      ),
+                    );
+                  },
+                  childCount: 1,
+                ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 15.0, right: 15),
-                  child: Column(
-                    children: _buildTrainingListWithSpacing(currentTrainings),
-                  ),
-                );
-              },
-              childCount: 1,
-            ),
-          ),
-          SliverFillRemaining(),
-        ],
+            SliverFillRemaining(),
+          ],
+        ),
       ),
     );
   }
