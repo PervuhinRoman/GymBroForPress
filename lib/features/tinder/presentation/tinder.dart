@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:gymbro/features/tinder/presentation/tinder_card.dart';
 
 final usersProvider = FutureProvider<List<User>>((ref) async {
-  final response = await http.get(Uri.parse('https://5d4116670875e6e657f76b3ca78c219e.serveo.net/api/users'));
+  final response = await http.get(Uri.parse('https://gymbro.serveo.net/api/users'));
   if (response.statusCode == 200) {
     final List<dynamic> data = jsonDecode(response.body);
     return data.map((json) => User.fromJson(json)).toList();
