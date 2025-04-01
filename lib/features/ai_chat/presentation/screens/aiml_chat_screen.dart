@@ -12,19 +12,21 @@ class AimlChatScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messages = ref.watch(aimlChatMessagesProvider);
     final isTyping = ref.watch(chatTypingProvider);
-    
+
     return Scaffold(
       body: Chat(
         messages: messages,
-        onSendPressed: (text) => ref.read(aimlChatMessagesProvider.notifier).sendMessage(text.text),
+        onSendPressed: (text) =>
+            ref.read(aimlChatMessagesProvider.notifier).sendMessage(text.text),
         user: const types.User(id: 'user-id'),
         typingIndicatorOptions: TypingIndicatorOptions(
           typingUsers: isTyping ? [const types.User(id: 'ai-id')] : [],
         ),
         theme: DefaultChatTheme(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          primaryColor: AppColors.violetPrimary,
-          secondaryColor: AppColors.violetSecondary.withOpacity(0.2),
+          primaryColor: Theme.of(context).colorScheme.primary,
+          secondaryColor:
+              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
           sentMessageBodyTextStyle: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 16,
@@ -42,7 +44,8 @@ class AimlChatScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(aimlChatMessagesProvider.notifier).clearChat(),
+        onPressed: () =>
+            ref.read(aimlChatMessagesProvider.notifier).clearChat(),
         backgroundColor: AppColors.violetPrimary,
         child: const Icon(Icons.refresh),
       ),
