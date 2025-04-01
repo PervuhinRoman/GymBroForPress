@@ -11,16 +11,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Profile Demo',
-      theme: ThemeData(
-        useMaterial3: true,
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(fontFamily: 'Roboto', fontSize: 18),
-          bodySmall: TextStyle(fontFamily: 'Roboto', fontSize: 14),
-          titleLarge: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-        ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-      ),
+      theme: Theme.of(context),
       home: ProfilePage(),
     );
   }

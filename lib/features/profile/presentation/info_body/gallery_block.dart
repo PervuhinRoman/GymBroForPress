@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'profile_info.dart';
+import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
+import 'info_wrapper.dart';
 
 ShaderCallback galleryShaderCallback() {
   final Color op = Colors.white.withAlpha(255);
@@ -16,7 +17,7 @@ ShaderCallback galleryShaderCallback() {
               ).createShader(bounds);
 }
 
-class Gallery extends InfoBody {
+class Gallery extends StatelessWidget implements InfoBody {
   const Gallery({
     super.key,
     required this.photosUrls,

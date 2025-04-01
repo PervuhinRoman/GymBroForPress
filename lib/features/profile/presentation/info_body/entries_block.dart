@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
-import 'profile_info.dart';
+import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
+import 'info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
 
 
-class Entries extends InfoBody {
+class Entries extends StatelessWidget implements InfoBody {
   const Entries({
     super.key,
     required this.infoTuples,
@@ -58,7 +59,7 @@ class InfoEntry extends StatelessWidget {
                       topColor: contextTheme.colorScheme.onSecondary,
 
                       bottomText: label,
-                      bottomColor: Colors.grey,
+                      bottomColor: Color.lerp(contextTheme.colorScheme.onSecondary, Colors.grey, 0.3),
                     ),
                   )
                 ],
