@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // TODO: перенести api-key в .env
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCQaE76KncP9ESLjY3cvjrQJm_yePJRCY0',
     appId: '1:273998046310:android:89ac8beb1758aa504e79a7',

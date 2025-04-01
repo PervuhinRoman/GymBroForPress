@@ -35,10 +35,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "MAPKIT_API_KEY", MAPKIT_API_KEY
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            buildConfigField "String", "MAPKIT_API_KEY", MAPKIT_API_KEY
         }
     }
 }
