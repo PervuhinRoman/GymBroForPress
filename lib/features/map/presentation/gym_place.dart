@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:gymbro/features/map/presentation/ontap_dialog.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class GymPlace {
   final double latitude;
   final double longitude;
   final String mapObjectId;
+  final bool isLiked;
   final TapCallback<PlacemarkMapObject> tapFunc;
 
   GymPlace({
     required this.mapObjectId,
+    required this.isLiked,
     required this.latitude,
     required this.longitude,
     required this.tapFunc

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/map/domain/select_button_provider.dart';
 
-class SelectButton extends StatefulWidget {
-  const SelectButton({super.key});
-
-  @override
-  _SelectButtonState createState() => _SelectButtonState();
-}
-
-class _SelectButtonState extends State<SelectButton> {
-  bool isLeftSelected = true;
+class SelectButton extends ConsumerWidget {
+  SelectButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool isLeftSelected = ref.watch(selectButtonStateProvider);
     return Container(
       margin: EdgeInsets.only(right: 16, left: 16, bottom: 24),
       height: 72,
@@ -25,7 +21,7 @@ class _SelectButtonState extends State<SelectButton> {
             duration: Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             alignment:
-                isLeftSelected ? Alignment.centerLeft : Alignment.centerRight,
+                 isLeftSelected ? Alignment.centerLeft : Alignment.centerRight,
             child: FractionallySizedBox(
               // Позволяет взять значение ширины родителя
               widthFactor: 0.5,
@@ -45,9 +41,7 @@ class _SelectButtonState extends State<SelectButton> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isLeftSelected = true;
-                    });
+                    ref.read(selectButtonStateProvider.notifier).selectLeft();
                   },
                   child: Center(
                       child: AnimatedDefaultTextStyle(
@@ -75,9 +69,7 @@ class _SelectButtonState extends State<SelectButton> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isLeftSelected = false;
-                    });
+                    ref.read(selectButtonStateProvider.notifier).selectRight();
                   },
                   child: Center(
                       child: AnimatedDefaultTextStyle(

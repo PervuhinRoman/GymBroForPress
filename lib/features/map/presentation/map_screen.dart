@@ -12,8 +12,8 @@ class MapScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SizedBox(height: 64),
-          Expanded(child: Map(key)),
-          SelectButton(key: key)
+          Expanded(child: Map(key: key)),
+          SelectButton(key: key),
         ],
       ),
     );
