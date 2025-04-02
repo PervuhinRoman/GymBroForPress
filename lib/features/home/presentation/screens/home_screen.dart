@@ -120,14 +120,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onPressed: () => _navigateToQuestionnaire(context),
               tooltip: 'Моя анкета',
             ),
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () => _showLanguageSelector(context, ref),
-          ),
-          IconButton(
-            icon: const Icon(Icons.brightness_6),
-            onPressed: () => _showThemeSelector(context, ref),
-          ),
         ],
       ),
       body: TabBarView(
@@ -165,85 +157,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         selectedItemColor: Theme.of(context).colorScheme.primary,
         onTap: (index) => ref.read(tabProvider.notifier).setTab(index),
       ),
-    );
-  }
-
-  // Диалоговое окно для выбора языка
-  void _showLanguageSelector(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Select Language'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('English'),
-                onTap: () {
-                  ref
-                      .read(appSettingsNotifierProvider.notifier)
-                      .setLocale(const Locale('en'));
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Русский'),
-                onTap: () {
-                  ref
-                      .read(appSettingsNotifierProvider.notifier)
-                      .setLocale(const Locale('ru'));
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // Диалоговое окно для выбора темы
-  void _showThemeSelector(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Select Theme'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('System'),
-                onTap: () {
-                  ref
-                      .read(appSettingsNotifierProvider.notifier)
-                      .setThemeMode(ThemeMode.system);
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Light'),
-                onTap: () {
-                  ref
-                      .read(appSettingsNotifierProvider.notifier)
-                      .setThemeMode(ThemeMode.light);
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Dark'),
-                onTap: () {
-                  ref
-                      .read(appSettingsNotifierProvider.notifier)
-                      .setThemeMode(ThemeMode.dark);
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

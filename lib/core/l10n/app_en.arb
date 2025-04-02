@@ -43,6 +43,11 @@
   "@darkTheme": {
     "description": "Dark theme option"
   },
+  "generalInfo": "General Info",
+  "@generalInfo": {
+    "description": "General profile info header"
+  },
+  
   "welcomeDescription": "IMPROVE PHYSICAL HEALTH WITH GymBro SIMPLY AND EFFECTIVELY",
   "signUp": "Sign Up",
   "accountExistence": "Already have an account? ",

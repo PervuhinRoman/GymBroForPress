@@ -44,11 +44,11 @@ dependencies:
   flutter_dotenv: ^5.2.1
   yandex_mapkit: ^4.1.0
   image_picker: ^0.8.7+3
+  carousel_slider: ^5.0.0
   flutter_chat_ui: ^1.6.10
   flutter_chat_types: ^3.6.2
   http: ^1.1.0
   uuid: ^4.5.1
-
 
 
   # The following adds the Cupertino Icons font to your application.
