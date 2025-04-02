@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:gymbro/core/providers/tab_provider.dart';
+import 'package:gymbro/core/utils/routes.dart';
+import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 import 'package:gymbro/features/tinder/presentation/form.dart';
@@ -112,8 +114,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
+      // appBar: AppBar(
+      //   title: Text(l10n.appTitle),
+      //   actions: [
+      //     if (selectedTab == 1)
+      //       IconButton(
+      //         icon: const Icon(Icons.edit),
+      //         onPressed: () => _navigateToQuestionnaire(context),
+      //         tooltip: 'Моя анкета',
+      //       ),
+      //   ],
+      // ),
+      appBar: CustomAppBar(
+        showProfileAvatar: true,
+        showBackButton: false,
+        onProfileTap: () => Navigator.pushNamed(context, RouteNames.profile),
+        
         actions: [
           if (selectedTab == 1)
             IconButton(

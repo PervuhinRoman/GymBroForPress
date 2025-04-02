@@ -78,6 +78,11 @@ abstract class RoutesBuilder {
           builder: (_) => const AimlChatScreen(),
           settings: settings,
         );
+      case RouteNames.profile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
+          settings: settings,
+        );
     }
 
     return null;
