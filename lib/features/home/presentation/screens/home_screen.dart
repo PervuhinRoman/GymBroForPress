@@ -6,6 +6,7 @@ import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 import 'package:gymbro/features/tinder/presentation/form.dart';
+import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 
 import '../../../calendar/presentation/calendar.dart';
 import '../../../tinder/presentation/tinder.dart';
@@ -120,6 +121,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onPressed: () => _navigateToQuestionnaire(context),
               tooltip: 'Моя анкета',
             ),
+          
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'Profile',
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                )
+
+                // PageRouteBuilder(
+                //   pageBuilder: (context, animation, secondaryAnimation) => ProfileScreen(),
+                //   transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                //     return SlideTransition(
+                //       position: Tween<Offset>(
+                //         begin: Offset(1, 0), // Start from bottom
+                //         end: Offset(0, 0),   // End at normal position
+                //       ).animate(animation),
+                //       child: child,
+                //     );
+                //   },
+                // ),
+              );
+            },
+          ),
         ],
       ),
       body: TabBarView(
