@@ -1,13 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/theme/text_styles.dart';
-import '../../../core/widgets/training_template.dart';
+import 'package:gymbro/features/calendar/data/trainingModel.dart';
+import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Calendar extends StatefulWidget {
@@ -20,121 +17,40 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  int _selectedTrainingIndex = 0;
+  final controller = CalendarController();
+
   late double _calendarHeight =
-      _getCalendarHeightByFormat(_calendarFormat, context);
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
-
-  final TextEditingController _newEventContriller = TextEditingController();
-  final TextEditingController _newTimeEventContriller = TextEditingController();
-
-  Map<DateTime, List<TrainingTemplate>> events = {};
-
-  String? _selectedGym;
-  List<String> _gyms = [];
-
-  double _getCalendarHeightByFormat(CalendarFormat format, context) {
-    final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
-    final screenHeight = size.height;
-    switch (format) {
-      case CalendarFormat.week:
-        return screenHeight / 2.2;
-      case CalendarFormat.twoWeeks:
-        return screenHeight / 2.2;
-      case CalendarFormat.month:
-        return screenHeight / 2.2;
-    }
-  }
-
-  List<TrainingTemplate> _getTrainsForConcreteDay(DateTime day) {
-    final normalizedDay = normalizeDate(day);
-    return events[normalizedDay] ?? [];
-  }
+      controller.getCalendarHeightByFormat(controller.calendarFormat, context);
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
+      controller.selectedDay = selectedDay;
+      controller.focusedDay = focusedDay;
     });
-  }
-
-  final timeMaskFormatter = MaskTextInputFormatter(
-    mask: '##:##',
-    filter: {'#': RegExp(r'\d')},
-  );
-
-  List<TrainingTemplate> _getTrainingsByTag(TrainingType tag) {
-    final dayEvents = events.keys.firstWhere(
-      (d) => _isSameDay(d, _selectedDay),
-      orElse: () => _selectedDay,
-    );
-
-    if (tag == TrainingType.all) {
-      return (events[dayEvents] ?? [])
-        ..sort((a, b) => a.textTime.compareTo(b.textTime));
-    }
-
-    return (events[dayEvents] ?? [])
-        .where((val) => val.trainType == tag)
-        .toList()
-      ..sort((a, b) => a.textTime.compareTo(b.textTime));
-  }
-
-  List<Widget> _buildTrainingListWithSpacing(List<Widget> widgets,
-      {double spacing = 10}) {
-    List<Widget> spacedWidgets = [];
-    spacedWidgets.add(SizedBox(height: spacing));
-    for (int i = 0; i < widgets.length; i++) {
-      spacedWidgets.add(widgets[i]);
-      if (i < widgets.length - 1) {
-        spacedWidgets.add(SizedBox(height: spacing));
-      }
-    }
-    return spacedWidgets;
   }
 
   @override
   void dispose() {
-    _newEventContriller.dispose();
-    _newTimeEventContriller.dispose();
+    controller.dispose(); // важно для освобождения ресурсов
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    loadGyms();
-    // _selectedValue = _gyms.first;
-  }
-
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  DateTime normalizeDate(DateTime date) =>
-      DateTime(date.year, date.month, date.day);
-
-  void loadGyms() {
-    setState(() {
-      _gyms = ["Gym2", "Gym2", "Gym3"];
-      _selectedGym = _gyms.isNotEmpty ? _gyms.first : null;
-    });
+    // controller.addGym("gym");
   }
 
   @override
   Widget build(BuildContext context) {
-    // _selectedValue = _gyms.first;
     final l10n = AppLocalizations.of(context)!;
     List<Widget> currentTrainings = [];
-    if (_selectedTrainingIndex == 0) {
-      currentTrainings = _getTrainingsByTag(TrainingType.my);
-    } else if (_selectedTrainingIndex == 1) {
-      currentTrainings = _getTrainingsByTag(TrainingType.gym);
+    if (controller.selectedTrainingIndex == 0) {
+      currentTrainings = controller.getTrainingsByTag(TrainingType.my);
+    } else if (controller.selectedTrainingIndex == 1) {
+      currentTrainings = controller.getTrainingsByTag(TrainingType.gym);
     } else {
-      currentTrainings = _getTrainingsByTag(TrainingType.all);
+      currentTrainings = controller.getTrainingsByTag(TrainingType.all);
     }
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
@@ -159,9 +75,9 @@ class _CalendarState extends State<Calendar> {
                     children: [
                       TextField(
                         style: Theme.of(context).textTheme.bodyMedium,
-                        controller: _newTimeEventContriller,
+                        controller: controller.newTimeEventController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [timeMaskFormatter],
+                        inputFormatters: [controller.timeMaskFormatter],
                         decoration: InputDecoration(
                           hintText: l10n.hhmm,
                           hintStyle: TextStyle(color: AppColors.violetPale),
@@ -170,7 +86,7 @@ class _CalendarState extends State<Calendar> {
                       TextField(
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        controller: _newEventContriller,
+                        controller: controller.newEventController,
                         decoration: InputDecoration(
                           hintText: l10n.description,
                           hintStyle: TextStyle(color: AppColors.violetPale),
@@ -182,23 +98,10 @@ class _CalendarState extends State<Calendar> {
                 actions: [
                   ElevatedButton(
                     onPressed: () {
-                      if (_newEventContriller.text.isNotEmpty &&
-                          _newTimeEventContriller.text.isNotEmpty) {
-                        final newEvent = TrainingTemplate(
-                          trainType: TrainingType.my,
-                          borderColor: AppColors.bluePale,
-                          mainColor: AppColors.violetPrimary,
-                          text: _newEventContriller.text,
-                          textTime: DateFormat('HH:mm')
-                              .parse(_newTimeEventContriller.text),
-                        );
-
+                      if (controller.newEventController.text.isNotEmpty &&
+                          controller.newTimeEventController.text.isNotEmpty) {
                         setState(() {
-                          final normalizedDay = normalizeDate(_selectedDay);
-                          events[normalizedDay] = [
-                            ...(events[normalizedDay] ?? []),
-                            newEvent
-                          ];
+                          controller.saveEvent();
                         });
                       }
                       Navigator.of(context).pop();
@@ -217,6 +120,7 @@ class _CalendarState extends State<Calendar> {
           physics: ClampingScrollPhysics(),
           slivers: [
             SliverAppBar(
+              automaticallyImplyLeading: false,
               expandedHeight: screenHeight / 3.5,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               pinned: false,
@@ -242,7 +146,7 @@ class _CalendarState extends State<Calendar> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   hint: Center(child: Text(l10n.choose)),
-                                  value: _selectedGym,
+                                  value: controller.selectedGym,
                                   isExpanded: true,
                                   icon: Transform.translate(
                                     offset: Offset(-20, 0),
@@ -251,17 +155,24 @@ class _CalendarState extends State<Calendar> {
                                   ),
                                   onChanged: (value) {
                                     setState(() {
-                                      _selectedGym = value;
+                                      controller.selectedGym = value;
                                     });
                                   },
-                                  items: [
-                                    DropdownMenuItem(
-                                        value: 'Gym1',
-                                        child: Center(child: Text('Gym1'))),
-                                    DropdownMenuItem(
-                                        value: 'Gym2',
-                                        child: Center(child: Text('Gym2'))),
-                                  ],
+                                  //оставил специально из за l10n
+                                  items: controller.gyms.isEmpty
+                                      ? [
+                                          DropdownMenuItem(
+                                            value: null,
+                                            child: Center(
+                                                child: Text(l10n.choose)),
+                                          )
+                                        ]
+                                      : controller.gyms.map((String value) {
+                                          return DropdownMenuItem<String?>(
+                                            value: value,
+                                            child: Center(child: Text(value)),
+                                          );
+                                        }).toList(),
                                 ),
                               ),
                             ),
@@ -273,7 +184,8 @@ class _CalendarState extends State<Calendar> {
                               icon: Icon(Icons.people),
                               onPressed: () {
                                 setState(() {
-                                  _calendarFormat = CalendarFormat.twoWeeks;
+                                  controller.calendarFormat =
+                                      CalendarFormat.twoWeeks;
                                 });
                               },
                             ),
@@ -316,6 +228,7 @@ class _CalendarState extends State<Calendar> {
               ),
             ),
             SliverAppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               expandedHeight: screenHeight / 16,
               toolbarHeight: screenHeight / 16,
@@ -330,7 +243,7 @@ class _CalendarState extends State<Calendar> {
                         Icons.keyboard_arrow_down,
                       ),
                       hint: Center(child: Text(l10n.choose)),
-                      value: _calendarFormat,
+                      value: controller.calendarFormat,
                       items: [
                         DropdownMenuItem(
                           value: CalendarFormat.week,
@@ -348,9 +261,9 @@ class _CalendarState extends State<Calendar> {
                       onChanged: (format) {
                         if (format != null) {
                           setState(() {
-                            _calendarFormat = format;
-                            _calendarHeight =
-                                _getCalendarHeightByFormat(format, context);
+                            controller.calendarFormat = format;
+                            _calendarHeight = controller
+                                .getCalendarHeightByFormat(format, context);
                           });
                         }
                       },
@@ -360,6 +273,7 @@ class _CalendarState extends State<Calendar> {
               ),
             ),
             SliverAppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               expandedHeight: _calendarHeight - 100,
               toolbarHeight: _calendarHeight - 100,
@@ -382,7 +296,7 @@ class _CalendarState extends State<Calendar> {
                         child: ClipRect(
                           child: TableCalendar(
                             selectedDayPredicate: (day) =>
-                                isSameDay(_selectedDay, day),
+                                isSameDay(controller.selectedDay, day),
                             calendarStyle: CalendarStyle(
                               outsideDecoration: BoxDecoration(
                                 color: AppColors
@@ -404,22 +318,22 @@ class _CalendarState extends State<Calendar> {
                             ),
                             formatAnimationDuration:
                                 Duration(milliseconds: 100),
-                            calendarFormat: _calendarFormat,
+                            calendarFormat: controller.calendarFormat,
                             firstDay: DateTime.utc(2010, 10, 16),
                             lastDay: DateTime.utc(2030, 3, 14),
-                            focusedDay: _focusedDay,
+                            focusedDay: controller.focusedDay,
                             rowHeight: 35,
                             availableGestures:
                                 AvailableGestures.horizontalSwipe,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             onDaySelected: _onDaySelected,
-                            eventLoader: _getTrainsForConcreteDay,
+                            eventLoader: controller.getTrainsForConcreteDay,
                             headerStyle: HeaderStyle(
                               formatButtonVisible: false,
                               titleCentered: true,
                             ),
                             onPageChanged: (focusedDay) {
-                              _focusedDay = focusedDay;
+                              controller.focusedDay = focusedDay;
                             },
                           ),
                         ),
@@ -430,6 +344,7 @@ class _CalendarState extends State<Calendar> {
               ),
             ),
             SliverAppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               // expandedHeight: _calendarHeight,
               toolbarHeight: screenHeight / 13,
@@ -442,7 +357,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _selectedTrainingIndex = 0;
+                          controller.selectedTrainingIndex = 0;
                         });
                       },
                       child: Text(l10n.my),
@@ -450,7 +365,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _selectedTrainingIndex = 1;
+                          controller.selectedTrainingIndex = 1;
                         });
                       },
                       child: Text(l10n.gym),
@@ -458,7 +373,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _selectedTrainingIndex = 2;
+                          controller.selectedTrainingIndex = 2;
                         });
                       },
                       child: Text(l10n.all),
@@ -475,8 +390,8 @@ class _CalendarState extends State<Calendar> {
                     return Padding(
                       padding: const EdgeInsets.only(left: 15.0, right: 15),
                       child: Column(
-                        children:
-                            _buildTrainingListWithSpacing(currentTrainings),
+                        children: controller
+                            .buildTrainingListWithSpacing(currentTrainings),
                       ),
                     );
                   },
