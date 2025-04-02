@@ -122,22 +122,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           
           IconButton(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
+            tooltip: 'Profile',
             onPressed: () {
               Navigator.push(
                 context, 
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => ProfileScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: Offset(1, 0), // Start from bottom
-                        end: Offset(0, 0),   // End at normal position
-                      ).animate(animation),
-                      child: child,
-                    );
-                  },
-                ),
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                )
+
+                // PageRouteBuilder(
+                //   pageBuilder: (context, animation, secondaryAnimation) => ProfileScreen(),
+                //   transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                //     return SlideTransition(
+                //       position: Tween<Offset>(
+                //         begin: Offset(1, 0), // Start from bottom
+                //         end: Offset(0, 0),   // End at normal position
+                //       ).animate(animation),
+                //       child: child,
+                //     );
+                //   },
+                // ),
               );
             },
           ),
@@ -149,7 +154,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         children: const [
           Calendar(),
           TinderScreen(),
-          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -161,10 +165,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           BottomNavigationBarItem(
             icon: const Icon(Icons.fitness_center),
             label: l10n.workoutPageTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: l10n.profilePageTitle,
           ),
         ],
         currentIndex: selectedTab,
