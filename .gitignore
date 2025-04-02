@@ -38,6 +38,7 @@ devtools_options.yaml
 .pub-cache/
 .pub/
 /build/
+.env
 
 # Symbolication related
 app.*.symbols

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/core/theme/text_styles.dart';
-import 'training_template.dart';
+import 'package:gymbro/features/calendar/data/trainingModel.dart';
+import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({
@@ -17,126 +17,50 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  String _dropdownMenuItem = 'Gym1';
+  final controller = CalendarController();
 
-  int _selectedTrainingIndex = 0;
   late double _calendarHeight =
-      _getCalendarHeightByFormat(_calendarFormat, context);
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
-
-  final TextEditingController _newEventContriller = TextEditingController();
-  final TextEditingController _newTimeEventContriller = TextEditingController();
-
-  Map<DateTime, List<TrainingTemplate>> events = {};
-
-  void _dropDownMenuItemChange(String? newValue) {
-    if (newValue is String) {
-      setState(() {
-        _dropdownMenuItem = newValue;
-      });
-    }
-  }
-
-  double _getCalendarHeightByFormat(CalendarFormat format, context) {
-    final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
-    final screenHeight = size.height;
-    switch (format) {
-      case CalendarFormat.week:
-        return screenHeight / 2.2;
-      case CalendarFormat.twoWeeks:
-        return screenHeight / 2.2;
-      case CalendarFormat.month:
-        return screenHeight / 2.2;
-    }
-  }
-
-  List<TrainingTemplate> _getTrainsForConcreteDay(DateTime day) {
-    final normalizedDay = normalizeDate(day);
-    return events[normalizedDay] ?? [];
-  }
+      controller.getCalendarHeightByFormat(controller.calendarFormat, context);
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
+      controller.selectedDay = selectedDay;
+      controller.focusedDay = focusedDay;
     });
-  }
-
-  final timeMaskFormatter = MaskTextInputFormatter(
-    mask: '##:##',
-    filter: {'#': RegExp(r'\d')},
-  );
-
-  List<TrainingTemplate> _getTrainingsByTag(TrainingType tag) {
-    final dayEvents = events.keys.firstWhere(
-      (d) => _isSameDay(d, _selectedDay),
-      orElse: () => _selectedDay,
-    );
-
-    if (tag == TrainingType.all) {
-      return (events[dayEvents] ?? [])
-        ..sort((a, b) => a.textTime.compareTo(b.textTime));
-    }
-
-    return (events[dayEvents] ?? [])
-        .where((val) => val.trainType == tag)
-        .toList()
-      ..sort((a, b) => a.textTime.compareTo(b.textTime));
-  }
-
-  List<Widget> _buildTrainingListWithSpacing(List<Widget> widgets,
-      {double spacing = 10}) {
-    List<Widget> spacedWidgets = [];
-    spacedWidgets.add(SizedBox(height: spacing));
-    for (int i = 0; i < widgets.length; i++) {
-      spacedWidgets.add(widgets[i]);
-      if (i < widgets.length - 1) {
-        spacedWidgets.add(SizedBox(height: spacing));
-      }
-    }
-    return spacedWidgets;
   }
 
   @override
   void dispose() {
-    _newEventContriller.dispose();
-    _newTimeEventContriller.dispose();
+    controller.dispose(); // важно для освобождения ресурсов
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    // controller.addGym("gym");
   }
-
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  DateTime normalizeDate(DateTime date) =>
-      DateTime(date.year, date.month, date.day);
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     List<Widget> currentTrainings = [];
-    if (_selectedTrainingIndex == 0) {
-      currentTrainings = _getTrainingsByTag(TrainingType.my);
-    } else if (_selectedTrainingIndex == 1) {
-      currentTrainings = _getTrainingsByTag(TrainingType.gym);
+    if (controller.selectedTrainingIndex == 0) {
+      currentTrainings = controller.getTrainingsByTag(TrainingType.my);
+    } else if (controller.selectedTrainingIndex == 1) {
+      currentTrainings = controller.getTrainingsByTag(TrainingType.gym);
     } else {
-      currentTrainings = _getTrainingsByTag(TrainingType.all);
+      currentTrainings = controller.getTrainingsByTag(TrainingType.all);
     }
-    print('curr index is $_selectedTrainingIndex');
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.violetPrimary,
+        backgroundColor:
+            Theme.of(context).floatingActionButtonTheme.backgroundColor,
         child: Icon(Icons.add),
         onPressed: () {
           showDialog(
@@ -144,27 +68,27 @@ class _CalendarState extends State<Calendar> {
             builder: (context) {
               return AlertDialog(
                 scrollable: true,
-                title: Text('New training:'),
+                title: Text(l10n.newTraining),
                 content: Padding(
                   padding: EdgeInsets.all(8),
                   child: Column(
                     children: [
                       TextField(
-                        style: AppTextStyles.robotoBold,
-                        controller: _newTimeEventContriller,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        controller: controller.newTimeEventController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [timeMaskFormatter],
+                        inputFormatters: [controller.timeMaskFormatter],
                         decoration: InputDecoration(
-                          hintText: 'ЧЧ:ММ',
+                          hintText: l10n.hhmm,
                           hintStyle: TextStyle(color: AppColors.violetPale),
                         ),
                       ),
                       TextField(
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        controller: _newEventContriller,
+                        controller: controller.newEventController,
                         decoration: InputDecoration(
-                          hintText: 'Описание',
+                          hintText: l10n.description,
                           hintStyle: TextStyle(color: AppColors.violetPale),
                         ),
                       ),
@@ -174,28 +98,15 @@ class _CalendarState extends State<Calendar> {
                 actions: [
                   ElevatedButton(
                     onPressed: () {
-                      if (_newEventContriller.text.isNotEmpty &&
-                          _newTimeEventContriller.text.isNotEmpty) {
-                        final newEvent = TrainingTemplate(
-                          trainType: TrainingType.my,
-                          borderColor: AppColors.greenPrimary,
-                          mainColor: AppColors.greenSecondary,
-                          text: _newEventContriller.text,
-                          textTime: DateFormat('HH:mm')
-                              .parse(_newTimeEventContriller.text),
-                        );
-
+                      if (controller.newEventController.text.isNotEmpty &&
+                          controller.newTimeEventController.text.isNotEmpty) {
                         setState(() {
-                          final normalizedDay = normalizeDate(_selectedDay);
-                          events[normalizedDay] = [
-                            ...(events[normalizedDay] ?? []),
-                            newEvent
-                          ];
+                          controller.saveEvent();
                         });
                       }
                       Navigator.of(context).pop();
                     },
-                    child: Text('Submit'),
+                    child: Text(l10n.submit),
                   ),
                 ],
               );
@@ -203,249 +114,294 @@ class _CalendarState extends State<Calendar> {
           );
         },
       ),
-      body: CustomScrollView(
-        physics: ClampingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: screenHeight / 3.5,
-            backgroundColor: Colors.white,
-            pinned: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Column(
-                children: [
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                    color: Colors.black26, width: 1)),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: const Center(child: Text('Choose')),
-                                value: _dropdownMenuItem,
-                                isExpanded: true,
-                                icon: const Icon(Icons.arrow_downward),
-                                onChanged: _dropDownMenuItemChange,
-                                items: const [
-                                  DropdownMenuItem(
-                                      value: 'Gym1',
-                                      child: Center(child: Text('Gym1'))),
-                                  DropdownMenuItem(
-                                      value: 'Gym2',
-                                      child: Center(child: Text('Gym2'))),
-                                ],
+      body: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: CustomScrollView(
+          physics: ClampingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              expandedHeight: screenHeight / 3.5,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              pinned: false,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      width: 1)),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: Center(child: Text(l10n.choose)),
+                                  value: controller.selectedGym,
+                                  isExpanded: true,
+                                  icon: Transform.translate(
+                                    offset: Offset(-20, 0),
+                                    child:
+                                        const Icon(Icons.keyboard_arrow_down),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      controller.selectedGym = value;
+                                    });
+                                  },
+                                  //оставил специально из за l10n
+                                  items: controller.gyms.isEmpty
+                                      ? [
+                                          DropdownMenuItem(
+                                            value: null,
+                                            child: Center(
+                                                child: Text(l10n.choose)),
+                                          )
+                                        ]
+                                      : controller.gyms.map((String value) {
+                                          return DropdownMenuItem<String?>(
+                                            value: value,
+                                            child: Center(child: Text(value)),
+                                          );
+                                        }).toList(),
+                                ),
                               ),
                             ),
                           ),
+                          Spacer(),
+                          Padding(
+                            padding: EdgeInsets.only(right: screenWidth / 200),
+                            child: IconButton(
+                              icon: Icon(Icons.people),
+                              onPressed: () {
+                                setState(() {
+                                  controller.calendarFormat =
+                                      CalendarFormat.twoWeeks;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.amber,
+                            ),
+                            height: screenWidth / 2.7,
+                            width: screenWidth / 2.7,
+                          ),
                         ),
-                        Spacer(),
-                        Padding(
-                          padding: EdgeInsets.only(right: screenWidth / 200),
-                          child: IconButton(
-                            icon: Icon(Icons.people),
-                            onPressed: () {
-                              setState(() {
-                                _calendarFormat = CalendarFormat.twoWeeks;
-                              });
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.greenPrimary,
+                            ),
+                            height: screenWidth / 2.7,
+                            width: screenWidth / 2.7,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              expandedHeight: screenHeight / 16,
+              toolbarHeight: screenHeight / 16,
+              elevation: 0,
+              pinned: true,
+              shadowColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Center(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                      ),
+                      hint: Center(child: Text(l10n.choose)),
+                      value: controller.calendarFormat,
+                      items: [
+                        DropdownMenuItem(
+                          value: CalendarFormat.week,
+                          child: Text(l10n.week),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarFormat.twoWeeks,
+                          child: Text(l10n.fortnight),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarFormat.month,
+                          child: Text(l10n.month),
+                        ),
+                      ],
+                      onChanged: (format) {
+                        if (format != null) {
+                          setState(() {
+                            controller.calendarFormat = format;
+                            _calendarHeight = controller
+                                .getCalendarHeightByFormat(format, context);
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              expandedHeight: _calendarHeight - 100,
+              toolbarHeight: _calendarHeight - 100,
+              elevation: 0,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Container(
+                    color: Theme.of(context)
+                        .scaffoldBackgroundColor, // задаём фон, чтобы скрыть артефакты
+
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: AnimatedSize(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: ClipRect(
+                          child: TableCalendar(
+                            selectedDayPredicate: (day) =>
+                                isSameDay(controller.selectedDay, day),
+                            calendarStyle: CalendarStyle(
+                              outsideDecoration: BoxDecoration(
+                                color: AppColors
+                                    .disabledText, // цвет выбранного дня
+                                shape: BoxShape.circle,
+                              ),
+                              outsideTextStyle:
+                                  TextStyle(color: AppColors.textSecondary),
+                              selectedDecoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // цвет выбранного дня
+                                shape: BoxShape.circle, // форма выбранного дня
+                              ),
+                              selectedTextStyle: TextStyle(
+                                  color: AppColors
+                                      .primaryText // стиль текста выбранного дня
+                                  ),
+                            ),
+                            formatAnimationDuration:
+                                Duration(milliseconds: 100),
+                            calendarFormat: controller.calendarFormat,
+                            firstDay: DateTime.utc(2010, 10, 16),
+                            lastDay: DateTime.utc(2030, 3, 14),
+                            focusedDay: controller.focusedDay,
+                            rowHeight: 35,
+                            availableGestures:
+                                AvailableGestures.horizontalSwipe,
+                            startingDayOfWeek: StartingDayOfWeek.monday,
+                            onDaySelected: _onDaySelected,
+                            eventLoader: controller.getTrainsForConcreteDay,
+                            headerStyle: HeaderStyle(
+                              formatButtonVisible: false,
+                              titleCentered: true,
+                            ),
+                            onPageChanged: (focusedDay) {
+                              controller.focusedDay = focusedDay;
                             },
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.amber,
-                          ),
-                          height: screenWidth / 2.5,
-                          width: screenWidth / 2.5,
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.greenPrimary,
-                          ),
-                          height: screenWidth / 2.5,
-                          width: screenWidth / 2.5,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            expandedHeight: screenHeight / 12,
-            toolbarHeight: screenHeight / 12,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Center(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    icon: Icon(Icons.arrow_downward_outlined),
-                    hint: const Center(child: Text('Choose')),
-                    value: _calendarFormat,
-                    items: [
-                      DropdownMenuItem(
-                        value: CalendarFormat.month,
-                        child: Text('Месяц'),
-                      ),
-                      DropdownMenuItem(
-                        value: CalendarFormat.twoWeeks,
-                        child: Text('Две недели'),
-                      ),
-                      DropdownMenuItem(
-                        value: CalendarFormat.week,
-                        child: Text('Неделя'),
-                      ),
-                    ],
-                    onChanged: (format) {
-                      if (format != null) {
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              // expandedHeight: _calendarHeight,
+              toolbarHeight: screenHeight / 13,
+              elevation: 0,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
                         setState(() {
-                          _calendarFormat = format;
-                          _calendarHeight =
-                              _getCalendarHeightByFormat(format, context);
+                          controller.selectedTrainingIndex = 0;
                         });
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            expandedHeight: _calendarHeight - 100,
-            toolbarHeight: _calendarHeight - 60,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                child: Container(
-                  color: Colors.white, // задаём фон, чтобы скрыть артефакты
-
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: AppColors.greenSecondary,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.black26, width: 1)),
-                    child: AnimatedSize(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      child: TableCalendar(
-                        selectedDayPredicate: (day) =>
-                            isSameDay(_selectedDay, day),
-                        calendarStyle: CalendarStyle(
-                          selectedDecoration: BoxDecoration(
-                            color:
-                                AppColors.violetPrimary, // цвет выбранного дня
-                            shape: BoxShape.circle, // форма выбранного дня
-                          ),
-                          selectedTextStyle: TextStyle(
-                            color: AppColors
-                                .violetPaleX2, // стиль текста выбранного дня
-                          ),
-                        ),
-                        formatAnimationDuration: Duration(milliseconds: 100),
-                        calendarFormat: _calendarFormat,
-                        firstDay: DateTime.utc(2010, 10, 16),
-                        lastDay: DateTime.utc(2030, 3, 14),
-                        focusedDay: _focusedDay,
-                        rowHeight: 40,
-                        availableGestures: AvailableGestures.horizontalSwipe,
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        onDaySelected: _onDaySelected,
-                        eventLoader: _getTrainsForConcreteDay,
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                        ),
-                        onPageChanged: (focusedDay) {
-                          _focusedDay = focusedDay;
-                        },
-                      ),
+                      },
+                      child: Text(l10n.my),
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          controller.selectedTrainingIndex = 1;
+                        });
+                      },
+                      child: Text(l10n.gym),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          controller.selectedTrainingIndex = 2;
+                        });
+                      },
+                      child: Text(l10n.all),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            // expandedHeight: _calendarHeight,
-            toolbarHeight: screenHeight / 10,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 0;
-                      });
-                    },
-                    child: const Text('Моё'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 1;
-                      });
-                    },
-                    child: const Text('Зал'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTrainingIndex = 2;
-                      });
-                    },
-                    child: const Text('Всё'),
-                  ),
-                ],
+            SliverPadding(
+              padding: EdgeInsets.only(top: screenHeight / 300),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15),
+                      child: Column(
+                        children: controller
+                            .buildTrainingListWithSpacing(currentTrainings),
+                      ),
+                    );
+                  },
+                  childCount: 1,
+                ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 15.0, right: 15),
-                  child: Column(
-                    children: _buildTrainingListWithSpacing(currentTrainings),
-                  ),
-                );
-              },
-              childCount: 1,
-            ),
-          ),
-          SliverFillRemaining(),
-        ],
+            SliverFillRemaining(),
+          ],
+        ),
       ),
     );
   }

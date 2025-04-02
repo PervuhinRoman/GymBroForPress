@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
 import 'package:gymbro/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:gymbro/features/auth/presentation/screens/login_screen.dart';
+import 'package:gymbro/features/auth/presentation/screens/questionnare_screen.dart';
 import 'package:gymbro/features/auth/presentation/screens/registration_screen.dart';
 import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
@@ -11,13 +13,15 @@ import '../../features/tinder/presentation/tinder.dart';
 abstract class RouteNames {
   const RouteNames._();
 
-  static const home = 'home';
-  static const tinder = 'tinder';
-  static const auth = 'auth';
-  static const login = 'login';
-  static const registration = 'registration';
-  static const forgotPassword = 'forgotPassword';
-  static const profile = 'profile';
+  static const home = '/home';
+  static const tinder = '/tinder';
+  static const auth = '/auth';
+  static const login = '/login';
+  static const questionnare = '/questionnare';
+  static const registration = '/registration';
+  static const forgotPassword = '/forgotPassword';
+  static const String aiChat = '/aiChat';
+  static const profile = '/profile';
 }
 
 abstract class RoutesBuilder {
@@ -62,6 +66,16 @@ abstract class RoutesBuilder {
       case RouteNames.forgotPassword:
         return MaterialPageRoute(
           builder: (_) => const ForgotPasswordScreen(),
+          settings: settings,
+        );
+      case RouteNames.questionnare:
+        return MaterialPageRoute(
+          builder: (_) => const QuestionnaireScreen(),
+          settings: settings,
+        );
+      case RouteNames.aiChat:
+        return MaterialPageRoute(
+          builder: (_) => const AimlChatScreen(),
           settings: settings,
         );
       case RouteNames.profile:
