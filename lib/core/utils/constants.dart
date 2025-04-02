@@ -8,23 +8,28 @@ final constantsProvider = Provider<Constants>((ref) {
   final screenWidth =
       mediaQuery.physicalSize.width / mediaQuery.devicePixelRatio;
 
+  final screenRatio = 1/ mediaQuery.devicePixelRatio;
+
   final paddingUnit = screenHeight / 100;
 
   return Constants(
       paddingUnit: paddingUnit,
       screenHeight: screenHeight,
-      screenWidth: screenWidth);
+      screenWidth: screenWidth,
+      screenRatio: screenRatio);
 });
 
 class Constants {
   final double paddingUnit;
   final double screenHeight;
   final double screenWidth;
+  final double screenRatio;
 
   const Constants(
       {required this.paddingUnit,
       required this.screenHeight,
-      required this.screenWidth});
+      required this.screenWidth,
+      required this.screenRatio});
 
   static const double headerHeight = 9;
   static const double topNavigationBarHeight = 6;
