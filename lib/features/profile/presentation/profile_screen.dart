@@ -1,20 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'profile_page.dart';
+import 'package:gymbro/core/utils/routes.dart';
+import 'package:gymbro/features/auth/services/auth_service.dart';
 
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({
-    super.key,
-  });
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Profile Demo',
-      theme: Theme.of(context),
-      home: ProfilePage(),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authService = AuthService();
+    return Scaffold(
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 300,
+            height: 300,
+            decoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await authService.signOut();
+                // Navigate to login screen after logout
+                if (context.mounted) {
+                  Navigator.pushNamed(context, RouteNames.login);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error signing out: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    ));
   }
 }
