@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:gymbro/features/map/presentation/ontap_dialog.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -27,8 +25,20 @@ class _MapState extends State<Map> {
       padding: EdgeInsets.all(16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32.0),
-        child: FutureBuilder(future: mapService.getMapObjectsList((PlacemarkMapObject placeMarkObject, Point point) {
-          showDialog(context: context, builder: (builder) => OntapDialog(gymName: placeMarkObject.mapId));
+        child: FutureBuilder(future: mapService.getMapObjectsList(
+            (PlacemarkMapObject placeMarkObject, Point point) {
+              controller.moveCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: point,
+                    zoom: 16
+                  ),
+                ),
+              );
+              showModalBottomSheet(context: context, builder: (_) {
+                return OntapDialog(gymName: placeMarkObject.mapId);
+              });
+
         }), builder: (context, asyncValue) {
           final List<MapObject> mapObjects = [];
           if (asyncValue.hasData) {
@@ -36,6 +46,7 @@ class _MapState extends State<Map> {
           }
 
           return YandexMap(
+            nightModeEnabled: Theme.of(context).brightness == Brightness.dark ? true : false,
             logoAlignment: MapAlignment(
               horizontal: HorizontalAlignment.center,
               vertical: VerticalAlignment.top,
