@@ -13,6 +13,7 @@
 .swiftpm/
 migrate_working_dir/
 *.env
+devtools_options.yaml
 
 # Unused platform
 /linux
@@ -37,6 +38,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+.env
 
 # Symbolication related
 app.*.symbols

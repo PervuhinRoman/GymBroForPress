@@ -35,7 +35,7 @@ class TinderCard extends ConsumerWidget {
                 child: Image(
                   image: AssetImage(imagePath),
                   width: constants.screenHeight / 2.2,
-                  height: constants.screenHeight / 1.8,
+                  height: constants.screenHeight / 2,
                   fit: BoxFit.cover,
                 ),
               ),
