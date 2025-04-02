@@ -72,20 +72,20 @@ class AuthService {
   }
   
   // Обработка ошибок Firebase Auth
-  String _handleFirebaseAuthError(FirebaseAuthException e) {
+  Exception _handleFirebaseAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return 'Пользователь с таким email не найден';
+        return Exception('Пользователь с таким email не найден');
       case 'wrong-password':
-        return 'Неверный пароль';
+       return Exception('Неверный пароль');
       case 'email-already-in-use':
-        return 'Email уже используется другим пользователем';
+        return Exception('Email уже используется другим пользователем');
       case 'weak-password':
-        return 'Слишком простой пароль. Используйте минимум 6 символов';
+        return Exception('Слишком простой пароль. Используйте минимум 6 символов');
       case 'invalid-email':
-        return 'Неверный формат email';
+        return Exception('Неверный формат email');
       default:
-        return 'Произошла ошибка: ${e.message}';
+        return Exception('Произошла ошибка: ${e.message}');
     }
   }
 }

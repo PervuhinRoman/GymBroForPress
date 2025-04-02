@@ -43,6 +43,11 @@
   "@darkTheme": {
     "description": "Dark theme option"
   },
+  "generalInfo": "General Info",
+  "@generalInfo": {
+    "description": "General profile info header"
+  },
+  
   "welcomeDescription": "IMPROVE PHYSICAL HEALTH WITH GymBro SIMPLY AND EFFECTIVELY",
   "signUp": "Sign Up",
   "accountExistence": "Already have an account? ",
@@ -72,5 +77,19 @@
   "newTraining" : "New training:",
   "week" : "Week",
   "fortnight" : "Two weeks",
-  "month" : "Month"
+  "month" : "Month",
+  "meet": "LET US KNOW YOU BETTER",
+  "selectAge": "What is your age?",
+  "selectName": "What is your name?",
+  "selectGender": "Your gender",
+  "manGender": "Man",
+  "womanGender": "Woman",
+  "selectWeight": "Your weight (in kg)",
+  "selectHeight": "Your height (in centimetrs)",
+  "selectGoal": "Your goal",
+  "keepingShape": "Keeping in shape",
+  "loosingWeight": "Loosing weight",
+  "gainingWeight": "Gaining weight",
+  "healthyLifestyle": "Healthy lifestyle",
+  "completeRegistration": "Complete registration"
 }
