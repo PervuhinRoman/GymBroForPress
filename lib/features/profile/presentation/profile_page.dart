@@ -14,18 +14,19 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      // TODO BG COLOR CHANGE TO SOLVE THEME NOT UPDATING
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            ref.read(debugProvider.notifier).toggleDebug(); // TODO REDO
+            Navigator.pop(context);
           },
         ),
         
         actions: [
           SettingsMenu(),
         ],
-        title: Text(""),
       ),
       body: ProfileBody(),
     );
