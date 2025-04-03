@@ -59,6 +59,11 @@ class CalendarService {
 
   Future<void> updateGym(String id, bool isFavourite) async {
     await DatabaseHelper.instance.updateDotFavourite(id, isFavourite);
+    await loadFavouriteGyms();
+    if (!gyms.contains(selectedGym)) {
+      selectedGym = null;
+      await PreferencesService.setSelectedGym(null);
+    }
   }
 
   Future<void> loadAllEventsFromDB() async {

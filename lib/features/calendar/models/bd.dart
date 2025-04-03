@@ -85,6 +85,7 @@ class DatabaseHelper {
   }
 
   Future<void> createDot(DotOnMapModel dot) async {
+    print("creating");
     final db = await instance.database;
     await db.insert(
       tableDots,
@@ -104,6 +105,7 @@ class DatabaseHelper {
   }
 
   Future<int> updateDotFavourite(String id, bool isFavourite) async {
+    print("try to update");
     final db = await instance.database;
     return await db.update(
       tableDots,
@@ -114,6 +116,7 @@ class DatabaseHelper {
   }
 
   Future<List<DotOnMapModel>> getFavouriteDots() async {
+    print("getting favourite");
     final db = await instance.database;
     final maps = await db.query(
       tableDots,
