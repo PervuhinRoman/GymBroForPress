@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
-import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
-import 'package:gymbro/features/tinder/presentation/form.dart';
 import 'package:gymbro/features/profile/presentation/profile_page.dart';
+import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
 
 import '../../../calendar/presentation/calendar.dart';
+import '../../../tinder/controller/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
 
 class HomeScreenArgs {
@@ -32,70 +32,34 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isTabControllerListenerActive = true; // Флаг для контроля слушателя
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // Инициализация TabController с сохраненной вкладкой
     _tabController = TabController(
-      length: 4,
+      length: 3,
       vsync: this,
-      initialIndex: ref.read(tabProvider),
+      initialIndex: _selectedIndex,
     );
-
-    // Слушаем изменения TabController
-    _tabController.addListener(_handleTabChange);
   }
 
-  void _handleTabChange() {
-    // Проверяем флаг перед обновлением провайдера
-    if (_tabController.indexIsChanging && _isTabControllerListenerActive) {
-      ref.read(tabProvider.notifier).setTab(_tabController.index);
-    }
-  }
+  Future<void> _navigateToForm(BuildContext context) async {
+    final formServiceAsync = ref.read(formServiceProvider.future);
+    final formService = await formServiceAsync;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+    if (!mounted) return;
 
-  @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Синхронизация TabController с провайдером после обновления виджета
-    _syncTabControllerWithProvider();
-  }
-
-  // Синхронизируем TabController с провайдером безопасно
-  void _syncTabControllerWithProvider() {
-    final selectedTab = ref.read(tabProvider);
-    if (_tabController.index != selectedTab) {
-      // Временно отключаем слушатель, чтобы избежать цикла обратной связи
-      _isTabControllerListenerActive = false;
-      // Используем Future.microtask, чтобы обновление произошло после построения виджета
-      Future.microtask(() {
-        if (mounted) {
-          _tabController.animateTo(selectedTab);
-          // Восстанавливаем слушатель
-          _isTabControllerListenerActive = true;
-        }
-      });
-    }
-  }
-
-  void _navigateToQuestionnaire(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const FormScreen(),
+        builder: (context) => FormScreen(formService: formService),
       ),
     );
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
   }
@@ -103,53 +67,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final selectedTab = ref.watch(tabProvider);
-
-    // Безопасная синхронизация TabController после построения
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _tabController.index != selectedTab) {
-        _syncTabControllerWithProvider();
-      }
-    });
 
     return Scaffold(
       appBar: CustomAppBar(
         showProfileAvatar: true,
         showBackButton: false,
         onProfileTap: () => Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // Define the curve for better transition dynamics
-          const curve = Curves.easeInOutCubic;
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  ProfilePage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                // Define the curve for better transition dynamics
+                const curve = Curves.easeInOut;
 
-          var slideTween = Tween<Offset>(
-            begin: Offset(-1.0, 0.0), 
-            end: Offset.zero,
-          ).chain(CurveTween(curve: curve));
+                // Create a tween for the slide transition
+                var slideTween = Tween<Offset>(
+                  begin: Offset(1.0, 0.0), // Start from the right
+                  end: Offset.zero, // End at the current position
+                ).chain(CurveTween(curve: curve));
 
-          var fadeTween = Tween<double>(
-            begin: 0.0, 
-            end: 1.0,
-          ).chain(CurveTween(curve: curve));
+                // Create a tween for the fade transition
+                var fadeTween = Tween<double>(
+                  begin: 0.0, // Fully transparent
+                  end: 1.0, // Fully opaque
+                ).chain(CurveTween(curve: curve));
 
-          return SlideTransition(
-            position: animation.drive(slideTween),
-            child: FadeTransition(
-              opacity: animation.drive(fadeTween),
-              child: child,
+                // Apply both slide and fade transitions
+                return SlideTransition(
+                  position: animation.drive(slideTween),
+                  child: FadeTransition(
+                    opacity: animation.drive(fadeTween),
+                    child: child,
+                  ),
+                );
+              },
+            )
+            // MaterialPageRoute(
+            //   builder: (context) => const ProfilePage(),
+            // ),
             ),
-          );
-        },
-      )
-    ),
-        
         actions: [
-          if (selectedTab == 1)
+          if (_selectedIndex == 1)
             IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () => _navigateToQuestionnaire(context),
+              icon: const Icon(Icons.edit),
+              color: Theme.of(context).colorScheme.primary,
+              onPressed: () => _navigateToForm(context),
               tooltip: 'Моя анкета',
             ),
         ],
@@ -157,17 +121,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       body: TabBarView(
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
-          Calendar(),
-          TinderScreen(),
-          AimlChatScreen()
-        ],
+        children: const [Calendar(), TinderScreen(), AimlChatScreen()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        // iconSize: 12,
-        // selectedFontSize: 12,
-        // unselectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),
@@ -184,9 +141,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           BottomNavigationBarItem(
               icon: const Icon(Icons.chat), label: 'AI-trainer')
         ],
-        currentIndex: selectedTab,
+        currentIndex: _selectedIndex,
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: (index) => ref.read(tabProvider.notifier).setTab(index),
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+            _tabController.animateTo(index);
+          });
+        },
       ),
     );
   }

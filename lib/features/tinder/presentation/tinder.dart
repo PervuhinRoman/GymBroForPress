@@ -1,109 +1,130 @@
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/features/tinder/presentation/tinder_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-class TinderScreen extends ConsumerStatefulWidget {
+import '../controller/user.dart' as u;
+import '../controller/swiper.dart';
+import 'match/match_pop_up.dart';
+import 'tinder_ui_components.dart';
+
+class TinderScreen extends ConsumerWidget {
   const TinderScreen({super.key});
 
   @override
-  _TinderScreenState createState() => _TinderScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final usersAsync = ref.watch(u.usersProvider);
+    final cardState = ref.watch(cardStateProvider);
+    final usersState = ref.watch(u.usersControllerProvider);
 
-class _TinderScreenState extends ConsumerState<TinderScreen> {
-  final List<String> images = [
-    'assets/images/cat.jpeg',
-    'assets/images/dog.jpeg',
-    'assets/images/myles.jpeg',
-  ];
-
-  int currentIndex = 0;
-  double offsetX = 0.0;
-  double opacity = 1.0;
-  bool isVisible = true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    for (var imagePath in images) {
-      precacheImage(AssetImage(imagePath), context);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: TinderCard(
-                    imagePath: images[(currentIndex + 1) % images.length]),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: usersState.isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const SizedBox(),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await ref.read(u.usersControllerProvider.notifier).refresh();
+                return;
+              },
+              child: usersAsync.when(
+                loading: () => const LoadingIndicator(),
+                error: (error, stack) => ErrorDisplay(error: error.toString()),
+                data: (users) {
+                  if (users.isEmpty) {
+                    return const EmptyStateDisplay();
+                  }
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (cardState.currentIndex >= users.length) {
+                      ref
+                          .read(cardStateProvider.notifier)
+                          .setCardIndex(0, users.length);
+                    }
+                  });
+
+                  return TinderCardStack(
+                    users: users,
+                    currentIndex: cardState.currentIndex,
+                    offsetX: cardState.offsetX,
+                    opacity: cardState.opacity,
+                    isVisible: cardState.isVisible,
+                    onHorizontalDragUpdate: (details) {
+                      if (details.primaryDelta != null) {
+                        ref
+                            .read(cardStateProvider.notifier)
+                            .updateDragPosition(details.primaryDelta);
+                      }
+                    },
+                    onHorizontalDragEnd: (details) {
+                      if (cardState.offsetX.abs() > 150) {
+                        final isRightSwipe = cardState.offsetX > 0;
+                        _handleSwipe(context, ref, isRightSwipe, users);
+                      } else {
+                        ref
+                            .read(cardStateProvider.notifier)
+                            .resetCardPosition();
+                      }
+                    },
+                  );
+                },
               ),
             ),
-            if (isVisible)
-              GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  setState(() {
-                    offsetX += details.primaryDelta ?? 0;
-                  });
-                },
-                onHorizontalDragEnd: (details) {
-                  if (offsetX.abs() > 150) {
-                    final isRightSwipe = offsetX > 0;
-                    animateCardAway(isRightSwipe);
-                  } else {
-                    resetCardPosition();
-                  }
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  transform: Matrix4.translationValues(offsetX, 0, 0)
-                    ..rotateZ(0.02 * offsetX / 150),
-                  child: Opacity(
-                    opacity: opacity,
-                    child: TinderCard(imagePath: images[currentIndex]),
-                  ),
-                ),
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  void onSwipeComplete(bool isRightSwipe) {
-    setState(() {
-      isVisible = false;
-    });
+  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe,
+      List<u.User> users) {
+    final cardStateNotifier = ref.read(cardStateProvider.notifier);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final l10n = AppLocalizations.of(context)!;
+    final currentIndex = ref.read(cardStateProvider).currentIndex;
+
+    if (currentUser == null) return;
+
+    cardStateNotifier.animateCardAway(isRightSwipe);
 
     Future.delayed(const Duration(milliseconds: 200), () {
-      setState(() {
-        currentIndex = (currentIndex + 1) % images.length;
-        offsetX = 0.0;
-        opacity = 1.0;
-        isVisible = true;
+      cardStateNotifier.hideCard();
+
+      final request = SwipeRequest(
+        swiperId: currentUser.uid,
+        targetId: users[currentIndex].id,
+        isLike: isRightSwipe,
+      );
+
+      ref.read(swipeProvider(request).future).then((result) {
+        if (result.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${l10n.error}: ${result.errorMessage}')),
+          );
+        }
+
+        if (result.isMatch && result.matchedUser != null) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => MatchPopup(matchedUser: result.matchedUser!),
+          );
+        }
+
+        cardStateNotifier.showNextCard(users.length);
       });
-    });
-  }
-
-  void animateCardAway(bool isRightSwipe) {
-    setState(() {
-      offsetX = isRightSwipe ? 300 : -300;
-      opacity = 0.0;
-    });
-
-    Future.delayed(const Duration(milliseconds: 200), () {
-      onSwipeComplete(isRightSwipe);
-    });
-  }
-
-  void resetCardPosition() {
-    setState(() {
-      offsetX = 0;
-      opacity = 1.0;
     });
   }
 }

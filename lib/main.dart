@@ -8,7 +8,7 @@ import 'package:gymbro/core/utils/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gymbro/firebase_options.dart';
+import 'package:gymbro/core/utils/firebase_options.dart';
 import 'package:gymbro/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
 import 'core/utils/routes.dart';
