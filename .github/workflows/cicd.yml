@@ -24,4 +24,7 @@ jobs:
     - run: flutter pub get
     - run: flutter test
     - run: flutter build apk --release
-    - run: echo "API_KEY=${{ secrets.API_KEY }}" > .enм
+    - run: echo "AIML_API_KEY=${{ secrets.AIML_API_KEY }}" > .env
+    - run: flutter build apk --release
+
+
