@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import 'info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
-
-class InfoClause {
-  const InfoClause(
-    this.label,
-    this.info,
-  );
-
-  final String info;
-  final String label;
-}
 
 class Entries extends StatelessWidget implements InfoBody {
   const Entries({
@@ -33,6 +22,16 @@ class Entries extends StatelessWidget implements InfoBody {
         ]
       );
   }
+}
+
+class InfoClause {
+  const InfoClause(
+    this.label,
+    this.info,
+  );
+
+  final String info;
+  final String label;
 }
 
 class InfoEntry extends StatelessWidget {

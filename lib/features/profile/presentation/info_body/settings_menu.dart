@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
@@ -15,65 +14,69 @@ class SettingsMenu extends ConsumerWidget {
       icon: Icon(Icons.settings),
       tooltip: 'Show settings',
       onPressed: () {
-        showModalBottomSheet(
-          showDragHandle: true,
-          context: context,
-          builder: (BuildContext context) {
-            final contextTheme = Theme.of(context);
-            return Wrap(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, bottom: 18.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextButton(
-                          child: Row(
-                            children: [
-                              Icon(Icons.language),
-                              SizedBox(width: sepPadding,),
-                              Text(
-                                'Change language', 
-                                style: contextTheme.textTheme.bodyMedium?.copyWith(
-                                  color: contextTheme.colorScheme.onTertiary,
-                                ),
-                              ),
-                            ]
-                          ),
-                          onPressed: () {
-                            _showLanguageSelector(context, ref);
-                          }
-                        ),
-                        TextButton(
-                          child: Row(
-                            children: [
-                              Icon(Icons.brightness_6),
-                              SizedBox(width: sepPadding,),
-                              Text(
-                                'Change app theme',
-                                style: contextTheme.textTheme.bodyMedium?.copyWith(
-                                  color: contextTheme.colorScheme.onTertiary,
-                                ), 
-                              ),
-                            ]
-                          ),
-                          onPressed: () { 
-                            _showThemeSelector(context, ref);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        );
+        _showSettings(context, ref);
       }
     );
+  }
+
+  Future<dynamic> _showSettings(BuildContext context, WidgetRef ref) {
+    return showModalBottomSheet(
+        showDragHandle: true,
+        context: context,
+        builder: (BuildContext context) {
+          final contextTheme = Theme.of(context);
+          return Wrap(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, bottom: 18.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        child: Row(
+                          children: [
+                            Icon(Icons.language),
+                            SizedBox(width: sepPadding,),
+                            Text(
+                              'Change language', 
+                              style: contextTheme.textTheme.bodyMedium?.copyWith(
+                                color: contextTheme.colorScheme.onTertiary,
+                              ),
+                            ),
+                          ]
+                        ),
+                        onPressed: () {
+                          _showLanguageSelector(context, ref);
+                        }
+                      ),
+                      TextButton(
+                        child: Row(
+                          children: [
+                            Icon(Icons.brightness_6),
+                            SizedBox(width: sepPadding,),
+                            Text(
+                              'Change app theme',
+                              style: contextTheme.textTheme.bodyMedium?.copyWith(
+                                color: contextTheme.colorScheme.onTertiary,
+                              ), 
+                            ),
+                          ]
+                        ),
+                        onPressed: () { 
+                          _showThemeSelector(context, ref);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+      );
   }
 
   // Диалоговое окно для выбора темы

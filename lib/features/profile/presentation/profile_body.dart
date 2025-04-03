@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/features/profile/presentation/profile_header.dart';
-import 'info_body/gallery_block.dart';
-import 'info_body/entries_block.dart';
+import 'info_body/gallery.dart';
+import 'info_body/entries.dart';
 import 'info_body/info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
 import 'package:gymbro/features/profile/presentation/profile_configs.dart';
@@ -21,7 +20,7 @@ class ProfileBody extends StatelessWidget {
           children: [
             ProfileBackGround(),
             ProfileHeader(),
-            DebugBox(
+            SizedBox(
               height: ProfileBodyConfig.pbgHeight + (ProfileBodyConfig.radius * (1-ProfileBodyConfig.topRelPadding)),
               width: ProfileBodyConfig.leftPadding,
             ),
@@ -39,9 +38,9 @@ class ProfileBody extends StatelessWidget {
           ), 
           infoBody: Entries(
             infoClauses: [
-              InfoClause('Phone Number', '+7 (800) 555-35-35'),
-              InfoClause('Bio', 'The quick red fox jumps over the lazy brown dog and the lively white cat'),
-              InfoClause('User Tag', '@user'),
+              InfoClause('Phone Number',  '+7 (800) 555-35-35'),
+              InfoClause('Bio',           'The quick red fox jumps over the lazy brown dog and the lively white cat'),
+              InfoClause('User Tag',      '@user'),
             ],
           )
         ),

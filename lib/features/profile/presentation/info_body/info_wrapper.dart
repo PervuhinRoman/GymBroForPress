@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import '../profile_body.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/features/profile/presentation/profile_configs.dart';
 
 class InfoWrapper extends StatelessWidget {
