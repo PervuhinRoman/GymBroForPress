@@ -123,7 +123,6 @@ class CalendarController {
   double getCalendarHeightByFormat(CalendarFormat format, context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
-    
     final screenHeight = size.height;
     switch (format) {
       case CalendarFormat.week:
