@@ -6,9 +6,8 @@ import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
-import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 import 'package:gymbro/features/tinder/presentation/form.dart';
-import 'package:gymbro/features/profile/presentation/profile_screen.dart';
+import 'package:gymbro/features/profile/presentation/profile_page.dart';
 
 import '../../../calendar/presentation/calendar.dart';
 import '../../../tinder/presentation/tinder.dart';
@@ -128,7 +127,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       appBar: CustomAppBar(
         showProfileAvatar: true,
         showBackButton: false,
-        onProfileTap: () => Navigator.pushNamed(context, RouteNames.profile),
+        onProfileTap: () => Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Define the curve for better transition dynamics
+          const curve = Curves.easeInOut;
+
+          // Create a tween for the slide transition
+          var slideTween = Tween<Offset>(
+            begin: Offset(1.0, 0.0), // Start from the right
+            end: Offset.zero,        // End at the current position
+          ).chain(CurveTween(curve: curve));
+
+          // Create a tween for the fade transition
+          var fadeTween = Tween<double>(
+            begin: 0.0, // Fully transparent
+            end: 1.0,   // Fully opaque
+          ).chain(CurveTween(curve: curve));
+
+          // Apply both slide and fade transitions
+          return SlideTransition(
+            position: animation.drive(slideTween),
+            child: FadeTransition(
+              opacity: animation.drive(fadeTween),
+              child: child,
+            ),
+          );
+        },
+      )
+      // MaterialPageRoute(
+      //   builder: (context) => const ProfilePage(),
+      // ),
+    ),
         
         actions: [
           if (selectedTab == 1)
@@ -137,32 +169,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onPressed: () => _navigateToQuestionnaire(context),
               tooltip: 'Моя анкета',
             ),
-          
-          IconButton(
-            icon: const Icon(Icons.person),
-            tooltip: 'Profile',
-            onPressed: () {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                )
-
-                // PageRouteBuilder(
-                //   pageBuilder: (context, animation, secondaryAnimation) => ProfileScreen(),
-                //   transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                //     return SlideTransition(
-                //       position: Tween<Offset>(
-                //         begin: Offset(1, 0), // Start from bottom
-                //         end: Offset(0, 0),   // End at normal position
-                //       ).animate(animation),
-                //       child: child,
-                //     );
-                //   },
-                // ),
-              );
-            },
-          ),
         ],
       ),
       body: TabBarView(
@@ -171,7 +177,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         children: const [
           Calendar(),
           TinderScreen(),
-          ProfileScreen(),
           AimlChatScreen()
         ],
       ),
@@ -189,10 +194,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             icon: const Icon(Icons.fitness_center),
             label: l10n.workoutPageTitle,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: l10n.profilePageTitle,
-          ),
+          // BottomNavigationBarItem(
+          //   icon: const Icon(Icons.person),
+          //   label: l10n.profilePageTitle,
+          // ),
           BottomNavigationBarItem(
               icon: const Icon(Icons.chat), label: 'AI-trainer')
         ],
