@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
+import 'package:gymbro/features/calendar/domain/calendar_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,7 +15,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final controller = CalendarController();
+  final controller = CalendarService();
 
   late double _calendarHeight =
       controller.getCalendarHeightByFormat(controller.calendarFormat, context);
