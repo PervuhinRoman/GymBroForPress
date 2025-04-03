@@ -13,6 +13,10 @@ class TinderCard extends ConsumerWidget {
     required this.user,
   });
 
+  Color getContrastColor(Color background) {
+    return background.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var constants = ref.read(constantsProvider);
@@ -40,28 +44,42 @@ class TinderCard extends ConsumerWidget {
                   child: ClipRRect(
                     borderRadius:
                         BorderRadius.circular(constants.paddingUnit * 1.5),
-                    child: Stack(children: [
-                      Image.network(
-                        'https://gymbro.serveo.net${user.imageUrl}',
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.error),
-                      ),
-                      Positioned(
-                          left: constants.paddingUnit * 2,
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          'https://gymbro.serveo.net${user.imageUrl}',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.error),
+                        ),
+                        Positioned(
                           bottom: 0,
-                          child: Text(
-                            user.name,
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 48,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topRight:
+                                  Radius.circular(constants.paddingUnit * 1.5),
                             ),
-                          )),
-                    ]),
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  right: constants.paddingUnit * 2,
+                                  left: constants.paddingUnit),
+                              color: AppColors.background,
+                              child: Text(
+                                user.name,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 32,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
