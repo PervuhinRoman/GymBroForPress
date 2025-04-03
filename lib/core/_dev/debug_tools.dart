@@ -16,7 +16,7 @@ Color getRandomColor() {
 class DebugState {
   final bool isDebugEnabled;
 
-  const DebugState({this.isDebugEnabled = false});
+  const DebugState({this.isDebugEnabled = true});
 
   DebugState copyWith({bool? isDebugEnabled}) {
     return DebugState(

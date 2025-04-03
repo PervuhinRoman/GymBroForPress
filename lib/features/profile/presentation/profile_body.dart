@@ -6,11 +6,7 @@ import 'info_body/entries_block.dart';
 import 'info_body/info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
 
-class ProfileBody extends StatelessWidget {
-  const ProfileBody({
-    super.key,
-  });
-
+class ProfileBodyConfig {
   static const double pbgHeight = 60.0;
 
   static const double radius = 110;
@@ -18,10 +14,16 @@ class ProfileBody extends StatelessWidget {
   static const double topRelPadding = 0.4;
 
   static const double ibSepHeight = 10;
+}
+
+class ProfileBody extends StatelessWidget {
+  const ProfileBody({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         Stack(
           clipBehavior: Clip.none,
@@ -29,8 +31,8 @@ class ProfileBody extends StatelessWidget {
             ProfileBackGround(),
             ProfileHeader(),
             DebugBox(
-              height: pbgHeight + (radius * (1-topRelPadding)),
-              width: leftPadding,
+              height: ProfileBodyConfig.pbgHeight + (ProfileBodyConfig.radius * (1-ProfileBodyConfig.topRelPadding)),
+              width: ProfileBodyConfig.leftPadding,
             ),
           ],
         ),
@@ -41,7 +43,7 @@ class ProfileBody extends StatelessWidget {
           optionalButton: IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-    
+              
             }
           ), 
           infoBody: Entries(

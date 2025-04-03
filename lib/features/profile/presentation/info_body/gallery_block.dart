@@ -30,11 +30,9 @@ class Gallery extends StatelessWidget implements InfoBody {
   Widget build(BuildContext context) {
     final contextTheme = Theme.of(context);
 
-    // TODO: catch exceptional behaviour
-    print(photosUrls);
-
+    // TODO: catch exceptional behavior
+    
     if (photosUrls == null) {
-      print("no photos(");
       return Placeholder();
     }
     // TODO END;

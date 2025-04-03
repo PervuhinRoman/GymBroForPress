@@ -10,11 +10,11 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topRelPadding = ProfileBody.topRelPadding;
-    final radius = ProfileBody.radius;
-    final leftPadding = ProfileBody.leftPadding;
+    final topRelPadding = ProfileBodyConfig.topRelPadding;
+    final radius = ProfileBodyConfig.radius;
+    final leftPadding = ProfileBodyConfig.leftPadding;
     
-    final pbgHeight = ProfileBody.pbgHeight;
+    final pbgHeight = ProfileBodyConfig.pbgHeight;
 
     final double nameLeftPadding = ((0.7 - topRelPadding) * radius / 2).abs();
 
@@ -57,7 +57,7 @@ class ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = ProfileBody.radius;
+    final radius = ProfileBodyConfig.radius;
     return ClipOval(
         child: Image(
           width: radius,
@@ -75,7 +75,7 @@ class ProfileBackGround extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double pbgHeight = ProfileBody.pbgHeight;
+    final double pbgHeight = ProfileBodyConfig.pbgHeight;
     return Row(
       children: [
         Expanded(

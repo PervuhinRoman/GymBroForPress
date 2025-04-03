@@ -6,6 +6,11 @@ import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter
 import '../profile_body.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
 
+class InfoWrapperConfig {
+  static const double _divHeight = 0.5;
+  static const double _divThickness = 1;
+}
+
 class InfoWrapper extends StatelessWidget {
   const InfoWrapper({
     super.key,
@@ -18,19 +23,15 @@ class InfoWrapper extends StatelessWidget {
   final IconButton? optionalButton;
   final InfoBody infoBody;
 
-  static const double _divHeight = 0.5;
-  static const double _divThickness = 1;
-
   @override
   Widget build(BuildContext context) {
-    final ibSepHeight = ProfileBody.ibSepHeight;
     return Column(
       children: [
-        InfoSeparator(ibSepHeight: ibSepHeight),
+        InfoSeparator(ibSepHeight: ProfileBodyConfig.ibSepHeight),
         InfoHeader(header),
         Divider(
-          height: _divHeight,
-          thickness: _divThickness,
+          height: InfoWrapperConfig._divHeight,
+          thickness: InfoWrapperConfig._divThickness,
         ),
         infoBody,
       ],
@@ -68,31 +69,33 @@ class InfoHeader extends StatelessWidget {
   final String header;
   final IconButton? sideButton;
 
-  static const double _ihLeftPadding = 16.0;
+  final double _ihLeftPadding = 16.0;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData contextTheme = Theme.of(context);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: ColoredBox(
-            color: contextTheme.colorScheme.primary,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(_ihLeftPadding, 8.0, 8.0, 8.0),
-              child: Text(
-                header,
-                style: contextTheme.textTheme.bodyLarge?.copyWith(
-                  color: contextTheme.colorScheme.onPrimary,
+    return SizedBox(
+      child: Expanded(
+        child: ColoredBox(
+          color: contextTheme.colorScheme.primary,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(_ihLeftPadding, 8.0, 8.0, 8.0),
+                child: Text(
+                  header,
+                  style: contextTheme.textTheme.titleMedium?.copyWith(
+                    color: contextTheme.colorScheme.onPrimary,
+                  ),
                 ),
               ),
-            ),
-          )
-        ),
-        sideButton ?? SizedBox.shrink(),
-      ]
+              sideButton ?? SizedBox.shrink(),
+            ],
+          ),
+        )
+      ),
     );
   }
 }

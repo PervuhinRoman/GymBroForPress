@@ -113,17 +113,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     });
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(l10n.appTitle),
-      //   actions: [
-      //     if (selectedTab == 1)
-      //       IconButton(
-      //         icon: const Icon(Icons.edit),
-      //         onPressed: () => _navigateToQuestionnaire(context),
-      //         tooltip: 'Моя анкета',
-      //       ),
-      //   ],
-      // ),
       appBar: CustomAppBar(
         showProfileAvatar: true,
         showBackButton: false,
@@ -133,21 +122,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           // Define the curve for better transition dynamics
-          const curve = Curves.easeInOut;
+          const curve = Curves.easeInOutCubic;
 
-          // Create a tween for the slide transition
           var slideTween = Tween<Offset>(
-            begin: Offset(1.0, 0.0), // Start from the right
-            end: Offset.zero,        // End at the current position
+            begin: Offset(1.0, 0.0), 
+            end: Offset.zero,
           ).chain(CurveTween(curve: curve));
 
-          // Create a tween for the fade transition
           var fadeTween = Tween<double>(
-            begin: 0.0, // Fully transparent
-            end: 1.0,   // Fully opaque
+            begin: 0.0, 
+            end: 1.0,
           ).chain(CurveTween(curve: curve));
 
-          // Apply both slide and fade transitions
           return SlideTransition(
             position: animation.drive(slideTween),
             child: FadeTransition(
@@ -157,9 +143,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           );
         },
       )
-      // MaterialPageRoute(
-      //   builder: (context) => const ProfilePage(),
-      // ),
     ),
         
         actions: [
