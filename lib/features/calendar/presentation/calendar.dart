@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/features/calendar/data/trainingModel.dart';
 import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,21 +22,26 @@ class _CalendarState extends State<Calendar> {
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      controller.selectedDay = selectedDay;
-      controller.focusedDay = focusedDay;
+      controller.changeSelectedDay(selectedDay);
+      controller.changeFocusedDay(focusedDay);
     });
   }
 
   @override
   void dispose() {
-    controller.dispose(); // важно для освобождения ресурсов
+    controller.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    // controller.addGym("gym");
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    await controller.loadAllEventsFromDB();
+    setState(() {});
   }
 
   @override
@@ -97,12 +100,11 @@ class _CalendarState extends State<Calendar> {
                 ),
                 actions: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (controller.newEventController.text.isNotEmpty &&
                           controller.newTimeEventController.text.isNotEmpty) {
-                        setState(() {
-                          controller.saveEvent();
-                        });
+                        await controller.saveEvent();
+                        setState(() {});
                       }
                       Navigator.of(context).pop();
                     },
@@ -183,10 +185,7 @@ class _CalendarState extends State<Calendar> {
                             child: IconButton(
                               icon: Icon(Icons.people),
                               onPressed: () {
-                                setState(() {
-                                  controller.calendarFormat =
-                                      CalendarFormat.twoWeeks;
-                                });
+                                setState(() {});
                               },
                             ),
                           ),
@@ -261,7 +260,8 @@ class _CalendarState extends State<Calendar> {
                       onChanged: (format) {
                         if (format != null) {
                           setState(() {
-                            controller.calendarFormat = format;
+                            controller.changeCalendarFormat(format);
+                            // controller.calendarFormat = format;
                             _calendarHeight = controller
                                 .getCalendarHeightByFormat(format, context);
                           });
