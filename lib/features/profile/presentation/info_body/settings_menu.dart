@@ -25,55 +25,57 @@ class SettingsMenu extends ConsumerWidget {
         context: context,
         builder: (BuildContext context) {
           final contextTheme = Theme.of(context);
-          return Wrap(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 18.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextButton(
-                        child: Row(
-                          children: [
-                            Icon(Icons.language),
-                            SizedBox(width: sepPadding,),
-                            Text(
-                              'Change language', 
-                              style: contextTheme.textTheme.bodyMedium?.copyWith(
-                                color: contextTheme.colorScheme.onTertiary,
+          return SafeArea(
+            child: Wrap(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, bottom: 18.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton(
+                          child: Row(
+                            children: [
+                              Icon(Icons.language),
+                              SizedBox(width: sepPadding,),
+                              Text(
+                                'Change language', 
+                                style: contextTheme.textTheme.bodyMedium?.copyWith(
+                                  color: contextTheme.colorScheme.onTertiary,
+                                ),
                               ),
-                            ),
-                          ]
+                            ]
+                          ),
+                          onPressed: () {
+                            _showLanguageSelector(context, ref);
+                          }
                         ),
-                        onPressed: () {
-                          _showLanguageSelector(context, ref);
-                        }
-                      ),
-                      TextButton(
-                        child: Row(
-                          children: [
-                            Icon(Icons.brightness_6),
-                            SizedBox(width: sepPadding,),
-                            Text(
-                              'Change app theme',
-                              style: contextTheme.textTheme.bodyMedium?.copyWith(
-                                color: contextTheme.colorScheme.onTertiary,
-                              ), 
-                            ),
-                          ]
+                        TextButton(
+                          child: Row(
+                            children: [
+                              Icon(Icons.brightness_6),
+                              SizedBox(width: sepPadding,),
+                              Text(
+                                'Change app theme',
+                                style: contextTheme.textTheme.bodyMedium?.copyWith(
+                                  color: contextTheme.colorScheme.onTertiary,
+                                ), 
+                              ),
+                            ]
+                          ),
+                          onPressed: () { 
+                            _showThemeSelector(context, ref);
+                          },
                         ),
-                        onPressed: () { 
-                          _showThemeSelector(context, ref);
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
       );

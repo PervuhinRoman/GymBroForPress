@@ -50,6 +50,8 @@ dependencies:
   flutter_chat_ui: ^1.6.10
   flutter_chat_types: ^3.6.2
   yandex_mapkit: ^4.1.0
+  file_picker: ^10.0.0
+  
   
   http: ^1.1.0
   uuid: ^4.5.1

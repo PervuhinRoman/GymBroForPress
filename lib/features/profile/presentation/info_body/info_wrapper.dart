@@ -29,7 +29,7 @@ class InfoWrapper extends StatelessWidget {
             ),
           ],
         ),
-        InfoHeader(header),
+        InfoHeader(header, sideButton: optionalButton,),
         Divider(
           height: InfoWrapperConfig.divHeight,
           thickness: InfoWrapperConfig.divThickness,
