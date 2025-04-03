@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../controller/user.dart' as u;
 import '../controller/swiper.dart';
+import '../controller/notifications.dart';
 import 'match/match_pop_up.dart';
 import 'tinder_ui_components.dart';
 
@@ -19,20 +20,46 @@ class TinderScreen extends ConsumerWidget {
     final usersAsync = ref.watch(u.usersProvider);
     final cardState = ref.watch(cardStateProvider);
     final usersState = ref.watch(u.usersControllerProvider);
+    final lastUpdatedFormatted = DateFormat.Hm().format(usersState.lastUpdated);
 
     return Scaffold(
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: usersState.isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const SizedBox(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Updated: $lastUpdatedFormatted',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (usersState.isLoading)
+                      Container(
+                        margin: const EdgeInsets.only(left: 8),
+                        width: 16,
+                        height: 16,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                  ],
+                ),
+                usersAsync.when(
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                  data: (users) {
+                    if (users.isEmpty) return const SizedBox.shrink();
+                    return Text(
+                      '${cardState.currentIndex + 1}/${users.length}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
+          
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -49,9 +76,7 @@ class TinderScreen extends ConsumerWidget {
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (cardState.currentIndex >= users.length) {
-                      ref
-                          .read(cardStateProvider.notifier)
-                          .setCardIndex(0, users.length);
+                      ref.read(cardStateProvider.notifier).setCardIndex(0, users.length);
                     }
                   });
 
@@ -63,9 +88,7 @@ class TinderScreen extends ConsumerWidget {
                     isVisible: cardState.isVisible,
                     onHorizontalDragUpdate: (details) {
                       if (details.primaryDelta != null) {
-                        ref
-                            .read(cardStateProvider.notifier)
-                            .updateDragPosition(details.primaryDelta);
+                        ref.read(cardStateProvider.notifier).updateDragPosition(details.primaryDelta);
                       }
                     },
                     onHorizontalDragEnd: (details) {
@@ -73,9 +96,7 @@ class TinderScreen extends ConsumerWidget {
                         final isRightSwipe = cardState.offsetX > 0;
                         _handleSwipe(context, ref, isRightSwipe, users);
                       } else {
-                        ref
-                            .read(cardStateProvider.notifier)
-                            .resetCardPosition();
+                        ref.read(cardStateProvider.notifier).resetCardPosition();
                       }
                     },
                   );
@@ -88,8 +109,7 @@ class TinderScreen extends ConsumerWidget {
     );
   }
 
-  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe,
-      List<u.User> users) {
+  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe, List<u.User> users) {
     final cardStateNotifier = ref.read(cardStateProvider.notifier);
     final currentUser = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context)!;

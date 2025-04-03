@@ -90,5 +90,12 @@
   "week" : "Неделя",
   "fortnight" : "Две недели",
   "month" : "Месяц",
-  "generalInfo" : "Общая информация"
+  "generalInfo" : "Общая информация",
+
+  "notifications": "Уведомления",
+  "noNotifications": "Нет уведомлений",
+  "markAllAsRead": "Отметить все как прочитанные",
+  "notificationDismissed": "Уведомление удалено",
+  "undo": "Отменить",
+  "lastUpdated": "Обновлено"
 }

@@ -11,6 +11,9 @@ import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
 import '../../../calendar/presentation/calendar.dart';
 import '../../../tinder/controller/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
+import '../../../tinder/controller/notifications.dart';
+import '../../../tinder/controller/user.dart' as u;
+import '../../../tinder/presentation/notifications/notifications_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
@@ -67,55 +70,122 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final unreadCount = ref.watch(unreadNotificationsCountProvider);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        showProfileAvatar: true,
-        showBackButton: false,
-        onProfileTap: () => Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  ProfilePage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                // Define the curve for better transition dynamics
-                const curve = Curves.easeInOut;
-
-                // Create a tween for the slide transition
-                var slideTween = Tween<Offset>(
-                  begin: Offset(1.0, 0.0), // Start from the right
-                  end: Offset.zero, // End at the current position
-                ).chain(CurveTween(curve: curve));
-
-                // Create a tween for the fade transition
-                var fadeTween = Tween<double>(
-                  begin: 0.0, // Fully transparent
-                  end: 1.0, // Fully opaque
-                ).chain(CurveTween(curve: curve));
-
-                // Apply both slide and fade transitions
-                return SlideTransition(
-                  position: animation.drive(slideTween),
-                  child: FadeTransition(
+      appBar: AppBar(
+        title: Text(
+          _selectedIndex == 0
+              ? l10n.homePageTitle
+              : _selectedIndex == 1
+                  ? l10n.workoutPageTitle
+                  : 'AI-trainer',
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w500),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: CircleAvatar(
+            radius: 15.0,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.onPrimary,
+              size: 20,
+            ),
+          ),
+          onPressed: () => Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const ProfilePage(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  final fadeTween = Tween<double>(begin: 0.0, end: 1.0);
+                  return FadeTransition(
                     opacity: animation.drive(fadeTween),
                     child: child,
-                  ),
-                );
-              },
-            )
-            // MaterialPageRoute(
-            //   builder: (context) => const ProfilePage(),
-            // ),
-            ),
+                  );
+                },
+              )
+              ),
+        ),
         actions: [
-          if (_selectedIndex == 1)
+          if (_selectedIndex == 1) ...[
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  color: Theme.of(context).colorScheme.primary,
+                  tooltip: 'Уведомления',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsScreen(),
+                      ),
+                    );
+                  },
+                  onLongPress: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Создаю тестовое уведомление...')),
+                    );
+                    
+                    ref.read(u.usersProvider.future).then((users) {
+                      if (users.isNotEmpty) {
+                        final testUser = users.first;
+                        ref.read(notificationsControllerProvider.notifier)
+                            .createTestNotification(testUser);
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Тестовое уведомление создано')),
+                        );
+                      }
+                    }).catchError((error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Ошибка: $error')),
+                      );
+                    });
+                  },
+                ),
+                if (unreadCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        unreadCount > 9 ? '9+' : unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             IconButton(
               icon: const Icon(Icons.edit),
               color: Theme.of(context).colorScheme.primary,
               onPressed: () => _navigateToForm(context),
               tooltip: 'Моя анкета',
             ),
+          ],
         ],
       ),
       body: TabBarView(
