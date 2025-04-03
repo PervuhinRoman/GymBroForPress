@@ -5,16 +5,7 @@ import 'info_body/gallery_block.dart';
 import 'info_body/entries_block.dart';
 import 'info_body/info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
-
-class ProfileBodyConfig {
-  static const double pbgHeight = 60.0;
-
-  static const double radius = 110;
-  static const double leftPadding = 45;
-  static const double topRelPadding = 0.4;
-
-  static const double ibSepHeight = 10;
-}
+import 'package:gymbro/features/profile/presentation/profile_configs.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({
@@ -47,10 +38,10 @@ class ProfileBody extends StatelessWidget {
             }
           ), 
           infoBody: Entries(
-            infoTuples: [
-              ['+7 (800) 555-35-35', 'Phone Number'],
-              ['The quick red fox jumps over the lazy brown dog and the lively white cat', 'Bio'],
-              ['@user', 'User Tag'],
+            infoClauses: [
+              InfoClause('Phone Number', '+7 (800) 555-35-35'),
+              InfoClause('Bio', 'The quick red fox jumps over the lazy brown dog and the lively white cat'),
+              InfoClause('User Tag', '@user'),
             ],
           )
         ),

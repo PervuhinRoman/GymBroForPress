@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import 'info_wrapper.dart';
 
-ShaderCallback galleryShaderCallback() {
+ShaderCallback galleryShaderCallback = () {
   final Color op = Colors.white.withAlpha(255);
   final Color tr = Colors.white.withAlpha(0);
   final double trStop = 0.01;
@@ -15,7 +15,7 @@ ShaderCallback galleryShaderCallback() {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ).createShader(bounds);
-}
+}.call();
 
 class Gallery extends StatelessWidget implements InfoBody {
   const Gallery({
@@ -32,7 +32,7 @@ class Gallery extends StatelessWidget implements InfoBody {
 
     // TODO: catch exceptional behavior
     
-    if (photosUrls == null) {
+    if (photosUrls == []) {
       return Placeholder();
     }
     // TODO END;
@@ -44,7 +44,7 @@ class Gallery extends StatelessWidget implements InfoBody {
         child: Stack(
           children: [
             ShaderMask(
-              shaderCallback: galleryShaderCallback(),
+              shaderCallback: galleryShaderCallback,
               child: GalleryCarousel(photosUrls: photosUrls),
             ),
           ]

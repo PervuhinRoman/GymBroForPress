@@ -125,7 +125,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           const curve = Curves.easeInOutCubic;
 
           var slideTween = Tween<Offset>(
-            begin: Offset(1.0, 0.0), 
+            begin: Offset(-1.0, 0.0), 
             end: Offset.zero,
           ).chain(CurveTween(curve: curve));
 
@@ -148,7 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         actions: [
           if (selectedTab == 1)
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: const Icon(Icons.edit_outlined),
               onPressed: () => _navigateToQuestionnaire(context),
               tooltip: 'Моя анкета',
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
 import 'package:gymbro/features/profile/presentation/profile_body.dart';
+import 'package:gymbro/features/profile/presentation/profile_configs.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({
@@ -28,7 +29,7 @@ class ProfileHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           ProfileAvatar(),
-          DebugGizmo(
+          SizedBox(
             child: Padding(
               padding: EdgeInsets.only(left: nameLeftPadding, bottom: radius*0.08),
               child: Column(

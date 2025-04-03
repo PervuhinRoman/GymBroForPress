@@ -5,11 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import '../profile_body.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
-
-class InfoWrapperConfig {
-  static const double _divHeight = 0.5;
-  static const double _divThickness = 1;
-}
+import 'package:gymbro/features/profile/presentation/profile_configs.dart';
 
 class InfoWrapper extends StatelessWidget {
   const InfoWrapper({
@@ -27,33 +23,19 @@ class InfoWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        InfoSeparator(ibSepHeight: ProfileBodyConfig.ibSepHeight),
+        Row(
+          children: [
+            Expanded(
+              child: SizedBox(height: InfoWrapperConfig.ibSepHeight),
+            ),
+          ],
+        ),
         InfoHeader(header),
         Divider(
-          height: InfoWrapperConfig._divHeight,
-          thickness: InfoWrapperConfig._divThickness,
+          height: InfoWrapperConfig.divHeight,
+          thickness: InfoWrapperConfig.divThickness,
         ),
         infoBody,
-      ],
-    );
-  }
-}
-
-class InfoSeparator extends StatelessWidget {
-  const InfoSeparator({
-    super.key,
-    required this.ibSepHeight,
-  });
-
-  final double ibSepHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: DebugBox(height: ibSepHeight),
-        ),
       ],
     );
   }

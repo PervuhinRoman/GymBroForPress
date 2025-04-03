@@ -4,23 +4,31 @@ import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter
 import 'info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
 
+class InfoClause {
+  const InfoClause(
+    this.label,
+    this.info,
+  );
+
+  final String info;
+  final String label;
+}
 
 class Entries extends StatelessWidget implements InfoBody {
   const Entries({
     super.key,
-    required this.infoTuples,
+    required this.infoClauses,
   });
 
-  final List<List<String>> infoTuples;
+  final List<InfoClause> infoClauses;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children:[
-        for(var tuple in infoTuples) 
+        for(var clause in infoClauses) 
           InfoEntry(
-            info: tuple[0], 
-            label: tuple[1],
+            infoClause: clause,
           ),
         ]
       );
@@ -30,12 +38,10 @@ class Entries extends StatelessWidget implements InfoBody {
 class InfoEntry extends StatelessWidget {
   const InfoEntry({
     super.key,
-    required this.info,
-    required this.label,
+    required this.infoClause,
   });
 
-  final String info;
-  final String label;
+  final InfoClause infoClause;
 
   static const double _ibLeftPadding = 8.0;
 
@@ -55,10 +61,10 @@ class InfoEntry extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: _ibLeftPadding),
                     child: DoubleTextDisplay(
-                      topText: info,
+                      topText: infoClause.info,
                       topColor: contextTheme.colorScheme.onSecondary,
 
-                      bottomText: label,
+                      bottomText: infoClause.label,
                       bottomColor: Color.lerp(contextTheme.colorScheme.onSecondary, Colors.grey, 0.3),
                     ),
                   )
