@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/features/calendar/domain/calendar_service.dart';
+import 'package:gymbro/features/calendar/presentation/custom_row.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -124,6 +127,7 @@ class _CalendarState extends State<Calendar> {
             SliverAppBar(
               automaticallyImplyLeading: false,
               expandedHeight: screenHeight / 3.5,
+              toolbarHeight: screenHeight / 3.5,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               pinned: false,
               flexibleSpace: FlexibleSpaceBar(
@@ -157,6 +161,7 @@ class _CalendarState extends State<Calendar> {
                                   ),
                                   onChanged: (value) {
                                     setState(() {
+                                      controller.loadFavouriteGyms();
                                       controller.selectedGym = value;
                                     });
                                   },
@@ -184,7 +189,8 @@ class _CalendarState extends State<Calendar> {
                             padding: EdgeInsets.only(right: screenWidth / 200),
                             child: IconButton(
                               icon: Icon(Icons.people),
-                              onPressed: () {
+                              onPressed: () async {
+                                await controller.updateGym('b', false);
                                 setState(() {});
                               },
                             ),
@@ -195,33 +201,8 @@ class _CalendarState extends State<Calendar> {
                     SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.amber,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColors.greenPrimary,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        )
-                      ],
-                    ),
+                    CustomRowOfElements(
+                        screenHeight: screenHeight, screenWidth: screenWidth),
                   ],
                 ),
               ),
