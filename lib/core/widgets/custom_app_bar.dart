@@ -59,7 +59,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 24.0),
           child: Image.asset(
-            'assets/images/gymbro_logo.png',
+            Theme.of(context).brightness == Brightness.dark
+                ? 'assets/images/gymbro_logo_dark.png'
+                : 'assets/images/gymbro_logo.png',
             height: 50,
           ),
         ),

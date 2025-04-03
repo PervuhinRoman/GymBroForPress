@@ -48,8 +48,6 @@ dependencies:
   flutter_dotenv: ^5.2.1
   json_annotation: ^4.0.1
   sqflite: ^2.0.0+4
-  path: ^1.8.0
-  carousel_slider: ^5.0.0
   flutter_chat_ui: ^1.6.10
   flutter_chat_types: ^3.6.2
   yandex_mapkit: ^4.1.0

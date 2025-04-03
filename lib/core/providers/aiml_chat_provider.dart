@@ -6,12 +6,12 @@ import 'package:uuid/uuid.dart';
 
 part 'aiml_chat_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AimlApiService aimlApiService(ref) {
   return AimlApiService();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ChatTyping extends _$ChatTyping {
   @override
   bool build() {
@@ -23,7 +23,7 @@ class ChatTyping extends _$ChatTyping {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AimlChatMessages extends _$AimlChatMessages {
   final _user = const types.User(id: 'user-id', firstName: 'Пользователь');
   final _aiUser = const types.User(id: 'ai-id', firstName: 'GymBro AI');
