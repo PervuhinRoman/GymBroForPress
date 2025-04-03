@@ -23,14 +23,14 @@ class HomeScreenArgs {
   });
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
+class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
@@ -112,12 +112,8 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           if (_selectedIndex == 1)
             IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () => _navigateToQuestionnaire(context),
               icon: const Icon(Icons.edit),
+              color: Theme.of(context).colorScheme.primary,
               onPressed: () => _navigateToForm(context),
               tooltip: 'Моя анкета',
             ),
@@ -130,9 +126,6 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        // iconSize: 12,
-        // selectedFontSize: 12,
-        // unselectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 
 import '../controller/user.dart' as u;
@@ -20,6 +21,7 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
   double offsetX = 0.0;
   double opacity = 1.0;
   bool isVisible = true;
+  final Set<String> _shownMatches = {};
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,7 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
     });
 
     u.User? matchedUser;
+    String? matchId;
 
     http.post(
       Uri.parse('https://gymbro.serveo.net/api/swipe'),
@@ -83,25 +86,32 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
       if (mounted && response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData['isMatch'] == true) {
-          matchedUser = users.firstWhere(
-            (u) =>
-                u.id == responseData['match']['user1Id'] ||
-                u.id == responseData['match']['user2Id'],
-          );
+          matchId = responseData['match']['id']?.toString() ?? '';
           
-          if (mounted && matchedUser != null) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) => MatchPopup(matchedUser: matchedUser!),
+          if (matchId != null && !_shownMatches.contains(matchId)) {
+            _shownMatches.add(matchId!);
+            
+            matchedUser = users.firstWhere(
+              (u) =>
+                  u.id == responseData['match']['user1Id'] ||
+                  u.id == responseData['match']['user2Id'],
+              orElse: () => users[currentIndex],
             );
+            
+            if (mounted && matchedUser != null) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (ctx) => MatchPopup(matchedUser: matchedUser!),
+              );
+            }
           }
         }
       }
     }).catchError((e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
         );
       }
     }).whenComplete(() {
