@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/map/domain/gym_place_provider.dart';
+import 'package:gymbro/features/map/domain/map_objects_service.dart';
 import 'package:gymbro/features/map/domain/select_button_provider.dart';
 import 'package:gymbro/features/map/presentation/gym_place.dart';
 import 'package:gymbro/features/map/presentation/ontap_dialog.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
-
-import '../domain/map_objects_service.dart';
 
 class Map extends ConsumerStatefulWidget {
   final Point startPoint;
@@ -20,7 +20,6 @@ class Map extends ConsumerStatefulWidget {
 
 class _MapState extends ConsumerState<Map> {
   late YandexMapController controller;
-  List<GymPlace>? mapObjects;
 
   @override
   void initState() {
@@ -29,10 +28,7 @@ class _MapState extends ConsumerState<Map> {
   }
 
   void _loadMapObjects() async {
-    final objects = await mapService.getMapObjectsList(_handlePlacemarkTap);
-    setState(() {
-      mapObjects = objects;
-    });
+    await ref.read(mapServiceProvider).getMapObjectsList(_handlePlacemarkTap);
   }
 
   void _handlePlacemarkTap(PlacemarkMapObject placeMarkObject, Point point) {
@@ -52,15 +48,16 @@ class _MapState extends ConsumerState<Map> {
   @override
   Widget build(BuildContext context) {
     final isAllSelected = ref.watch(selectButtonStateProvider);
+    final mapObjects = ref.watch(gymPlaceStateProvider);
 
     final List<MapObject> filteredMapObjects = [];
-    if (mapObjects != null) {
+    if (mapObjects.isNotEmpty) {
       if (isAllSelected) {
-        mapObjects!.forEach((el) {
+        mapObjects.forEach((el) {
           filteredMapObjects.add(el.toConfiguredObject());
         });
       } else {
-        List<GymPlace> liked = mapObjects!.where((obj) => obj.isLiked).toList();
+        List<GymPlace> liked = mapObjects.where((obj) => obj.isLiked).toList();
         liked.forEach((el) {
           filteredMapObjects.add(el.toConfiguredObject());
         });

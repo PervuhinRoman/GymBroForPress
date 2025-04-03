@@ -21,7 +21,7 @@ class SelectButton extends ConsumerWidget {
             duration: Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             alignment:
-                 isLeftSelected ? Alignment.centerLeft : Alignment.centerRight,
+                isLeftSelected ? Alignment.centerLeft : Alignment.centerRight,
             child: FractionallySizedBox(
               // Позволяет взять значение ширины родителя
               widthFactor: 0.5,
@@ -49,21 +49,9 @@ class SelectButton extends ConsumerWidget {
                         style: TextStyle(
                             color: isLeftSelected ? Color(0xFF353a48) : Colors.white,
                             fontSize: 24,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                         child: Text('Все'),
-                  )
-                      // child: Text(
-                      //   'Все',
-                      //   style: TextStyle(
-                      //     // TODO: использовать ресурсы цветов
-                      //     // TODO: использовать ресурсы текста
-                      //     color: isLeftSelected ? Color(0xFF353a48) : Colors.white,
-                      //     fontWeight: FontWeight.bold,
-                      //     fontSize: 24,
-                      //   ),
-                      // ),
-                      ),
+                  )),
                 ),
               ),
               Expanded(
@@ -75,23 +63,12 @@ class SelectButton extends ConsumerWidget {
                       child: AnimatedDefaultTextStyle(
                         duration: Duration(milliseconds: 300),
                         style: TextStyle(
-                          color: !isLeftSelected ? Color(0xFF353a48) : Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
-                        ),
+                            color:
+                            !isLeftSelected ? Color(0xFF353a48) : Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
                         child: Text('Избранные'),
-                  )
-                      // child: Text(
-                      //   'Избранные',
-                      //   style: TextStyle(
-                      //     // TODO: использовать ресурсы цветов
-                      //     // TODO: использовать ресурсы текста
-                      //     color: !isLeftSelected ? Color(0xFF353a48) : Colors.white,
-                      //     fontWeight: FontWeight.bold,
-                      //     fontSize: 24,
-                      //   ),
-                      // ),
-                      ),
+                  )),
                 ),
               ),
             ],

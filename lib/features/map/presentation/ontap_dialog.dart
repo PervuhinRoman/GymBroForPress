@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
+import 'package:gymbro/features/map/domain/gym_place_provider.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-class OntapDialog extends StatefulWidget {
+class OntapDialog extends ConsumerStatefulWidget {
   final MapObjectId gymName;
   const OntapDialog({super.key, required this.gymName});
 
   @override
-  State<OntapDialog> createState() => _OntapDialogState();
+  ConsumerState<OntapDialog> createState() => _OntapDialogState();
 }
 
-class _OntapDialogState extends State<OntapDialog> {
+class _OntapDialogState extends ConsumerState<OntapDialog> {
+  late bool _isLiked;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Инициализируем начальное состояние
+    _isLiked = ref.read(gymPlaceStateProvider.notifier).isLiked(widget.gymName.value);
+  }
+  
   @override
   Widget build(BuildContext context) {
+    // Используем локальное состояние для UI
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32, top: 16),
       child: IntrinsicHeight(
@@ -66,34 +78,59 @@ class _OntapDialogState extends State<OntapDialog> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 72),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(36))
-                    ),
-                    // TODO: изменение цвета в зависимости от данных
-                    backgroundColor: AppColors.greenPrimary,
-                  ),
-                  child: Row(
-                    // TODO: изменение состояния кнопки в зависимости от полученных данных
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        // TODO: изменение иконки от данных
-                        child: Icon(Icons.star_border, size: 32),
-                      ),
-                      Text(
-                        "Add to Favorite",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold
-                        ),
+              child: GestureDetector(
+                onTap: () {
+                  // Переключаем состояние в провайдере
+                  ref.read(gymPlaceStateProvider.notifier).toggleFavorite(widget.gymName.value);
+
+                  // Обновляем локальное состояние
+                  setState(() {
+                    _isLiked = !_isLiked;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                  width: double.infinity,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: _isLiked ? AppColors.constantError : AppColors.greenPrimary,
+                    borderRadius: BorderRadius.circular(36),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(0, 2),
                       ),
                     ],
-                  )),
+                  ),
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      duration: Duration(milliseconds: 400),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _isLiked ? Icons.star : Icons.star_border,
+                            size: 32,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            _isLiked ? "Remove from Favorite" : "Add to Favorite",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             )
           ],
         ),
