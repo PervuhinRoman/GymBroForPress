@@ -195,18 +195,6 @@ class _CalendarState extends State<Calendar> {
                             ),
                           ),
                           Spacer(),
-                          Padding(
-                            padding: EdgeInsets.only(right: screenWidth / 200),
-                            child: IconButton(
-                              icon: Icon(Icons.people),
-                              onPressed: () async {
-                                await controller.saveGym('d', '1', '1', true);
-                                await controller.loadFavouriteGyms();
-                                // await controller.updateGym('b', true);
-                                setState(() {});
-                              },
-                            ),
-                          ),
                         ],
                       ),
                     ),
