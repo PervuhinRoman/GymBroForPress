@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:gymbro/core/providers/tab_provider.dart';
 import 'package:gymbro/features/profile/presentation/profile_screen.dart';
-import 'package:gymbro/features/tinder/presentation/form.dart';
+import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
 
 import '../../../calendar/calendar.dart';
 import '../../../tinder/controller/form_service.dart';

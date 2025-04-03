@@ -520,7 +520,7 @@ packages:
   image_picker:
     dependency: "direct main"
     description:
-      name: image_picker
+      name: image_picker.dart
       sha256: b6951e25b795d053a6ba03af5f710069c99349de9341af95155d52665cb4607c
       url: "https://pub.dev"
     source: hosted
