@@ -5,10 +5,11 @@ import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
-import 'package:gymbro/features/tinder/presentation/form.dart';
 import 'package:gymbro/features/profile/presentation/profile_page.dart';
+import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
 
 import '../../../calendar/presentation/calendar.dart';
+import '../../../tinder/controller/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
 
 class HomeScreenArgs {
@@ -21,14 +22,14 @@ class HomeScreenArgs {
   });
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
+class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
@@ -43,11 +44,16 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _navigateToQuestionnaire(BuildContext context) {
+  Future<void> _navigateToForm(BuildContext context) async {
+    final formServiceAsync = ref.read(formServiceProvider.future);
+    final formService = await formServiceAsync;
+
+    if (!mounted) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const FormScreen(),
+        builder: (context) => FormScreen(formService: formService),
       ),
     );
   }
@@ -105,11 +111,9 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           if (_selectedIndex == 1)
             IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () => _navigateToQuestionnaire(context),
+              icon: const Icon(Icons.edit),
+              color: Theme.of(context).colorScheme.primary,
+              onPressed: () => _navigateToForm(context),
               tooltip: 'Моя анкета',
             ),
         ],
@@ -121,9 +125,6 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        // iconSize: 12,
-        // selectedFontSize: 12,
-        // unselectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),
