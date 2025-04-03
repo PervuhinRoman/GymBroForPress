@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'info_body/header_buttons/settings_button.dart';
+import 'info_body/settings_button.dart';
 import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'profile_body.dart';
 
@@ -14,15 +14,8 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      // TODO BG COLOR CHANGE TO SOLVE THEME NOT UPDATING
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        leading: BackButton(),
         
         actions: [
           SettingsMenu(),

@@ -21,45 +21,48 @@ class ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.onPrimary,
-      child: ListView(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              ProfileBackGround(),
-              ProfileHeader(),
-              DebugBox(
-                height: pbgHeight + (radius * (1-topRelPadding)),
-                width: leftPadding,
-              ),
+    return Column(
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ProfileBackGround(),
+            ProfileHeader(),
+            // DebugBox(
+            //   height: pbgHeight + (radius * (1-topRelPadding)),
+            //   width: leftPadding,
+            // ),
+          ],
+        ),
+        
+        // Basically, just need a "ручка"
+        InfoWrapper(
+          header: 'General Info',
+          optionalButton: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+    
+            }
+          ), 
+          infoBody: Entries(
+            infoTuples: [
+              ['+7 (800) 555-35-35', 'Phone Number'],
+              ['The quick red fox jumps over the lazy brown dog and the lively white cat', 'Bio'],
+              ['@user', 'User Tag'],
+            ],
+          )
+        ),
+        InfoWrapper(
+          header: 'Progress in Pictures',
+          infoBody: Gallery(
+            photosUrls: [
+              'assets/images/dog.jpeg',
+              'assets/images/cat.jpeg',
+              'assets/images/myles.jpeg',
             ],
           ),
-          // Basically, just need a "ручка"
-          InfoWrapper(
-            header: 'General Info',
-            optionalButton: null,
-            infoBody: Entries(
-              infoTuples: [
-                ['+7 (800) 555-35-35', 'Phone Number'],
-                ['The quick red fox jumps over the lazy brown dog and the lively white cat', 'Bio'],
-                // ["@user", "User Tag"],
-              ],
-            )
-          ),
-          InfoWrapper(
-            header: 'Progress in Pictures',
-            infoBody: Gallery(
-              photosUrls: [
-                'assets/images/dog.jpeg',
-                'assets/images/cat.jpeg',
-                'assets/images/myles.jpeg',
-              ],
-            ),
-          ),
-        ]
-      ),
+        ),
+      ]
     );
   }
 }

@@ -33,7 +33,7 @@ class DoubleTextDisplay extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 300, // KISS
+            width: 350, // KISS
             child: Text(
               topText,
               maxLines: null,
