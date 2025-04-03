@@ -25,8 +25,8 @@ class _CustomRowOfElementsState extends State<CustomRowOfElements> {
               borderRadius: BorderRadius.circular(20),
               color: Colors.amber,
             ),
-            height: widget.screenWidth / 2.2,
-            width: widget.screenWidth / 2.2,
+            height: widget.screenWidth / 2.7,
+            width: widget.screenWidth / 2.7,
           ),
         ),
         Flexible(
@@ -36,8 +36,8 @@ class _CustomRowOfElementsState extends State<CustomRowOfElements> {
               borderRadius: BorderRadius.circular(20),
               color: AppColors.greenPrimary,
             ),
-            height: widget.screenWidth / 2.2,
-            width: widget.screenWidth / 2.2,
+            height: widget.screenWidth / 2.7,
+            width: widget.screenWidth / 2.7,
           ),
         )
       ],

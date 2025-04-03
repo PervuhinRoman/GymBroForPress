@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
+import 'package:gymbro/core/utils/preference_service.dart';
 import 'package:gymbro/features/calendar/domain/calendar_service.dart';
 import 'package:gymbro/features/calendar/presentation/custom_row.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -39,12 +40,20 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    _loadEvents();
+    _initializeGyms();
   }
 
-  Future<void> _loadEvents() async {
+  Future<void> _initializeGyms() async {
+    // Загружаем любимые залы из базы данных
+    await controller.loadFavouriteGyms();
     await controller.loadAllEventsFromDB();
-    setState(() {});
+
+    // Получаем выбранный зал из SharedPreferences (например, через ваш PreferencesService)
+    final savedGym = await PreferencesService
+        .getSelectedGym(); // или напрямую через SharedPreferences
+    setState(() {
+      controller.selectedGym = savedGym;
+    });
   }
 
   @override
@@ -159,13 +168,14 @@ class _CalendarState extends State<Calendar> {
                                     child:
                                         const Icon(Icons.keyboard_arrow_down),
                                   ),
-                                  onChanged: (value) {
+                                  onChanged: (value) async {
                                     setState(() {
-                                      controller.loadFavouriteGyms();
                                       controller.selectedGym = value;
                                     });
+                                    // Сохраняем выбранный зал в SharedPreferences
+                                    await PreferencesService.setSelectedGym(
+                                        value);
                                   },
-                                  //оставил специально из за l10n
                                   items: controller.gyms.isEmpty
                                       ? [
                                           DropdownMenuItem(
@@ -190,7 +200,9 @@ class _CalendarState extends State<Calendar> {
                             child: IconButton(
                               icon: Icon(Icons.people),
                               onPressed: () async {
-                                await controller.updateGym('b', false);
+                                await controller.saveGym('d', '1', '1', true);
+                                await controller.loadFavouriteGyms();
+                                // await controller.updateGym('b', true);
                                 setState(() {});
                               },
                             ),
