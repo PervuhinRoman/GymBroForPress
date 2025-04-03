@@ -17,10 +17,9 @@ jobs:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '21'
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.14.0
         with:
           channel: stable
-          flutter-version-file: pubspec.yaml # path to pubspec.yaml
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk --release
