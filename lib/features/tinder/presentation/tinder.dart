@@ -4,158 +4,119 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../controller/user.dart' as u;
+import '../controller/swiper.dart';
 import 'match/match_pop_up.dart';
 import 'tinder_ui_components.dart';
 
-class TinderScreen extends ConsumerStatefulWidget {
+class TinderScreen extends ConsumerWidget {
   const TinderScreen({super.key});
 
   @override
-  _TinderScreenState createState() => _TinderScreenState();
-}
-
-class _TinderScreenState extends ConsumerState<TinderScreen> {
-  int currentIndex = 0;
-  double offsetX = 0.0;
-  double opacity = 1.0;
-  bool isVisible = true;
-  final Set<String> _shownMatches = {};
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final usersAsync = ref.watch(u.usersProvider);
+    final cardState = ref.watch(cardStateProvider);
+    final usersState = ref.watch(u.usersControllerProvider);
 
     return Scaffold(
-      body: usersAsync.when(
-        loading: () => const LoadingIndicator(),
-        error: (error, stack) => ErrorDisplay(error: error.toString()),
-        data: (users) {
-          if (users.isEmpty) {
-            return const EmptyStateDisplay();
-          }
-
-          return TinderCardStack(
-            users: users,
-            currentIndex: currentIndex,
-            offsetX: offsetX,
-            opacity: opacity,
-            isVisible: isVisible,
-            onHorizontalDragUpdate: (details) {
-              setState(() {
-                offsetX += details.primaryDelta ?? 0;
-              });
-            },
-            onHorizontalDragEnd: (details) {
-              if (offsetX.abs() > 150) {
-                final isRightSwipe = offsetX > 0;
-                animateCardAway(isRightSwipe);
-              } else {
-                resetCardPosition();
-              }
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  void onSwipeComplete(bool isRightSwipe, List<u.User> users) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
-
-    setState(() {
-      isVisible = false;
-    });
-
-    u.User? matchedUser;
-    String? matchId;
-
-    http.post(
-      Uri.parse('https://gymbro.serveo.net/api/swipe'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(
-        {
-          'swiperId': currentUser.uid,
-          'targetId': users[currentIndex].id,
-          'isLike': isRightSwipe,
-        },
-      ),
-    ).then((response) {
-      if (mounted && response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        if (responseData['isMatch'] == true) {
-          matchId = responseData['match']['id']?.toString() ?? '';
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (usersState.isLoading)
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+          ),
           
-          if (matchId != null && !_shownMatches.contains(matchId)) {
-            _shownMatches.add(matchId!);
-            
-            matchedUser = users.firstWhere(
-              (u) =>
-                  u.id == responseData['match']['user1Id'] ||
-                  u.id == responseData['match']['user2Id'],
-              orElse: () => users[currentIndex],
-            );
-            
-            if (mounted && matchedUser != null) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (ctx) => MatchPopup(matchedUser: matchedUser!),
-              );
-            }
-          }
-        }
-      }
-    }).catchError((e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-        );
-      }
-    }).whenComplete(() {
-      Future.delayed(
-        const Duration(milliseconds: 300),
-        () {
-          if (mounted) {
-            setState(() {
-              currentIndex = (currentIndex + 1) % users.length;
-              offsetX = 0.0;
-              opacity = 1.0;
-              isVisible = true;
-            });
-          }
-        },
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await ref.read(u.usersControllerProvider.notifier).refresh();
+                return;
+              },
+              child: usersAsync.when(
+                loading: () => const LoadingIndicator(),
+                error: (error, stack) => ErrorDisplay(error: error.toString()),
+                data: (users) {
+                  if (users.isEmpty) {
+                    return const EmptyStateDisplay();
+                  }
+
+                  return TinderCardStack(
+                    users: users,
+                    currentIndex: cardState.currentIndex,
+                    offsetX: cardState.offsetX,
+                    opacity: cardState.opacity,
+                    isVisible: cardState.isVisible,
+                    onHorizontalDragUpdate: (details) {
+                      if (details.primaryDelta != null) {
+                        ref.read(cardStateProvider.notifier).updateDragPosition(details.primaryDelta);
+                      }
+                    },
+                    onHorizontalDragEnd: (details) {
+                      if (cardState.offsetX.abs() > 150) {
+                        final isRightSwipe = cardState.offsetX > 0;
+                        _handleSwipe(context, ref, isRightSwipe, users);
+                      } else {
+                        ref.read(cardStateProvider.notifier).resetCardPosition();
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe, List<u.User> users) {
+    final cardStateNotifier = ref.read(cardStateProvider.notifier);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final l10n = AppLocalizations.of(context)!;
+    final currentIndex = ref.read(cardStateProvider).currentIndex;
+    
+    if (currentUser == null) return;
+    
+    cardStateNotifier.animateCardAway(isRightSwipe);
+    
+    Future.delayed(const Duration(milliseconds: 200), () {
+      cardStateNotifier.hideCard();
+      
+      final request = SwipeRequest(
+        swiperId: currentUser.uid,
+        targetId: users[currentIndex].id,
+        isLike: isRightSwipe,
       );
+      
+      ref.read(swipeProvider(request).future).then((result) {
+        if (result.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${l10n.error}: ${result.errorMessage}')),
+          );
+        }
+        
+        if (result.isMatch && result.matchedUser != null) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => MatchPopup(matchedUser: result.matchedUser!),
+          );
+        }
+        
+        cardStateNotifier.showNextCard(users.length);
+      });
     });
-  }
-
-  void animateCardAway(bool isRightSwipe) {
-    final users = ref.read(u.usersProvider).value;
-    if (users == null) return;
-
-    setState(
-      () {
-        offsetX = isRightSwipe ? 300.0 : -300.0;
-        opacity = 0.0;
-      },
-    );
-
-    Future.delayed(
-      const Duration(milliseconds: 200),
-      () {
-        onSwipeComplete(isRightSwipe, users);
-      },
-    );
-  }
-
-  void resetCardPosition() {
-    setState(
-      () {
-        offsetX = 0.0;
-        opacity = 1.0;
-      },
-    );
   }
 }
