@@ -3,6 +3,8 @@ import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gymbro/core/utils/routes.dart';
 
 class SettingsMenu extends ConsumerWidget {
   const SettingsMenu({super.key});
@@ -49,6 +51,19 @@ class SettingsMenu extends ConsumerWidget {
                         ),
                         onPressed: () { 
                           _showThemeSelector(context, ref);
+                        },
+                      ),
+                      Divider(),
+                      TextButton(
+                        child: Row(
+                          children: [
+                            Icon(Icons.logout, color: Colors.red),
+                            SizedBox(width: sepPadding,),
+                            Text('Выйти из аккаунта', style: TextStyle(color: Colors.red)),
+                          ]
+                        ),
+                        onPressed: () {
+                          _showLogoutConfirmation(context);
                         },
                       ),
                     ],
@@ -135,6 +150,56 @@ class SettingsMenu extends ConsumerWidget {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  // Диалоговое окно для подтверждения выхода из аккаунта
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Выход из аккаунта'),
+          content: const Text('Вы уверены, что хотите выйти из аккаунта?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Закрываем диалог
+              },
+              child: const Text('Отмена'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance.signOut();
+                  
+                  if (context.mounted) {
+                    // Закрываем все диалоги
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    
+                    // Перенаправляем на экран авторизации
+                    Navigator.of(context).pushReplacementNamed(RouteNames.auth);
+                    
+                    // Показываем сообщение об успешном выходе
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Вы успешно вышли из аккаунта')),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    // Показываем сообщение об ошибке
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Ошибка при выходе из аккаунта: $e')),
+                    );
+                    Navigator.pop(context); // Закрываем диалог подтверждения
+                  }
+                }
+              },
+              child: const Text('Выйти', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         );
       },
     );

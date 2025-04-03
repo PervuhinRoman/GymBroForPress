@@ -50,7 +50,6 @@ class UserDetailDialog extends ConsumerWidget {
                 ],
               ),
             ),
-            
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -66,10 +65,8 @@ class UserDetailDialog extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     TrainingBadge(user: user),
                     const SizedBox(height: 16),
-
                     Row(
                       children: [
                         Expanded(
@@ -89,30 +86,37 @@ class UserDetailDialog extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-
                     PersonalInfoSection(user: user),
                     const SizedBox(height: 16),
-
                     if (user.contact.isNotEmpty)
                       ElevatedButton.icon(
                         onPressed: () async {
-                          final contactInfo = "https://t.me/${user.contact}";
-                          final url = Uri.parse(contactInfo);
-                          
+                          final username = user.contact.replaceAll('@', '');
+                          final tgUri =
+                              Uri.parse('tg://resolve?domain=$username');
+                          final webUri = Uri.parse('https://t.me/$username');
+
                           try {
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
+                            if (await canLaunchUrl(tgUri)) {
+                              await launchUrl(tgUri);
+                            } else if (await canLaunchUrl(webUri)) {
+                              await launchUrl(webUri,
+                                  mode: LaunchMode.externalApplication);
                             } else {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Не удалось открыть $contactInfo')),
+                                  SnackBar(
+                                      content: Text(
+                                          'Не удалось открыть Telegram для пользователя $username')),
                                 );
                               }
                             }
                           } catch (e) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Ошибка: $e')),
+                                SnackBar(
+                                    content: Text(
+                                        'Ошибка при открытии Telegram: $e')),
                               );
                             }
                           }
@@ -121,7 +125,8 @@ class UserDetailDialog extends ConsumerWidget {
                         label: Text('Связаться в Telegram: ${user.contact}'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: const Color(0xFF0088cc), // Telegram color
+                          backgroundColor:
+                              const Color(0xFF0088cc), // Telegram color
                         ),
                       ),
                   ],
@@ -133,4 +138,4 @@ class UserDetailDialog extends ConsumerWidget {
       ),
     );
   }
-} 
+}
