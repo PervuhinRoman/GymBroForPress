@@ -5,6 +5,8 @@ import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/utils/constants.dart';
 import 'package:gymbro/features/tinder/controller/user.dart' as u;
 
+import 'info_row.dart';
+
 class TinderCard extends ConsumerWidget {
   final u.User user;
 
@@ -109,7 +111,6 @@ class TinderCard extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       Positioned(
                         bottom: 0,
                         left: 0,
@@ -152,7 +153,6 @@ class TinderCard extends ConsumerWidget {
                                   ),
                                 ),
                               ),
-
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
@@ -169,7 +169,6 @@ class TinderCard extends ConsumerWidget {
                           ),
                         ),
                       ),
-
                       Positioned(
                         top: 0,
                         right: 0,
@@ -211,7 +210,6 @@ class TinderCard extends ConsumerWidget {
                   ),
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.only(top: constants.paddingUnit * 1.5),
                 padding: EdgeInsets.all(constants.paddingUnit),
@@ -222,84 +220,30 @@ class TinderCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.fitness_center,
-                            size: 16, color: AppColors.violetPrimary),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.training,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.violetPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            user.trainType,
-                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    InfoRow(
+                      icon: Icons.fitness_center,
+                      label: l10n.training,
+                      value: user.trainType,
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time,
-                            size: 16, color: AppColors.violetPrimary),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.trainingTime,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.violetPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            user.time,
-                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    InfoRow(
+                      icon: Icons.access_time,
+                      label: l10n.trainingTime,
+                      value: user.time,
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today,
-                            size: 16, color: AppColors.violetPrimary),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.trainingDays,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.violetPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            user.day,
-                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    InfoRow(
+                      icon: Icons.calendar_today,
+                      label: l10n.trainingDays,
+                      value: user.day,
                     ),
                   ],
                 ),
               ),
-
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.only(top: constants.paddingUnit),
                 padding: EdgeInsets.all(constants.paddingUnit),
                 decoration: BoxDecoration(
-                  color: AppColors.greenSecondary.withValues(alpha: 0.3),
+                  color: AppColors.greenSecondary.withValues(alpha: 0.45),
                   borderRadius: BorderRadius.circular(constants.paddingUnit),
                   border: Border.all(color: AppColors.greenSecondary, width: 1),
                 ),

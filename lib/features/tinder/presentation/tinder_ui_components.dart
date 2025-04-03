@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controller/user.dart' as u;
-import 'tinder_card.dart';
+import 'tinder_card/tinder_card.dart';
 
 class TinderCardStack extends StatelessWidget {
   final List<u.User> users;
