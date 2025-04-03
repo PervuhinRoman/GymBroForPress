@@ -155,7 +155,6 @@ class SettingsMenu extends ConsumerWidget {
     );
   }
 
-  // Диалоговое окно для подтверждения выхода из аккаунта
   void _showLogoutConfirmation(BuildContext context) {
     showDialog(
       context: context,
