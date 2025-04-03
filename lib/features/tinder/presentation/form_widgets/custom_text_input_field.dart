@@ -35,7 +35,7 @@ class FormInputField extends StatelessWidget {
           borderSide: const BorderSide(color: Colors.blue, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: Colors.grey.shade50.withValues(alpha: 0.44),
       ),
       validator: validator,
     );
