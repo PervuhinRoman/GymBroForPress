@@ -238,7 +238,7 @@ class TinderCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             user.trainType,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -261,7 +261,7 @@ class TinderCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             user.time,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -284,7 +284,7 @@ class TinderCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             user.day,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: const TextStyle(fontWeight: FontWeight.w500, color : Colors.black),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -299,7 +299,7 @@ class TinderCard extends ConsumerWidget {
                 margin: EdgeInsets.only(top: constants.paddingUnit),
                 padding: EdgeInsets.all(constants.paddingUnit),
                 decoration: BoxDecoration(
-                  color: AppColors.greenSecondary.withValues(alpha: 0x4D),
+                  color: AppColors.greenSecondary.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(constants.paddingUnit),
                   border: Border.all(color: AppColors.greenSecondary, width: 1),
                 ),
