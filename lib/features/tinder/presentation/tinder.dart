@@ -25,19 +25,14 @@ class TinderScreen extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (usersState.isLoading)
-                  const SizedBox(
+            child: usersState.isLoading
+                ? const SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-              ],
-            ),
+                  )
+                : const SizedBox(),
           ),
-          
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -52,6 +47,14 @@ class TinderScreen extends ConsumerWidget {
                     return const EmptyStateDisplay();
                   }
 
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (cardState.currentIndex >= users.length) {
+                      ref
+                          .read(cardStateProvider.notifier)
+                          .setCardIndex(0, users.length);
+                    }
+                  });
+
                   return TinderCardStack(
                     users: users,
                     currentIndex: cardState.currentIndex,
@@ -60,7 +63,9 @@ class TinderScreen extends ConsumerWidget {
                     isVisible: cardState.isVisible,
                     onHorizontalDragUpdate: (details) {
                       if (details.primaryDelta != null) {
-                        ref.read(cardStateProvider.notifier).updateDragPosition(details.primaryDelta);
+                        ref
+                            .read(cardStateProvider.notifier)
+                            .updateDragPosition(details.primaryDelta);
                       }
                     },
                     onHorizontalDragEnd: (details) {
@@ -68,7 +73,9 @@ class TinderScreen extends ConsumerWidget {
                         final isRightSwipe = cardState.offsetX > 0;
                         _handleSwipe(context, ref, isRightSwipe, users);
                       } else {
-                        ref.read(cardStateProvider.notifier).resetCardPosition();
+                        ref
+                            .read(cardStateProvider.notifier)
+                            .resetCardPosition();
                       }
                     },
                   );
@@ -81,32 +88,33 @@ class TinderScreen extends ConsumerWidget {
     );
   }
 
-  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe, List<u.User> users) {
+  void _handleSwipe(BuildContext context, WidgetRef ref, bool isRightSwipe,
+      List<u.User> users) {
     final cardStateNotifier = ref.read(cardStateProvider.notifier);
     final currentUser = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context)!;
     final currentIndex = ref.read(cardStateProvider).currentIndex;
-    
+
     if (currentUser == null) return;
-    
+
     cardStateNotifier.animateCardAway(isRightSwipe);
-    
+
     Future.delayed(const Duration(milliseconds: 200), () {
       cardStateNotifier.hideCard();
-      
+
       final request = SwipeRequest(
         swiperId: currentUser.uid,
         targetId: users[currentIndex].id,
         isLike: isRightSwipe,
       );
-      
+
       ref.read(swipeProvider(request).future).then((result) {
         if (result.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${l10n.error}: ${result.errorMessage}')),
           );
         }
-        
+
         if (result.isMatch && result.matchedUser != null) {
           showDialog(
             context: context,
@@ -114,7 +122,7 @@ class TinderScreen extends ConsumerWidget {
             builder: (ctx) => MatchPopup(matchedUser: result.matchedUser!),
           );
         }
-        
+
         cardStateNotifier.showNextCard(users.length);
       });
     });
