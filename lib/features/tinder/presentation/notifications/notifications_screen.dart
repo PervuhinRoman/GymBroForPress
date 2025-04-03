@@ -8,7 +8,7 @@ import 'dart:math';
 
 import '../../controller/notifications.dart';
 import '../../controller/user.dart' as app_user;
-import '../user_detail/user_detail_screen.dart';
+import '../user_detail/user_detail_dialog.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
@@ -143,7 +143,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                '${l10n.error}',
+                l10n.error,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.error,
                 ),
@@ -475,10 +475,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               setState(() {});
             }
             
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => UserDetailScreen(user: notification.user),
-              ),
+            showDialog(
+              context: context,
+              builder: (context) => UserDetailDialog(user: notification.user),
             );
           },
         );
