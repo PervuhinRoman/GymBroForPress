@@ -16,6 +16,7 @@ class FormService {
     required String hours,
     required String days,
     required String textInfo,
+    required String contact,
     File? imageFile,
   }) async {
     final user = _auth.currentUser;
@@ -38,12 +39,13 @@ class FormService {
     }
 
     request.fields.addAll({
-      'name' : name,
+      'name': name,
       'time': hours,
       'day': days,
       'textInfo': textInfo,
       'trainType': trainType,
       'firebaseUid': user.uid,
+      'contact': contact,
     });
 
     var response = await request.send();
@@ -58,6 +60,7 @@ class FormService {
     await _prefs.setString('hours', hours);
     await _prefs.setString('days', days);
     await _prefs.setString('textInfo', textInfo);
+    await _prefs.setString('contact', contact);
     if (imageFile != null) {
       await _prefs.setString('imagePath', imageFile.path);
     }
@@ -71,6 +74,7 @@ class FormService {
       'days': _prefs.getString('days') ?? '',
       'textInfo': _prefs.getString('textInfo') ?? '',
       'imagePath': _prefs.getString('imagePath') ?? '',
+      'contact': _prefs.getString('contact') ?? '',
     };
   }
 }
@@ -82,6 +86,6 @@ final formServiceProvider = FutureProvider<FormService>((ref) async {
 });
 
 final sharedPreferencesProvider =
-FutureProvider<SharedPreferences>((ref) async {
+    FutureProvider<SharedPreferences>((ref) async {
   return await SharedPreferences.getInstance();
 });

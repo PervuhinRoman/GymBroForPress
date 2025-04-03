@@ -11,6 +11,7 @@ class User {
   final String day;
   final String textInfo;
   final String trainType;
+  final String contact;
 
   User({
     required this.id,
@@ -20,6 +21,7 @@ class User {
     required this.day,
     required this.textInfo,
     required this.trainType,
+    required this.contact,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class User {
       day: json['day'],
       textInfo: json['textInfo'],
       trainType: json['trainType'],
+      contact: json['contact'],
     );
   }
 }

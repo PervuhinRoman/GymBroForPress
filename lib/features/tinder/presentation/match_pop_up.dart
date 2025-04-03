@@ -13,15 +13,15 @@ class MatchPopup extends StatelessWidget {
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(20),
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-             AppColors.greenSecondary,
-             AppColors.greenPrimary,
+              AppColors.greenSecondary,
+              AppColors.greenPrimary,
             ],
           ),
         ),
@@ -47,7 +47,7 @@ class MatchPopup extends StatelessWidget {
                             shadows: [
                               Shadow(
                                 blurRadius: 10,
-                                color: Colors.black.withValues(alpha: 0.3),
+                                color: Colors.black.withAlpha(0x30),
                               ),
                             ],
                           ),
@@ -71,12 +71,51 @@ class MatchPopup extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
+                    matchedUser.name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
                     'Вы понравились друг другу!',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  if (matchedUser.contact.isNotEmpty ?? false)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Контакт:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            matchedUser.contact,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -87,7 +126,7 @@ class MatchPopup extends StatelessWidget {
               child: TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.black.withValues(alpha: 0.3),
+                  backgroundColor: Colors.black.withAlpha(0x30),
                 ),
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Продолжить'),

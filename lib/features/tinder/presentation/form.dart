@@ -19,6 +19,7 @@ class _FormScreenState extends State<FormScreen> {
   final _hoursController = TextEditingController();
   final _daysController = TextEditingController();
   final _textInfoController = TextEditingController();
+  final _contactController = TextEditingController();
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -38,6 +39,7 @@ class _FormScreenState extends State<FormScreen> {
         _hoursController.text = formData['hours']!;
         _daysController.text = formData['days']!;
         _textInfoController.text = formData['textInfo']!;
+        _contactController.text = formData['contact']!;
 
         final imagePath = formData['imagePath'];
         if (imagePath!.isNotEmpty) {
@@ -51,9 +53,11 @@ class _FormScreenState extends State<FormScreen> {
     try {
       final pickedFile = await _picker.pickImage(source: source);
       if (pickedFile != null && mounted) {
-        setState(() {
-          _imageFile = File(pickedFile.path);
-        },);
+        setState(
+          () {
+            _imageFile = File(pickedFile.path);
+          },
+        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -74,6 +78,7 @@ class _FormScreenState extends State<FormScreen> {
         days: _daysController.text,
         textInfo: _textInfoController.text,
         imageFile: _imageFile,
+        contact: _contactController.text,
       );
 
       if (mounted) {
@@ -96,6 +101,7 @@ class _FormScreenState extends State<FormScreen> {
     _hoursController.dispose();
     _daysController.dispose();
     _textInfoController.dispose();
+    _contactController.dispose();
     super.dispose();
   }
 
@@ -149,21 +155,56 @@ class _FormScreenState extends State<FormScreen> {
               FormInputField(
                 controller: _trainTypeController,
                 label: 'Тип тренировки',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Поле обязательно для заполнения';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               FormInputField(
                 controller: _hoursController,
                 label: 'Часы',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Поле обязательно для заполнения';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               FormInputField(
                 controller: _daysController,
                 label: 'Дни',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Поле обязательно для заполнения';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               FormInputField(
                 controller: _textInfoController,
                 label: 'Дополнительная информация',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Поле обязательно для заполнения';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              FormInputField(
+                controller: _contactController,
+                label: 'Контакт для связи при метче',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Поле обязательно для заполнения';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
               Center(
@@ -184,10 +225,13 @@ class FormInputField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
 
+  final validator;
+
   const FormInputField({
     super.key,
     required this.controller,
     required this.label,
+    required this.validator
   });
 
   @override
