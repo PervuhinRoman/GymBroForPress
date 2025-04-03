@@ -4,10 +4,10 @@ import '../../controller/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
-class UserAvatar extends StatelessWidget {
+class CircleImage extends StatelessWidget {
   final User matchedUser;
 
-  const UserAvatar({super.key, required this.matchedUser});
+  const CircleImage({super.key, required this.matchedUser});
 
   @override
   Widget build(BuildContext context) {

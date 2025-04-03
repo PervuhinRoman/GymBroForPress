@@ -7,8 +7,8 @@ class User {
   final String id;
   final String name;
   final String imageUrl;
-  final String time;
-  final String day;
+  final String trainingTime;
+  final String trainingDays;
   final String textInfo;
   final String trainType;
   final String contact;
@@ -17,8 +17,8 @@ class User {
     required this.id,
     required this.name,
     required this.imageUrl,
-    required this.time,
-    required this.day,
+    required this.trainingTime,
+    required this.trainingDays,
     required this.textInfo,
     required this.trainType,
     required this.contact,
@@ -29,8 +29,8 @@ class User {
       id: json['firebaseUid'],
       name: json['name'],
       imageUrl: json['imageUrl'],
-      time: json['time'],
-      day: json['day'],
+      trainingTime: json['time'],
+      trainingDays: json['day'],
       textInfo: json['textInfo'],
       trainType: json['trainType'],
       contact: json['contact'],

@@ -16,7 +16,7 @@ class MatchContent extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        UserAvatar(matchedUser: matchedUser),
+        CircleImage(matchedUser: matchedUser),
         const SizedBox(height: 15),
         Text(
           matchedUser.name,
@@ -39,13 +39,13 @@ class MatchContent extends StatelessWidget {
         UserInfoItem(
           icon: Icons.access_time,
           label: l10n.trainingTime,
-          value: matchedUser.time,
+          value: matchedUser.trainingTime,
         ),
         const SizedBox(height: 8),
         UserInfoItem(
           icon: Icons.calendar_today,
           label: l10n.trainingDays,
-          value: matchedUser.day,
+          value: matchedUser.trainingDays,
         ),
         const SizedBox(height: 20),
         if (matchedUser.contact.isNotEmpty)
