@@ -85,6 +85,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(),
         title: const Text('Form'),
       ),
       body: SingleChildScrollView(

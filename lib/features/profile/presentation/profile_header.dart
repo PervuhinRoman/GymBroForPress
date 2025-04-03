@@ -37,6 +37,7 @@ class ProfileHeader extends StatelessWidget {
                     topText: 'Name LastName', 
                     topStyle: contextTheme.textTheme.titleLarge,
                     bottomText: 'online',
+                    bottomColor: Color.lerp(contextTheme.colorScheme.onSecondary, Colors.grey, 0.3),
                   ),
                 ],
               ),

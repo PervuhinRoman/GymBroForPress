@@ -65,6 +65,7 @@ class MyApp extends ConsumerWidget {
         Locale('ru', ''),
       ],
       home: const AppContent(),
+      initialRoute: RouteNames.home,
       onGenerateRoute: RoutesBuilder.onGenerateRoute,
       routes: RoutesBuilder.routes,
     );
