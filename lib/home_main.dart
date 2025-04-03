@@ -12,7 +12,7 @@ import 'package:gymbro/features/home/presentation/screens/home_screen.dart';
 import 'core/utils/routes.dart';
 import 'core/providers/app_settings_provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Инициализация настроек пользователя
 

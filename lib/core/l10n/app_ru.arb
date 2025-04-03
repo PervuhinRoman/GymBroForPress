@@ -55,6 +55,6 @@
   "newTraining" : "Новая тренировка:",
   "week" : "Неделя",
   "fortnight" : "Две недели",
-  "month" : "Месяц"
-  "generalInfo": "Общая информация"
+  "month" : "Месяц",
+  "generalInfo" : "Общая информация"
 }
