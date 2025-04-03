@@ -7,6 +7,7 @@ import 'package:gymbro/features/profile/presentation/profile_screen.dart';
 import 'package:gymbro/features/tinder/presentation/form.dart';
 
 import '../../../calendar/calendar.dart';
+import '../../../tinder/controller/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
 
 class HomeScreenArgs {
@@ -81,11 +82,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
-  void _navigateToQuestionnaire(BuildContext context) {
+  Future<void> _navigateToForm(BuildContext context) async {
+    final formServiceAsync = ref.read(formServiceProvider.future);
+    final formService = await formServiceAsync;
+
+    if (!mounted) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const FormScreen(),
+        builder: (context) => FormScreen(formService: formService),
       ),
     );
   }
@@ -116,7 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           if (selectedTab == 1)
             IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () => _navigateToQuestionnaire(context),
+              onPressed: () => _navigateToForm(context),
               tooltip: 'Моя анкета',
             ),
           IconButton(

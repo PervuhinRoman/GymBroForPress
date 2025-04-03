@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../controller/form_service.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+  final FormService formService;
+
+  const FormScreen({super.key, required this.formService});
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -28,90 +28,23 @@ class _FormScreenState extends State<FormScreen> {
     super.initState();
     _loadFormData();
   }
-  Future<void> _saveFormData() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('userId');
-
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('https://gymbro.serveo.net/api/profiles'),
-    );
-
-    if (_imageFile != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          _imageFile!.path,
-        ),
-      );
-    }
-
-    request.fields['time'] = _hoursController.text;
-    request.fields['day'] = _daysController.text;
-    request.fields['textInfo'] = _textInfoController.text;
-    request.fields['trainType'] = _trainTypeController.text;
-
-    if (userId != null) {
-      request.fields['id'] = userId;
-    }
-
-    try {
-      var response = await request.send();
-      var responseString = await response.stream.bytesToString();
-
-      if (!context.mounted) return;
-
-      if (response.statusCode == 200) {
-        if (userId == null) {
-          final responseData = json.decode(responseString);
-          await prefs.setString('userId', responseData['id'].toString());
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile saved successfully!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $responseString')),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-
-    await prefs.setString('name', _nameController.text);
-    await prefs.setString('trainType', _trainTypeController.text);
-    await prefs.setString('hours', _hoursController.text);
-    await prefs.setString('days', _daysController.text);
-    await prefs.setString('textInfo', _textInfoController.text);
-    if (_imageFile != null) {
-      await prefs.setString('imagePath', _imageFile!.path);
-    }
-  }
 
   Future<void> _loadFormData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _nameController.text = prefs.getString('name') ?? '';
-      _trainTypeController.text = prefs.getString('trainType') ?? '';
-      _hoursController.text = prefs.getString('hours') ?? '';
-      _daysController.text = prefs.getString('days') ?? '';
-      _textInfoController.text = prefs.getString('textInfo') ?? '';
+    final formData = await widget.formService.loadFormData();
+    setState(
+      () {
+        _nameController.text = formData['name']!;
+        _trainTypeController.text = formData['trainType']!;
+        _hoursController.text = formData['hours']!;
+        _daysController.text = formData['days']!;
+        _textInfoController.text = formData['textInfo']!;
 
-      final imagePath = prefs.getString('imagePath');
-      if (imagePath != null) {
-        _imageFile = File(imagePath);
-      }
-    });
-
-    final userId = prefs.getString('userId');
-    if (userId != null) {
-    }
+        final imagePath = formData['imagePath'];
+        if (imagePath!.isNotEmpty) {
+          _imageFile = File(imagePath);
+        }
+      },
+    );
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -120,12 +53,38 @@ class _FormScreenState extends State<FormScreen> {
       if (pickedFile != null && mounted) {
         setState(() {
           _imageFile = File(pickedFile.path);
-        });
+        },);
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error while handling image: $e')),
+      );
+    }
+  }
+
+  Future<void> _saveForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      await widget.formService.saveFormData(
+        name: _nameController.text,
+        trainType: _trainTypeController.text,
+        hours: _hoursController.text,
+        days: _daysController.text,
+        textInfo: _textInfoController.text,
+        imageFile: _imageFile,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile saved successfully!')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }
@@ -143,9 +102,7 @@ class _FormScreenState extends State<FormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Form'),
-      ),
+      appBar: AppBar(title: const Text('Form')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -169,7 +126,6 @@ class _FormScreenState extends State<FormScreen> {
                     ElevatedButton.icon(
                       icon: const Icon(Icons.photo_library),
                       label: const Text('Change image'),
-                      //ToDo: string resources
                       onPressed: () => _pickImage(ImageSource.gallery),
                     ),
                   ],
@@ -184,7 +140,7 @@ class _FormScreenState extends State<FormScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Имя';
+                    return 'Пожалуйста, введите имя';
                   }
                   return null;
                 },
@@ -212,16 +168,7 @@ class _FormScreenState extends State<FormScreen> {
               const SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await _saveFormData();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Data loaded')),
-                        );
-                      }
-                    }
-                  },
+                  onPressed: _saveForm,
                   child: const Text('Save'),
                 ),
               ),

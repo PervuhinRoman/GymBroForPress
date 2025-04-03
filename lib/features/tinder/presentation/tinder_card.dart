@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/utils/constants.dart';
 import 'package:gymbro/features/tinder/presentation/tags.dart';
-import 'package:gymbro/features/tinder/presentation/tinder.dart';
+import 'package:gymbro/features/tinder/controller/user.dart' as u;
 
 class TinderCard extends ConsumerWidget {
-  final User user;
+  final u.User user;
 
   const TinderCard({
     super.key,
@@ -39,13 +40,28 @@ class TinderCard extends ConsumerWidget {
                   child: ClipRRect(
                     borderRadius:
                         BorderRadius.circular(constants.paddingUnit * 1.5),
-                    child: Image.network(
-                      'https://gymbro.serveo.net${user.imageUrl}',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.error),
-                    ),
+                    child: Stack(children: [
+                      Image.network(
+                        'https://gymbro.serveo.net${user.imageUrl}',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.error),
+                      ),
+                      Positioned(
+                          left: constants.paddingUnit * 2,
+                          bottom: 0,
+                          child: Text(
+                            user.name,
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 48,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )),
+                    ]),
                   ),
                 ),
               ),

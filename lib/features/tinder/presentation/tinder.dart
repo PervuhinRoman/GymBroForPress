@@ -1,47 +1,12 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:gymbro/features/tinder/presentation/tinder_card.dart';
+import 'package:http/http.dart' as http;
 
-final usersProvider = FutureProvider<List<User>>((ref) async {
-  final response = await http.get(Uri.parse('https://gymbro.serveo.net/api/users'));
-  if (response.statusCode == 200) {
-    final List<dynamic> data = jsonDecode(response.body);
-    return data.map((json) => User.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load users');
-  }
-});
-
-class User {
-  final int id;
-  final String imageUrl;
-  final String time;
-  final String day;
-  final String textInfo;
-  final String trainType;
-
-  User({
-    required this.id,
-    required this.imageUrl,
-    required this.time,
-    required this.day,
-    required this.textInfo,
-    required this.trainType,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      imageUrl: json['imageUrl'],
-      time: json['time'],
-      day: json['day'],
-      textInfo: json['textInfo'],
-      trainType: json['trainType'],
-    );
-  }
-}
+import '../controller/user.dart' as u;
+import 'match_pop_up.dart';
 
 class TinderScreen extends ConsumerStatefulWidget {
   const TinderScreen({super.key});
@@ -58,7 +23,7 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final usersAsync = ref.watch(usersProvider);
+    final usersAsync = ref.watch(u.usersProvider);
 
     return Scaffold(
       body: usersAsync.when(
@@ -115,39 +80,102 @@ class _TinderScreenState extends ConsumerState<TinderScreen> {
     );
   }
 
-  void onSwipeComplete(bool isRightSwipe, List<User> users) {
+  void onSwipeComplete(bool isRightSwipe, List<u.User> users) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
     setState(() {
       isVisible = false;
     });
 
-    Future.delayed(const Duration(milliseconds: 200), () {
-      setState(() {
-        currentIndex = (currentIndex + 1) % users.length;
-        offsetX = 0.0;
-        opacity = 1.0;
-        isVisible = true;
-      });
-    });
+    Future(
+      () async {
+        try {
+          final response = await http.post(
+            Uri.parse('https://gymbro.serveo.net/api/swipe'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(
+              {
+                'swiperId': currentUser.uid,
+                'targetId': users[currentIndex].id,
+                'isLike': isRightSwipe,
+              },
+            ),
+          );
+
+          if (mounted && response.statusCode == 200) {
+            final responseData = jsonDecode(response.body);
+            if (responseData['isMatch'] == true) {
+              final matchedUser = users.firstWhere(
+                (u) =>
+                    u.id == responseData['match']['user1Id'] ||
+                    u.id == responseData['match']['user2Id'],
+              );
+
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) {
+                  if (mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => MatchPopup(matchedUser: matchedUser),
+                    );
+                  }
+                },
+              );
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Ошибка: $e')),
+            );
+          }
+        }
+      },
+    );
+
+    Future.delayed(
+      const Duration(milliseconds: 200),
+      () {
+        if (mounted) {
+          setState(
+            () {
+              currentIndex = (currentIndex + 1) % users.length;
+              offsetX = 0.0;
+              opacity = 1.0;
+              isVisible = true;
+            },
+          );
+        }
+      },
+    );
   }
 
   void animateCardAway(bool isRightSwipe) {
-    final users = ref.read(usersProvider).value;
+    final users = ref.read(u.usersProvider).value;
     if (users == null) return;
 
-    setState(() {
-      offsetX = isRightSwipe ? 300.0 : -300.0;
-      opacity = 0.0;
-    });
+    setState(
+      () {
+        offsetX = isRightSwipe ? 300.0 : -300.0;
+        opacity = 0.0;
+      },
+    );
 
-    Future.delayed(const Duration(milliseconds: 200), () {
-      onSwipeComplete(isRightSwipe, users);
-    });
+    Future.delayed(
+      const Duration(milliseconds: 200),
+      () {
+        onSwipeComplete(isRightSwipe, users);
+      },
+    );
   }
 
   void resetCardPosition() {
-    setState(() {
-      offsetX = 0.0;
-      opacity = 1.0;
-    });
+    setState(
+      () {
+        offsetX = 0.0;
+        opacity = 1.0;
+      },
+    );
   }
 }
