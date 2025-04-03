@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gymbro/core/providers/aiml_chat_provider.dart';
+import 'package:gymbro/features/ai_chat/domain/aiml_chat_provider.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 
 class AimlChatScreen extends ConsumerWidget {

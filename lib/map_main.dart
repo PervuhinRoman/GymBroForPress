@@ -8,7 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gymbro/features/map/presentation/map_screen.dart';
-import 'package:gymbro/firebase_options.dart';
+import 'package:gymbro/core/utils/firebase_options.dart';
 import 'core/utils/routes.dart';
 import 'core/providers/app_settings_provider.dart';
 
