@@ -128,44 +128,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         showProfileAvatar: true,
         showBackButton: false,
         onProfileTap: () => Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // Define the curve for better transition dynamics
-          const curve = Curves.easeInOut;
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  ProfilePage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                // Define the curve for better transition dynamics
+                const curve = Curves.easeInOut;
 
-          // Create a tween for the slide transition
-          var slideTween = Tween<Offset>(
-            begin: Offset(1.0, 0.0), // Start from the right
-            end: Offset.zero,        // End at the current position
-          ).chain(CurveTween(curve: curve));
+                // Create a tween for the slide transition
+                var slideTween = Tween<Offset>(
+                  begin: Offset(1.0, 0.0), // Start from the right
+                  end: Offset.zero, // End at the current position
+                ).chain(CurveTween(curve: curve));
 
-          // Create a tween for the fade transition
-          var fadeTween = Tween<double>(
-            begin: 0.0, // Fully transparent
-            end: 1.0,   // Fully opaque
-          ).chain(CurveTween(curve: curve));
+                // Create a tween for the fade transition
+                var fadeTween = Tween<double>(
+                  begin: 0.0, // Fully transparent
+                  end: 1.0, // Fully opaque
+                ).chain(CurveTween(curve: curve));
 
-          // Apply both slide and fade transitions
-          return SlideTransition(
-            position: animation.drive(slideTween),
-            child: FadeTransition(
-              opacity: animation.drive(fadeTween),
-              child: child,
+                // Apply both slide and fade transitions
+                return SlideTransition(
+                  position: animation.drive(slideTween),
+                  child: FadeTransition(
+                    opacity: animation.drive(fadeTween),
+                    child: child,
+                  ),
+                );
+              },
+            )
+            // MaterialPageRoute(
+            //   builder: (context) => const ProfilePage(),
+            // ),
             ),
-          );
-        },
-      )
-      // MaterialPageRoute(
-      //   builder: (context) => const ProfilePage(),
-      // ),
-    ),
-        
         actions: [
           if (selectedTab == 1)
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               onPressed: () => _navigateToQuestionnaire(context),
               tooltip: 'Моя анкета',
             ),
@@ -174,11 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       body: TabBarView(
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
-          Calendar(),
-          TinderScreen(),
-          AimlChatScreen()
-        ],
+        children: const [Calendar(), TinderScreen(), AimlChatScreen()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
