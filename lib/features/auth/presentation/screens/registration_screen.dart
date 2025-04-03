@@ -5,7 +5,7 @@ import 'package:gymbro/core/widgets/background_wrapper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/core/widgets/custom_text_field.dart';
-import 'package:gymbro/features/auth/services/auth_service.dart';
+import 'package:gymbro/features/auth/domain/auth_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});

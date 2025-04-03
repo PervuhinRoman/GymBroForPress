@@ -6,11 +6,11 @@ part of 'aiml_chat_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$aimlApiServiceHash() => r'56f372f63e8c3aa553d0e525feb3a1c116b11579';
+String _$aimlApiServiceHash() => r'7fa32fbf6b229df7b50aa5a45d5f018d9a5a4fc5';
 
 /// See also [aimlApiService].
 @ProviderFor(aimlApiService)
-final aimlApiServiceProvider = Provider<AimlApiService>.internal(
+final aimlApiServiceProvider = Provider<AimlApiRepository>.internal(
   aimlApiService,
   name: r'aimlApiServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,7 +22,7 @@ final aimlApiServiceProvider = Provider<AimlApiService>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AimlApiServiceRef = ProviderRef<AimlApiService>;
+typedef AimlApiServiceRef = ProviderRef<AimlApiRepository>;
 String _$chatTypingHash() => r'c4a9755fbfd3152c21065ec362a62978e3f539db';
 
 /// See also [ChatTyping].
@@ -37,7 +37,7 @@ final chatTypingProvider = NotifierProvider<ChatTyping, bool>.internal(
 );
 
 typedef _$ChatTyping = Notifier<bool>;
-String _$aimlChatMessagesHash() => r'e6038314ff86c36106a10913e3e75420fd8e7b42';
+String _$aimlChatMessagesHash() => r'f68f0ba7482c8c17fd9ba4f1f960f6f5342d5582';
 
 /// See also [AimlChatMessages].
 @ProviderFor(AimlChatMessages)
