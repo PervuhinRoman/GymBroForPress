@@ -28,13 +28,13 @@ class ProfileBody extends StatelessWidget {
           children: [
             ProfileBackGround(),
             ProfileHeader(),
-            // DebugBox(
-            //   height: pbgHeight + (radius * (1-topRelPadding)),
-            //   width: leftPadding,
-            // ),
+            DebugBox(
+              height: pbgHeight + (radius * (1-topRelPadding)),
+              width: leftPadding,
+            ),
           ],
         ),
-        
+
         // Basically, just need a "ручка"
         InfoWrapper(
           header: 'General Info',

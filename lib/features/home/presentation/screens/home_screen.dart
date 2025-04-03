@@ -132,15 +132,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition( // TODO: ADD OKAY ANIMATION PLZ
-            position: Tween<Offset>(
-              begin: Offset(1, 0),
-              end: Offset(0, 0), 
-            ).animate(animation),
-            child: child,
+          // Define the curve for better transition dynamics
+          const curve = Curves.easeInOut;
+
+          // Create a tween for the slide transition
+          var slideTween = Tween<Offset>(
+            begin: Offset(1.0, 0.0), // Start from the right
+            end: Offset.zero,        // End at the current position
+          ).chain(CurveTween(curve: curve));
+
+          // Create a tween for the fade transition
+          var fadeTween = Tween<double>(
+            begin: 0.0, // Fully transparent
+            end: 1.0,   // Fully opaque
+          ).chain(CurveTween(curve: curve));
+
+          // Apply both slide and fade transitions
+          return SlideTransition(
+            position: animation.drive(slideTween),
+            child: FadeTransition(
+              opacity: animation.drive(fadeTween),
+              child: child,
+            ),
           );
         },
-      ),
+      )
       // MaterialPageRoute(
       //   builder: (context) => const ProfilePage(),
       // ),
