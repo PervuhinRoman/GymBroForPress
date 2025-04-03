@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
+import 'package:gymbro/features/calendar/domain/calendar_service.dart';
+import 'package:gymbro/features/calendar/presentation/custom_row.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,21 +16,21 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final controller = CalendarController();
+  final service = CalendarService();
 
   late double _calendarHeight =
-      controller.getCalendarHeightByFormat(controller.calendarFormat, context);
+      service.getCalendarHeightByFormat(service.calendarFormat, context);
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      controller.changeSelectedDay(selectedDay);
-      controller.changeFocusedDay(focusedDay);
+      service.changeSelectedDay(selectedDay);
+      service.changeFocusedDay(focusedDay);
     });
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    service.dispose();
     super.dispose();
   }
 
@@ -40,7 +41,7 @@ class _CalendarState extends State<Calendar> {
   }
 
   Future<void> _loadEvents() async {
-    await controller.loadAllEventsFromDB();
+    await service.loadAllEventsFromDB();
     setState(() {});
   }
 
@@ -48,12 +49,12 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     List<Widget> currentTrainings = [];
-    if (controller.selectedTrainingIndex == 0) {
-      currentTrainings = controller.getTrainingsByTag(TrainingType.my);
-    } else if (controller.selectedTrainingIndex == 1) {
-      currentTrainings = controller.getTrainingsByTag(TrainingType.gym);
+    if (service.selectedTrainingIndex == 0) {
+      currentTrainings = service.getTrainingsByTag(TrainingType.my);
+    } else if (service.selectedTrainingIndex == 1) {
+      currentTrainings = service.getTrainingsByTag(TrainingType.gym);
     } else {
-      currentTrainings = controller.getTrainingsByTag(TrainingType.all);
+      currentTrainings = service.getTrainingsByTag(TrainingType.all);
     }
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
@@ -78,9 +79,9 @@ class _CalendarState extends State<Calendar> {
                     children: [
                       TextField(
                         style: Theme.of(context).textTheme.bodyMedium,
-                        controller: controller.newTimeEventController,
+                        controller: service.newTimeEventController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [controller.timeMaskFormatter],
+                        inputFormatters: [service.timeMaskFormatter],
                         decoration: InputDecoration(
                           hintText: l10n.hhmm,
                           hintStyle: TextStyle(color: AppColors.violetPale),
@@ -89,7 +90,7 @@ class _CalendarState extends State<Calendar> {
                       TextField(
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        controller: controller.newEventController,
+                        controller: service.newEventController,
                         decoration: InputDecoration(
                           hintText: l10n.description,
                           hintStyle: TextStyle(color: AppColors.violetPale),
@@ -101,9 +102,9 @@ class _CalendarState extends State<Calendar> {
                 actions: [
                   ElevatedButton(
                     onPressed: () async {
-                      if (controller.newEventController.text.isNotEmpty &&
-                          controller.newTimeEventController.text.isNotEmpty) {
-                        await controller.saveEvent();
+                      if (service.newEventController.text.isNotEmpty &&
+                          service.newTimeEventController.text.isNotEmpty) {
+                        await service.saveEvent();
                         setState(() {});
                       }
                       Navigator.of(context).pop();
@@ -148,7 +149,7 @@ class _CalendarState extends State<Calendar> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   hint: Center(child: Text(l10n.choose)),
-                                  value: controller.selectedGym,
+                                  value: service.selectedGym,
                                   isExpanded: true,
                                   icon: Transform.translate(
                                     offset: Offset(-20, 0),
@@ -157,11 +158,12 @@ class _CalendarState extends State<Calendar> {
                                   ),
                                   onChanged: (value) {
                                     setState(() {
-                                      controller.selectedGym = value;
+                                      service.loadFavouriteGyms();
+                                      service.selectedGym = value;
                                     });
                                   },
                                   //оставил специально из за l10n
-                                  items: controller.gyms.isEmpty
+                                  items: service.gyms.isEmpty
                                       ? [
                                           DropdownMenuItem(
                                             value: null,
@@ -169,7 +171,7 @@ class _CalendarState extends State<Calendar> {
                                                 child: Text(l10n.choose)),
                                           )
                                         ]
-                                      : controller.gyms.map((String value) {
+                                      : service.gyms.map((String value) {
                                           return DropdownMenuItem<String?>(
                                             value: value,
                                             child: Center(child: Text(value)),
@@ -184,7 +186,7 @@ class _CalendarState extends State<Calendar> {
                             padding: EdgeInsets.only(right: screenWidth / 200),
                             child: IconButton(
                               icon: Icon(Icons.people),
-                              onPressed: () {
+                              onPressed: () async {
                                 setState(() {});
                               },
                             ),
@@ -195,33 +197,8 @@ class _CalendarState extends State<Calendar> {
                     SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.amber,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColors.greenPrimary,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        )
-                      ],
-                    ),
+                    CustomRowOfElements(
+                        screenHeight: screenHeight, screenWidth: screenWidth),
                   ],
                 ),
               ),
@@ -242,7 +219,7 @@ class _CalendarState extends State<Calendar> {
                         Icons.keyboard_arrow_down,
                       ),
                       hint: Center(child: Text(l10n.choose)),
-                      value: controller.calendarFormat,
+                      value: service.calendarFormat,
                       items: [
                         DropdownMenuItem(
                           value: CalendarFormat.week,
@@ -260,10 +237,10 @@ class _CalendarState extends State<Calendar> {
                       onChanged: (format) {
                         if (format != null) {
                           setState(() {
-                            controller.changeCalendarFormat(format);
-                            // controller.calendarFormat = format;
-                            _calendarHeight = controller
-                                .getCalendarHeightByFormat(format, context);
+                            service.changeCalendarFormat(format);
+                            // service.calendarFormat = format;
+                            _calendarHeight = service.getCalendarHeightByFormat(
+                                format, context);
                           });
                         }
                       },
@@ -296,7 +273,7 @@ class _CalendarState extends State<Calendar> {
                         child: ClipRect(
                           child: TableCalendar(
                             selectedDayPredicate: (day) =>
-                                isSameDay(controller.selectedDay, day),
+                                isSameDay(service.selectedDay, day),
                             calendarStyle: CalendarStyle(
                               outsideDecoration: BoxDecoration(
                                 color: AppColors
@@ -318,22 +295,22 @@ class _CalendarState extends State<Calendar> {
                             ),
                             formatAnimationDuration:
                                 Duration(milliseconds: 100),
-                            calendarFormat: controller.calendarFormat,
+                            calendarFormat: service.calendarFormat,
                             firstDay: DateTime.utc(2010, 10, 16),
                             lastDay: DateTime.utc(2030, 3, 14),
-                            focusedDay: controller.focusedDay,
+                            focusedDay: service.focusedDay,
                             rowHeight: 35,
                             availableGestures:
                                 AvailableGestures.horizontalSwipe,
                             startingDayOfWeek: StartingDayOfWeek.monday,
                             onDaySelected: _onDaySelected,
-                            eventLoader: controller.getTrainsForConcreteDay,
+                            eventLoader: service.getTrainsForConcreteDay,
                             headerStyle: HeaderStyle(
                               formatButtonVisible: false,
                               titleCentered: true,
                             ),
                             onPageChanged: (focusedDay) {
-                              controller.focusedDay = focusedDay;
+                              service.focusedDay = focusedDay;
                             },
                           ),
                         ),
@@ -357,7 +334,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          controller.selectedTrainingIndex = 0;
+                          service.selectedTrainingIndex = 0;
                         });
                       },
                       child: Text(l10n.my),
@@ -365,7 +342,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          controller.selectedTrainingIndex = 1;
+                          service.selectedTrainingIndex = 1;
                         });
                       },
                       child: Text(l10n.gym),
@@ -373,7 +350,7 @@ class _CalendarState extends State<Calendar> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          controller.selectedTrainingIndex = 2;
+                          service.selectedTrainingIndex = 2;
                         });
                       },
                       child: Text(l10n.all),
@@ -390,7 +367,7 @@ class _CalendarState extends State<Calendar> {
                     return Padding(
                       padding: const EdgeInsets.only(left: 15.0, right: 15),
                       child: Column(
-                        children: controller
+                        children: service
                             .buildTrainingListWithSpacing(currentTrainings),
                       ),
                     );
