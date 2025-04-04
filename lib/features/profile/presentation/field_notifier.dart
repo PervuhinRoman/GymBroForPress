@@ -12,11 +12,11 @@ class FieldNotifier extends StateNotifier<String> {
 
 /// Example providers for different fields:
 final bioProvider = StateNotifierProvider<FieldNotifier, String>((ref) {
-  return FieldNotifier('This is my bio.');
+  return FieldNotifier('Мой личный статус.');
 });
 
 final phoneProvider = StateNotifierProvider<FieldNotifier, String>((ref) {
-  return FieldNotifier('123-456-7890');
+  return FieldNotifier('+7 800 555-35-35');
 });
 
 final tagProvider = StateNotifierProvider<FieldNotifier, String>((ref) {
