@@ -81,7 +81,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       try {
                         final user = await _authService.signInWithGoogle();
                         if (user != null && mounted) {
-                          Navigator.pushNamed(context, RouteNames.home);
+                          Navigator.pushNamed(context, RouteNames.questionnare);
                         }
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(

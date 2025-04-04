@@ -25,7 +25,10 @@ class _CustomRowOfElementsState extends State<CustomRowOfElements> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.amber,
+              image: const DecorationImage(
+                image: AssetImage('assets/images/motivation_widget.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
             height: widget.screenWidth / 2.7,
             width: widget.screenWidth / 2.7,
