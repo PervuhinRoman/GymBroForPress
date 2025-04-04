@@ -41,6 +41,6 @@ GymBro — это инновационное мобильное приложен
 ## Установка
 
 # ссылка на APK
-
+https://disk.yandex.ru/d/tdqH_gTc1VSTEQ
 
 
