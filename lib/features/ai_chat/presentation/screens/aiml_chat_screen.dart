@@ -4,6 +4,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/features/ai_chat/domain/aiml_chat_provider.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
+import 'package:gymbro/core/widgets/custom_app_bar.dart';
 
 class AimlChatScreen extends ConsumerStatefulWidget {
   const AimlChatScreen({super.key});
@@ -36,11 +37,11 @@ class _AimlChatScreenState extends ConsumerState<AimlChatScreen> {
     final isTyping = ref.watch(chatTypingProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI-тренер'),
+      appBar: CustomAppBar(
+        title: 'AI-тренер',
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: AppColors.primaryText),
             onPressed: () =>
                 ref.read(aimlChatMessagesProvider.notifier).clearChat(),
             tooltip: 'Сбросить историю чата',
