@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/utils/constants.dart';
-import 'package:gymbro/features/tinder/controller/user.dart' as u;
+import 'package:gymbro/features/tinder/domain/user.dart' as u;
 
 class UserImage extends ConsumerWidget {
   final u.User user;

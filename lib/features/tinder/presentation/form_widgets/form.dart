@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../controller/form_service.dart';
+import '../../domain/form_service.dart';
 import 'form_content.dart';
 
 class FormScreen extends StatefulWidget {
@@ -145,5 +145,3 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 }
-
-

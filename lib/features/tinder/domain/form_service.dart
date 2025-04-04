@@ -79,13 +79,3 @@ class FormService {
   }
 }
 
-final formServiceProvider = FutureProvider<FormService>((ref) async {
-  final auth = FirebaseAuth.instance;
-  final prefs = await SharedPreferences.getInstance();
-  return FormService(auth, prefs);
-});
-
-final sharedPreferencesProvider =
-    FutureProvider<SharedPreferences>((ref) async {
-  return await SharedPreferences.getInstance();
-});

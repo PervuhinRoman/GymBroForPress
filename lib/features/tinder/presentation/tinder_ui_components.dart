@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controller/user.dart' as u;
+import '../domain/user.dart' as u;
 import 'tinder_card/tinder_card.dart';
 
 class TinderCardStack extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/utils/constants.dart';
-import 'package:gymbro/features/tinder/controller/user.dart' as u;
+import 'package:gymbro/features/tinder/domain/user.dart' as u;
 
 class PersonalInfoSection extends ConsumerWidget {
   final u.User user;

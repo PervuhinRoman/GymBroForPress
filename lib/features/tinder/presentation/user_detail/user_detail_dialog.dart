@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../controller/user.dart' as u;
+import '../../domain/user.dart' as u;
 import '../tinder_card/sections/personal_info_section.dart';
 import '../tinder_card/sections/training_preferences_section.dart';
 import '../tinder_card/user_image.dart';

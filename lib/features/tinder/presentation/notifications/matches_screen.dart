@@ -6,8 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'dart:convert';
 import 'dart:math';
 
-import '../../controller/notifications.dart';
-import '../../controller/user.dart' as app_user;
+import '../../domain/matches_list.dart';
+import '../../domain/user.dart' as app_user;
 import '../user_detail/user_detail_dialog.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
@@ -24,7 +24,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationsControllerProvider.notifier).ensureNotificationsStateConsistency();
+      ref.read(matchesControllerProvider.notifier).ensureMatchesStateConsistency();
       _refreshMatches();
     });
   }
@@ -37,7 +37,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     });
 
     try {
-      await ref.read(notificationsControllerProvider.notifier).loadMatchesFromServer();
+      await ref.read(matchesControllerProvider.notifier).loadMatchesFromServer();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +55,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notificationsState = ref.watch(notificationsControllerProvider);
+    final notificationsState = ref.watch(matchesControllerProvider);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     
@@ -124,7 +124,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   Widget _buildMatchesList(
     BuildContext context, 
-    NotificationsState state, 
+    UserMatchesState state,
     ThemeData theme, 
     AppLocalizations l10n,
     WidgetRef ref,
@@ -170,7 +170,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       );
     }
 
-    if (state.notifications.isEmpty) {
+    if (state.matches.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +228,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: () async {
-                final controller = ref.read(notificationsControllerProvider.notifier);
+                final controller = ref.read(matchesControllerProvider.notifier);
                 
                 try {
                   final currentUser = firebase.FirebaseAuth.instance.currentUser;
@@ -267,7 +267,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     return;
                   }
                   
-                  final notification = UserNotification(
+                  final notification = UserMatches(
                     id: 'test_match_${DateTime.now().millisecondsSinceEpoch}',
                     user: otherUser,
                     dateTime: DateTime.now(),
@@ -275,7 +275,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     isRead: false,
                   );
                   
-                  await controller.addNotification(notification);
+                  await controller.addMatch(notification);
                   
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Создано тестовое совпадение с ${otherUser.name}')),
@@ -319,7 +319,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             const SizedBox(height: 10),
             OutlinedButton(
               onPressed: () {
-                ref.read(notificationsControllerProvider.notifier).loadMatchesFromServer();
+                ref.read(matchesControllerProvider.notifier).loadMatchesFromServer();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Запрос на обновление матчей отправлен')),
                 );
@@ -361,7 +361,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     return;
                   }
 
-                  final newNotification = UserNotification(
+                  final newNotification = UserMatches(
                     id: 'test_match_${DateTime.now().millisecondsSinceEpoch}',
                     user: otherUser,
                     dateTime: DateTime.now(),
@@ -369,7 +369,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     isRead: false,
                   );
 
-                  ref.read(notificationsControllerProvider.notifier).addNotification(newNotification);
+                  ref.read(matchesControllerProvider.notifier).addMatch(newNotification);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Создан тестовый матч с ${otherUser.name}')),
                   );
@@ -449,8 +449,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       );
     }
 
-    final Map<String, UserNotification> userNotifications = {};
-    for (var notification in state.notifications) {
+    final Map<String, UserMatches> userNotifications = {};
+    for (var notification in state.matches) {
       if (!userNotifications.containsKey(notification.user.id) ||
           notification.dateTime.isAfter(userNotifications[notification.user.id]!.dateTime)) {
         userNotifications[notification.user.id] = notification;
@@ -470,7 +470,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           isUnread: !notification.isRead,
           onTap: () {
             if (!notification.isRead) {
-              ref.read(notificationsControllerProvider.notifier)
+              ref.read(matchesControllerProvider.notifier)
                   .markAsRead(notification.id);
               setState(() {});
             }

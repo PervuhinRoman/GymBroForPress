@@ -8,12 +8,13 @@ import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.da
 import 'package:gymbro/features/profile/presentation/profile_page.dart';
 import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
 
+import '../../../../core/providers/tinder_providers.dart';
 import '../../../calendar/presentation/calendar.dart';
-import '../../../tinder/controller/form_service.dart';
+import '../../../tinder/domain/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
-import '../../../tinder/controller/notifications.dart';
-import '../../../tinder/controller/user.dart' as u;
-import '../../../tinder/presentation/notifications/notifications_screen.dart';
+import '../../../tinder/domain/matches_list.dart';
+import '../../../tinder/domain/user.dart' as u;
+import '../../../tinder/presentation/notifications/matches_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
@@ -70,7 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final unreadCount = ref.watch(unreadNotificationsCountProvider);
+    final unreadCount = ref.watch(unreadMatchesCountProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -138,8 +139,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ref.read(u.usersProvider.future).then((users) {
                       if (users.isNotEmpty) {
                         final testUser = users.first;
-                        ref.read(notificationsControllerProvider.notifier)
-                            .createTestNotification(testUser);
+                        ref.read(matchesControllerProvider.notifier)
+                            .createTestMatch(testUser);
                         
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Тестовое уведомление создано')),

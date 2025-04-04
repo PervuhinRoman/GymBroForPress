@@ -24,14 +24,14 @@ class Match {
   }
 }
 
-class UserNotification {
+class UserMatches {
   final String id;
   final User user;
   final DateTime dateTime;
   final bool isRead;
   final String message;
 
-  UserNotification({
+  UserMatches({
     required this.id,
     required this.user,
     required this.dateTime,
@@ -39,14 +39,14 @@ class UserNotification {
     required this.message,
   });
 
-  UserNotification copyWith({
+  UserMatches copyWith({
     String? id,
     User? user,
     DateTime? dateTime,
     bool? isRead,
     String? message,
   }) {
-    return UserNotification(
+    return UserMatches(
       id: id ?? this.id,
       user: user ?? this.user,
       dateTime: dateTime ?? this.dateTime,
@@ -65,15 +65,15 @@ class UserNotification {
     };
   }
 
-  static UserNotification fromJson(Map<String, dynamic> json, Map<String, User> usersMap) {
+  static UserMatches fromJson(Map<String, dynamic> json, Map<String, User> usersMap) {
     final userId = json['userId'] as String;
     final user = usersMap[userId];
     
     if (user == null) {
-      throw Exception('User not found for notification');
+      throw Exception('User not found for match');
     }
     
-    return UserNotification(
+    return UserMatches(
       id: json['id'] as String,
       user: user,
       dateTime: DateTime.fromMillisecondsSinceEpoch(json['dateTime'] as int),
@@ -83,47 +83,47 @@ class UserNotification {
   }
 }
 
-class NotificationsState {
-  final List<UserNotification> notifications;
+class UserMatchesState {
+  final List<UserMatches> matches;
   final bool isLoading;
   final String? error;
   final String? lastServerResponse;
 
-  NotificationsState({
-    this.notifications = const [],
+  UserMatchesState({
+    this.matches = const [],
     this.isLoading = false,
     this.error,
     this.lastServerResponse,
   });
 
-  NotificationsState copyWith({
-    List<UserNotification>? notifications,
+  UserMatchesState copyWith({
+    List<UserMatches>? matches,
     bool? isLoading,
     String? error,
     String? lastServerResponse,
   }) {
-    return NotificationsState(
-      notifications: notifications ?? this.notifications,
+    return UserMatchesState(
+      matches: matches ?? this.matches,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       lastServerResponse: lastServerResponse ?? this.lastServerResponse,
     );
   }
 
-  int get unreadCount => notifications.where((n) => !n.isRead).length;
+  int get unreadCount => matches.where((n) => !n.isRead).length;
 }
 
-class NotificationsController extends StateNotifier<NotificationsState> {
-  NotificationsController(this.ref) : super(NotificationsState()) {
-    _loadNotifications();
+class matchesController extends StateNotifier<UserMatchesState> {
+  matchesController(this.ref) : super(UserMatchesState()) {
+    _loadmatches();
     loadMatchesFromServer();
   }
 
   final Ref ref;
-  static const String _savedNotificationsKey = 'saved_user_notifications';
+  static const String _savedMatchesKey = 'saved_user_matches';
   static const String _serverUrl = 'https://gymbro.serveo.net/api';
 
-  Future<void> _loadNotifications() async {
+  Future<void> _loadmatches() async {
     state = state.copyWith(isLoading: true);
     
     try {
@@ -131,39 +131,36 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       final usersMap = {for (var user in users) user.id: user};
       
       final prefs = await SharedPreferences.getInstance();
-      final notificationsJson = prefs.getStringList(_savedNotificationsKey) ?? [];
+      final matchesJson = prefs.getStringList(_savedMatchesKey) ?? [];
       
-      if (notificationsJson.isEmpty) {
-        state = state.copyWith(notifications: [], isLoading: false);
+      if (matchesJson.isEmpty) {
+        state = state.copyWith(matches: [], isLoading: false);
         return;
       }
       
-      final notifications = notificationsJson
-          .map((json) => UserNotification.fromJson(jsonDecode(json), usersMap))
+      final matches = matchesJson
+          .map((json) => UserMatches.fromJson(jsonDecode(json), usersMap))
           .toList();
       
-      notifications.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+      matches.sort((a, b) => b.dateTime.compareTo(a.dateTime));
       
-      state = state.copyWith(notifications: notifications, isLoading: false);
+      state = state.copyWith(matches: matches, isLoading: false);
     } catch (e) {
       state = state.copyWith(
-        error: 'Error loading notifications: $e',
+        error: 'Error loading matches: $e',
         isLoading: false,
       );
     }
   }
 
-  Future<void> _saveNotifications() async {
-    try {
+  Future<void> _saveMatchesList() async {
       final prefs = await SharedPreferences.getInstance();
-      final notificationsJson = state.notifications
-          .map((notification) => jsonEncode(notification.toJson()))
+      final matchesJson = state.matches
+          .map((match) => jsonEncode(match.toJson()))
           .toList();
       
-      await prefs.setStringList(_savedNotificationsKey, notificationsJson);
-    } catch (e) {
-      print('Error saving notifications: $e');
-    }
+      await prefs.setStringList(_savedMatchesKey, matchesJson);
+
   }
 
   Future<void> loadMatchesFromServer() async {
@@ -189,8 +186,6 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       int statusCode = 400;
       
       for (var endpoint in endpointsToTry) {
-        try {
-          print('Trying GET endpoint: $endpoint');
           final response = await http.get(
             endpoint,
             headers: {'Content-Type': 'application/json'},
@@ -198,19 +193,9 @@ class NotificationsController extends StateNotifier<NotificationsState> {
           
           responseBody = response.body;
           statusCode = response.statusCode;
-          
-          if (statusCode == 200) {
-            print('Success with endpoint: $endpoint');
-            break;
-          }
-        } catch (e) {
-          print('Error with endpoint $endpoint: $e');
-        }
       }
       
       if (statusCode != 200 || responseBody == null) {
-        try {
-          print('Trying POST request to /matches');
           final response = await http.post(
             Uri.parse('$_serverUrl/matches'),
             headers: {'Content-Type': 'application/json'},
@@ -220,15 +205,11 @@ class NotificationsController extends StateNotifier<NotificationsState> {
           responseBody = response.body;
           statusCode = response.statusCode;
           
-          if (statusCode == 200) {
-            print('Success with POST request');
-          }
-        } catch (e) {
-          print('Error with POST request: $e');
-        }
+
+
       }
       
-      if (statusCode != 200 || responseBody == null) {
+      if (statusCode != 200) {
         state = state.copyWith(
           error: 'Failed to load matches: $statusCode',
           isLoading: false,
@@ -238,13 +219,10 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       }
       
       state = state.copyWith(lastServerResponse: responseBody);
-      print('Matches response: $responseBody');
-      
       final dynamic matchesData;
       try {
         matchesData = jsonDecode(responseBody);
       } catch (e) {
-        print('JSON decode error: $e');
         state = state.copyWith(
           error: 'Invalid JSON response: $e',
           isLoading: false,
@@ -290,8 +268,7 @@ class NotificationsController extends StateNotifier<NotificationsState> {
         }
       }
       
-      print('Extracted ${matchMaps.length} match objects');
-      
+
       if (matchMaps.isEmpty) {
         state = state.copyWith(isLoading: false);
         return;
@@ -299,82 +276,69 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       
       List<Match> matches = [];
       for (var matchMap in matchMaps) {
-        try {
           if (matchMap.containsKey('user1Id') && matchMap.containsKey('user2Id')) {
             final user1Id = matchMap['user1Id'].toString();
             final user2Id = matchMap['user2Id'].toString();
             matches.add(Match(user1Id: user1Id, user2Id: user2Id));
           }
-        } catch (e) {
-          print('Error creating Match from $matchMap: $e');
-        }
+
       }
       
       final userMatches = matches.where((match) => 
           match.user1Id == currentUserId || match.user2Id == currentUserId).toList();
       
-      print('Found ${userMatches.length} matches for user $currentUserId');
-      
+
       if (userMatches.isEmpty) {
         state = state.copyWith(isLoading: false);
         return;
       }
       
       final users = await ref.read(usersProvider.future);
-      print('Loaded ${users.length} users');
-      
+
       final usersMap = {for (var user in users) user.id: user};
       
-      print('Available user IDs: ${usersMap.keys.join(', ')}');
-      
+
       for (var match in userMatches) {
         final partnerId = match.user1Id == currentUserId ? match.user2Id : match.user1Id;
         
         if (partnerId == currentUserId) {
-          print('Skipping self-match for user $currentUserId');
           continue;
         }
         
-        print('Processing match with partner ID: $partnerId');
-        
+
         final matchedUser = usersMap[partnerId];
         if (matchedUser != null) {
-          final existingNotificationIndex = state.notifications
-              .indexWhere((notification) => notification.user.id == partnerId);
+          final existingmatchIndex = state.matches
+              .indexWhere((match) => match.user.id == partnerId);
           
-          if (existingNotificationIndex == -1) {
-            print('Creating notification for match with user $partnerId (${matchedUser.name})');
-            final notification = UserNotification(
+          if (existingmatchIndex == -1) {
+            final match = UserMatches(
               id: 'match_${partnerId}_${DateTime.now().millisecondsSinceEpoch}',
               user: matchedUser,
               dateTime: DateTime.now(),
               message: 'Вы нашли тренировочного партнера! ${matchedUser.name} также хочет тренироваться с вами.',
             );
             
-            final updatedNotifications = [...state.notifications, notification];
+            final updatedmatches = [...state.matches, match];
             state = state.copyWith(
-              notifications: updatedNotifications,
+              matches: updatedmatches,
               error: null,
             );
           } else {
-            print('Notification for user $partnerId already exists');
           }
-        } else {
-          print('WARNING: User $partnerId not found in users list');
         }
       }
       
-      final sortedNotifications = [...state.notifications]
+      final sortedmatches = [...state.matches]
         ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
       
       state = state.copyWith(
-        notifications: sortedNotifications,
+        matches: sortedmatches,
         isLoading: false,
       );
       
-      await _saveNotifications();
+      await _saveMatchesList();
     } catch (e) {
-      print('Error loading matches: $e');
       state = state.copyWith(
         error: 'Error loading matches: $e',
         isLoading: false,
@@ -382,40 +346,39 @@ class NotificationsController extends StateNotifier<NotificationsState> {
     }
   }
 
-  Future<void> addNotification(UserNotification notification) async {
-    final updatedNotifications = [...state.notifications, notification];
-    state = state.copyWith(notifications: updatedNotifications);
-    await _saveNotifications();
+  Future<void> addMatch(UserMatches match) async {
+    final updatedmatches = [...state.matches, match];
+    state = state.copyWith(matches: updatedmatches);
+    await _saveMatchesList();
   }
 
-  Future<void> markAsRead(String notificationId) async {
-    final updatedNotifications = state.notifications.map((notification) {
-      if (notification.id == notificationId) {
-        return notification.copyWith(isRead: true);
+  Future<void> markAsRead(String matchId) async {
+    final updatedmatches = state.matches.map((match) {
+      if (match.id == matchId) {
+        return match.copyWith(isRead: true);
       }
-      return notification;
+      return match;
     }).toList();
     
-    state = state.copyWith(notifications: updatedNotifications);
-    await _saveNotifications();
+    state = state.copyWith(matches: updatedmatches);
+    await _saveMatchesList();
   }
 
   Future<void> markAllAsRead() async {
-    final updatedNotifications = state.notifications.map((notification) {
-      return notification.copyWith(isRead: true);
+    final updatedmatches = state.matches.map((match) {
+      return match.copyWith(isRead: true);
     }).toList();
     
-    state = state.copyWith(notifications: updatedNotifications);
-    await _saveNotifications();
+    state = state.copyWith(matches: updatedmatches);
+    await _saveMatchesList();
   }
 
-  Future<void> ensureNotificationsStateConsistency() async {
-    try {
+  Future<void> ensureMatchesStateConsistency() async {
       final prefs = await SharedPreferences.getInstance();
-      final savedJson = prefs.getStringList(_savedNotificationsKey) ?? [];
+      final savedJson = prefs.getStringList(_savedMatchesKey) ?? [];
       
       if (savedJson.isEmpty) {
-        await _saveNotifications();
+        await _saveMatchesList();
         return;
       }
       
@@ -423,26 +386,23 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       final users = await ref.read(usersProvider.future);
       final usersMap = {for (var user in users) user.id: user};
       
-      List<UserNotification> savedNotifications = [];
+      List<UserMatches> savedmatches = [];
       for (var json in savedJson) {
-        try {
           final decoded = jsonDecode(json);
           if (usersMap.containsKey(decoded['userId'])) {
-            savedNotifications.add(UserNotification.fromJson(decoded, usersMap));
+            savedmatches.add(UserMatches.fromJson(decoded, usersMap));
           }
-        } catch (e) {
-          print('Error parsing saved notification: $e');
-        }
+
       }
       
-      if (savedNotifications.length != state.notifications.length) {
+      if (savedmatches.length != state.matches.length) {
         needsUpdate = true;
       } else {
         final Map<String, bool> stateReadStatus = {
-          for (var n in state.notifications) n.id: n.isRead
+          for (var n in state.matches) n.id: n.isRead
         };
         final Map<String, bool> savedReadStatus = {
-          for (var n in savedNotifications) n.id: n.isRead
+          for (var n in savedmatches) n.id: n.isRead
         };
         
         for (var id in stateReadStatus.keys) {
@@ -456,46 +416,44 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       
       if (needsUpdate) {
         final Map<String, bool> savedReadStatus = {
-          for (var n in savedNotifications) n.id: n.isRead
+          for (var n in savedmatches) n.id: n.isRead
         };
         
-        final updatedNotifications = state.notifications.map((notification) {
-          if (savedReadStatus.containsKey(notification.id)) {
-            return notification.copyWith(isRead: savedReadStatus[notification.id]);
+        final updatedmatches = state.matches.map((match) {
+          if (savedReadStatus.containsKey(match.id)) {
+            return match.copyWith(isRead: savedReadStatus[match.id]);
           }
-          return notification;
+          return match;
         }).toList();
         
-        state = state.copyWith(notifications: updatedNotifications);
+        state = state.copyWith(matches: updatedmatches);
       }
       
-      await _saveNotifications();
-    } catch (e) {
-      print('Error ensuring notification state consistency: $e');
-    }
+      await _saveMatchesList();
+
   }
 
-  Future<void> removeNotification(String notificationId) async {
-    final updatedNotifications = state.notifications
-        .where((notification) => notification.id != notificationId)
+  Future<void> removematch(String matchId) async {
+    final updatedmatches = state.matches
+        .where((match) => match.id != matchId)
         .toList();
     
-    state = state.copyWith(notifications: updatedNotifications);
-    await _saveNotifications();
+    state = state.copyWith(matches: updatedmatches);
+    await _saveMatchesList();
   }
 
   Future<void> clearAll() async {
-    state = state.copyWith(notifications: []);
-    await _saveNotifications();
+    state = state.copyWith(matches: []);
+    await _saveMatchesList();
   }
 
   Future<void> refresh() async {
-    await _loadNotifications();
+    await _loadmatches();
     await loadMatchesFromServer();
   }
 
-  Future<void> createTestNotification(User user) async {
-    final notification = UserNotification(
+  Future<void> createTestMatch(User user) async {
+    final match = UserMatches(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       user: user,
       dateTime: DateTime.now(),
@@ -503,14 +461,14 @@ class NotificationsController extends StateNotifier<NotificationsState> {
       message: 'Новое совпадение с ${user.name}!',
     );
     
-    await addNotification(notification);
+    await addMatch(match);
   }
 }
 
-final notificationsControllerProvider = StateNotifierProvider<NotificationsController, NotificationsState>((ref) {
-  return NotificationsController(ref);
+final matchesControllerProvider = StateNotifierProvider<matchesController, UserMatchesState>((ref) {
+  return matchesController(ref);
 });
 
-final unreadNotificationsCountProvider = Provider<int>((ref) {
-  return ref.watch(notificationsControllerProvider).unreadCount;
+final unreadMatchesCountProvider = Provider<int>((ref) {
+  return ref.watch(matchesControllerProvider).unreadCount;
 });

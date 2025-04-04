@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // AI refactored and checked after by myself
 import 'user.dart';
-import 'notifications.dart';
+import 'matches_list.dart';
 
 class CardState {
   final int currentIndex;
@@ -209,7 +209,7 @@ final swipeProvider =
             orElse: () => throw Exception('User not found'),
           );
 
-          final notification = UserNotification(
+          final match = UserMatches(
             id: 'match_${matchedUser.id}_${DateTime.now().millisecondsSinceEpoch}',
             user: matchedUser,
             dateTime: DateTime.now(),
@@ -217,7 +217,7 @@ final swipeProvider =
             message: 'Вы нашли тренировочного партнера! ${matchedUser.name} также хочет тренироваться с вами.',
           );
 
-          await ref.read(notificationsControllerProvider.notifier).addNotification(notification);
+          await ref.read(matchesControllerProvider.notifier).addMatch(match);
 
           return SwipeResult(
             isMatch: true,

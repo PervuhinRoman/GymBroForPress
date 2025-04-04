@@ -2,7 +2,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbro/features/tinder/presentation/match/user_info.dart';
 
-import '../../controller/user.dart';
+import '../../domain/user.dart';
 
 class MatchContent extends StatelessWidget {
   final User matchedUser;

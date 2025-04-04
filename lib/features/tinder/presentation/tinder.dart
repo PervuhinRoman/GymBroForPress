@@ -6,9 +6,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../controller/user.dart' as u;
-import '../controller/swiper.dart';
-import '../controller/notifications.dart';
+import '../domain/user.dart' as u;
+import '../domain/swiper.dart';
+import '../domain/matches_list.dart';
 import 'match/match_pop_up.dart';
 import 'tinder_ui_components.dart';
 
