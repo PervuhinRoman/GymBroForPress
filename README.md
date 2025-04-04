@@ -37,6 +37,8 @@ GymBro — это инновационное мобильное приложен
 - **Прочее:**: REST API, SharedPreferences, Firebase, Yandex mapkit,
 
 ## Примеры использования
+
+<img src="https://github.com/PervuhinRoman/GymBroForPress/blob/main/media/REC-20250404113225%2520(online-video-cutter.gif" width="180" height="400">
   
 ## Установка
 
