@@ -11,6 +11,7 @@ class PreferencesService {
   static const String _selectedDayKey = 'selected';
   static const String _focusedDayKey = 'focused';
   static const String _format = 'format';
+  static const String _gym = 'gym';
 
   static Future<void> init() async {
     try {
@@ -80,5 +81,15 @@ class PreferencesService {
   static Future<bool> setFormat(String format) async {
     Logger.log.i('Setting format to: $format');
     return await _preferences.setString(_format, format);
+  }
+
+  static Future<String?> getSelectedGym() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_gym);
+  }
+
+  static Future<void> setSelectedGym(String? gym) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_gym, gym ?? '');
   }
 }

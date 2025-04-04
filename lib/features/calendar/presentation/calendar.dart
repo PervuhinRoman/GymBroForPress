@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/features/calendar/domain/calendar_controller.dart';
+import 'package:gymbro/core/utils/preference_service.dart';
+import 'package:gymbro/features/calendar/domain/calendar_service.dart';
+import 'package:gymbro/features/calendar/presentation/custom_row.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,7 +19,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final controller = CalendarController();
+  final controller = CalendarService();
 
   late double _calendarHeight =
       controller.getCalendarHeightByFormat(controller.calendarFormat, context);
@@ -36,12 +40,20 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    _loadEvents();
+    _initializeGyms();
   }
 
-  Future<void> _loadEvents() async {
+  Future<void> _initializeGyms() async {
+    // Загружаем любимые залы из базы данных
+    await controller.loadFavouriteGyms();
     await controller.loadAllEventsFromDB();
-    setState(() {});
+
+    // Получаем выбранный зал из SharedPreferences (например, через ваш PreferencesService)
+    final savedGym = await PreferencesService
+        .getSelectedGym(); // или напрямую через SharedPreferences
+    setState(() {
+      controller.selectedGym = savedGym;
+    });
   }
 
   @override
@@ -124,6 +136,7 @@ class _CalendarState extends State<Calendar> {
             SliverAppBar(
               automaticallyImplyLeading: false,
               expandedHeight: screenHeight / 3.5,
+              toolbarHeight: screenHeight / 3.5,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               pinned: false,
               flexibleSpace: FlexibleSpaceBar(
@@ -155,12 +168,14 @@ class _CalendarState extends State<Calendar> {
                                     child:
                                         const Icon(Icons.keyboard_arrow_down),
                                   ),
-                                  onChanged: (value) {
+                                  onChanged: (value) async {
                                     setState(() {
                                       controller.selectedGym = value;
                                     });
+                                    // Сохраняем выбранный зал в SharedPreferences
+                                    await PreferencesService.setSelectedGym(
+                                        value);
                                   },
-                                  //оставил специально из за l10n
                                   items: controller.gyms.isEmpty
                                       ? [
                                           DropdownMenuItem(
@@ -180,48 +195,14 @@ class _CalendarState extends State<Calendar> {
                             ),
                           ),
                           Spacer(),
-                          Padding(
-                            padding: EdgeInsets.only(right: screenWidth / 200),
-                            child: IconButton(
-                              icon: Icon(Icons.people),
-                              onPressed: () {
-                                setState(() {});
-                              },
-                            ),
-                          ),
                         ],
                       ),
                     ),
                     SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.amber,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColors.greenPrimary,
-                            ),
-                            height: screenWidth / 2.7,
-                            width: screenWidth / 2.7,
-                          ),
-                        )
-                      ],
-                    ),
+                    CustomRowOfElements(
+                        screenHeight: screenHeight, screenWidth: screenWidth),
                   ],
                 ),
               ),

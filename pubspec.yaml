@@ -71,6 +71,8 @@ dev_dependencies:
   riverpod_lint: ^2.6.5
   build_runner: ^2.1.2
   json_serializable: ^6.0.1
+  flutter_launcher_icons: ^0.13.1
+  mocktail: ^1.0.4
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -80,6 +82,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF" # android min sdk min:16, default 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
