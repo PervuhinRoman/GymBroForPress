@@ -113,12 +113,13 @@ class _EditableDisplayFieldState extends ConsumerState<EditableDisplayField> {
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             ),
+            onSubmitted: (_) => ref.read(editModeProvider.notifier).setEditMode(false),
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.check),
-          onPressed: () => ref.read(editModeProvider.notifier).setEditMode(false),
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.check),
+        //   onPressed: () => ref.read(editModeProvider.notifier).setEditMode(false),
+        // ),
       ],
     );
   }
