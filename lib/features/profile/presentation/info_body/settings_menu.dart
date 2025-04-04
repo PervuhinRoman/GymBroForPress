@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
 import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/features/auth/domain/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsMenu extends ConsumerWidget {
   const SettingsMenu({super.key});
@@ -14,7 +15,7 @@ class SettingsMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
       icon: Icon(Icons.settings),
-      tooltip: 'Show settings',
+      tooltip: AppLocalizations.of(context)!.showAppSettings,
       onPressed: () {
         _showSettings(context, ref);
       }
@@ -22,6 +23,7 @@ class SettingsMenu extends ConsumerWidget {
   }
 
   Future<dynamic> _showSettings(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return showModalBottomSheet(
         showDragHandle: true,
         context: context,
@@ -44,7 +46,7 @@ class SettingsMenu extends ConsumerWidget {
                               Icon(Icons.language),
                               SizedBox(width: sepPadding,),
                               Text(
-                                'Change language', 
+                                l10n.changeLanguage, 
                                 style: contextTheme.textTheme.bodyMedium?.copyWith(
                                   color: contextTheme.colorScheme.onTertiary,
                                 ),
@@ -61,7 +63,7 @@ class SettingsMenu extends ConsumerWidget {
                               Icon(Icons.brightness_6),
                               SizedBox(width: sepPadding,),
                               Text(
-                                'Change app theme',
+                                l10n.changeAppTheme,
                                 style: contextTheme.textTheme.bodyMedium?.copyWith(
                                   color: contextTheme.colorScheme.onTertiary,
                                 ), 
@@ -78,7 +80,7 @@ class SettingsMenu extends ConsumerWidget {
                               Icon(Icons.logout, color: Theme.of(context).colorScheme.error,),
                               SizedBox(width: sepPadding,),
                               Text(
-                                'Sign Out',
+                                l10n.signOut,
                                 style: contextTheme.textTheme.bodyMedium?.copyWith(
                                   color: contextTheme.colorScheme.onTertiary,
                                 ), 
@@ -104,16 +106,17 @@ class SettingsMenu extends ConsumerWidget {
 
   // Диалоговое окно для выбора темы
   void _showThemeSelector(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Select Theme'),
+          title: Text(l10n.selectAppTheme),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: const Text('System'),
+                title: Text(l10n.systemAppTheme),
                 onTap: () {
                   ref
                       .read(appSettingsNotifierProvider.notifier)
@@ -122,7 +125,7 @@ class SettingsMenu extends ConsumerWidget {
                 },
               ),
               ListTile(
-                title: const Text('Light'),
+                title: Text(l10n.lightAppTheme),
                 onTap: () {
                   ref
                       .read(appSettingsNotifierProvider.notifier)
@@ -131,7 +134,7 @@ class SettingsMenu extends ConsumerWidget {
                 },
               ),
               ListTile(
-                title: const Text('Dark'),
+                title: Text(l10n.darkAppTheme),
                 onTap: () {
                   ref
                       .read(appSettingsNotifierProvider.notifier)
@@ -147,11 +150,12 @@ class SettingsMenu extends ConsumerWidget {
   }
 
   void _showLanguageSelector(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Select Language'),
+          title: Text(l10n.selectLanguage),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -162,6 +166,7 @@ class SettingsMenu extends ConsumerWidget {
                       .read(appSettingsNotifierProvider.notifier)
                       .setLocale(const Locale('en'));
                   Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -170,6 +175,7 @@ class SettingsMenu extends ConsumerWidget {
                   ref
                       .read(appSettingsNotifierProvider.notifier)
                       .setLocale(const Locale('ru'));
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
               ),
