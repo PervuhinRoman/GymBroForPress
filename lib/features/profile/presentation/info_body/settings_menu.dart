@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
+import 'package:gymbro/core/utils/routes.dart';
+import 'package:gymbro/features/auth/domain/auth_service.dart';
 
 class SettingsMenu extends ConsumerWidget {
   const SettingsMenu({super.key});
@@ -68,6 +70,25 @@ class SettingsMenu extends ConsumerWidget {
                           ),
                           onPressed: () { 
                             _showThemeSelector(context, ref);
+                          },
+                        ),
+                        TextButton(
+                          child: Row(
+                            children: [
+                              Icon(Icons.logout, color: Theme.of(context).colorScheme.error,),
+                              SizedBox(width: sepPadding,),
+                              Text(
+                                'Sign Out',
+                                style: contextTheme.textTheme.bodyMedium?.copyWith(
+                                  color: contextTheme.colorScheme.onTertiary,
+                                ), 
+                              ),
+                            ]
+                          ),
+                          onPressed: () async { 
+                            await AuthService().signOut();
+                            Navigator.popUntil(context, ModalRoute.withName(RouteNames.auth));
+                            Navigator.pushNamed(context, RouteNames.auth);
                           },
                         ),
                       ],
