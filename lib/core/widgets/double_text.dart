@@ -26,30 +26,27 @@ class DoubleTextDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(0),
-      child: Column(
-        crossAxisAlignment: alignment,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 350, // KISS
-            child: Text(
-              topText,
-              maxLines: null,
-              style: topStyle ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: topColor ?? Colors.black,
-              ),
+    return Column(
+      crossAxisAlignment: alignment,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 350, // KISS
+          child: Text(
+            topText,
+            maxLines: null,
+            style: topStyle ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: topColor ?? Colors.black,
             ),
           ),
-          Text(
-            bottomText,
-            style: bottomStyle ?? Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: bottomColor ?? Colors.black,
-                ),
-          ),
-        ],
-      ),
+        ),
+        Text(
+          bottomText,
+          style: bottomStyle ?? Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: bottomColor ?? Colors.black,
+              ),
+        ),
+      ],
     );
   }
 }
