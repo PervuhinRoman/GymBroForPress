@@ -74,123 +74,127 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final unreadCount = ref.watch(unreadMatchesCountProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _selectedIndex == 0
-              ? l10n.homePageTitle
-              : _selectedIndex == 1
-              ? l10n.workoutPageTitle
-              : 'AI-trainer',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w500),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: CircleAvatar(
-            radius: 15.0,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.onPrimary,
-              size: 20,
-            ),
-          ),
-          onPressed: () => Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                const ProfilePage(),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  final fadeTween = Tween<double>(begin: 0.0, end: 1.0);
-                  return FadeTransition(
-                    opacity: animation.drive(fadeTween),
-                    child: child,
-                  );
-                },
-              )
-          ),
-        ),
-        actions: [
-          if (_selectedIndex == 1) ...[
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  color: Theme.of(context).colorScheme.primary,
-                  tooltip: 'Уведомления',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-
-
-                      MaterialPageRoute(
-                        builder: (context) => const MatchesListScreen(),
-                      ),
-                    );
-                  },
-                  onLongPress: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Создаю тестовое уведомление...')),
-                    );
-
-                    ref.read(u.usersProvider.future).then((users) {
-                      if (users.isNotEmpty) {
-                        final testUser = users.first;
-                        ref.read(matchesControllerProvider.notifier)
-                            .createTestMatch(testUser);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Тестовое уведомление создано')),
-                        );
-                      }
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Ошибка: $error')),
-                      );
-                    });
-                  },
-                ),
-                if (unreadCount > 0)
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.error,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
-                      child: Text(
-                        unreadCount > 9 ? '9+' : unreadCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+      appBar: _selectedIndex == 2
+          ? null
+          : AppBar(
+              title: Text(
+                _selectedIndex == 0
+                    ? l10n.homePageTitle
+                    : _selectedIndex == 1
+                        ? l10n.workoutPageTitle
+                        : 'AI-trainer',
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: CircleAvatar(
+                  radius: 15.0,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: Icon(
+                    Icons.person,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 20,
                   ),
+                ),
+                onPressed: () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const ProfilePage(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        final fadeTween = Tween<double>(begin: 0.0, end: 1.0);
+                        return FadeTransition(
+                          opacity: animation.drive(fadeTween),
+                          child: child,
+                        );
+                      },
+                    )),
+              ),
+              actions: [
+                if (_selectedIndex == 1) ...[
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications),
+                        color: Theme.of(context).colorScheme.primary,
+                        tooltip: 'Уведомления',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MatchesListScreen(),
+                            ),
+                          );
+                        },
+                        onLongPress: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Создаю тестовое уведомление...')),
+                          );
+
+                          ref.read(u.usersProvider.future).then((users) {
+                            if (users.isNotEmpty) {
+                              final testUser = users.first;
+                              ref
+                                  .read(matchesControllerProvider.notifier)
+                                  .createTestMatch(testUser);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Тестовое уведомление создано')),
+                              );
+                            }
+                          }).catchError((error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Ошибка: $error')),
+                            );
+                          });
+                        },
+                      ),
+                      if (unreadCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.error,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              unreadCount > 9 ? '9+' : unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    color: Theme.of(context).colorScheme.primary,
+                    onPressed: () => _navigateToForm(context),
+                    tooltip: 'Моя анкета',
+                  ),
+                ],
               ],
             ),
-            IconButton(
-              icon: const Icon(Icons.edit),
-              color: Theme.of(context).colorScheme.primary,
-              onPressed: () => _navigateToForm(context),
-              tooltip: 'Моя анкета',
-            ),
-          ],
-        ],
-      ),
       body: TabBarView(
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
