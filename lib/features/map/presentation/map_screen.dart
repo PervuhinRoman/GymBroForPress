@@ -8,26 +8,37 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   body: Column(
-    //     mainAxisAlignment: MainAxisAlignment.end,
-    //     children: [
-    //       SizedBox(height: 64),
-    //       Expanded(child: Map()),
-    //       SelectButton(),
-    //     ],
-    //   ),
-    // );
-    return
-      Scaffold(
-          body: Center(
-            child: PercentageIndicator(
-              percentage: 80,
-              height: 150,
-              width: 200,
-              title: "Низкая загруженность",
-              subtitle: "Есть более свободные",
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).padding.top),
+          // Кнопка назад
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
-          ));
+          ),
+          // Карта
+          Expanded(child: Map()),
+          SelectButton(),
+        ],
+      ),
+    );
+    // return
+    //   Scaffold(
+    //       body: Center(
+    //         child: PercentageIndicator(
+    //           percentage: 80,
+    //           height: 150,
+    //           width: 200,
+    //           title: "Низкая загруженность",
+    //           subtitle: "Есть более свободные",
+    //         ),
+    //       ));
   }
 }
