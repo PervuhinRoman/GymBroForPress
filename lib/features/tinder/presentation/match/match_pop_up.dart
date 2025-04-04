@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
-import 'package:gymbro/features/tinder/presentation/match/title_content.dart';
+import 'package:gymbro/features/tinder/presentation/match/match_title.dart';
 import '../../domain/user.dart';
 import 'background_icons.dart';
-import 'match_title.dart';
 
 class MatchPopup extends StatelessWidget {
   final User matchedUser;

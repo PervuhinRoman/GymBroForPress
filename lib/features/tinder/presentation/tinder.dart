@@ -10,7 +10,7 @@ import '../domain/user.dart' as u;
 import '../domain/swiper.dart';
 import '../domain/matches_list.dart';
 import 'match/match_pop_up.dart';
-import 'tinder_ui_components.dart';
+import 'tinder_widgets.dart';
 
 class TinderScreen extends ConsumerWidget {
   const TinderScreen({super.key});

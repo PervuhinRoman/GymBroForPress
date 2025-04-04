@@ -6,7 +6,7 @@ import 'package:gymbro/core/utils/routes.dart';
 import 'package:gymbro/core/widgets/custom_app_bar.dart';
 import 'package:gymbro/features/ai_chat/presentation/screens/aiml_chat_screen.dart';
 import 'package:gymbro/features/profile/presentation/profile_page.dart';
-import 'package:gymbro/features/tinder/presentation/form_widgets/form.dart';
+import 'package:gymbro/features/tinder/presentation/form/form.dart';
 
 import '../../../../core/providers/tinder_providers.dart';
 import '../../../calendar/presentation/calendar.dart';
@@ -14,7 +14,7 @@ import '../../../tinder/domain/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
 import '../../../tinder/domain/matches_list.dart';
 import '../../../tinder/domain/user.dart' as u;
-import '../../../tinder/presentation/matchesList/matches_screen.dart';
+import '../../../tinder/presentation/matches_list/matches_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;
@@ -127,7 +127,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsScreen(),
+                        builder: (context) => const MatchesListScreen(),
                       ),
                     );
                   },

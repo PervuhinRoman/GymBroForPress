@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:gymbro/features/tinder/presentation/form_widgets/sections/personal_info_section.dart';
-import 'package:gymbro/features/tinder/presentation/form_widgets/save_button.dart';
-import 'package:gymbro/features/tinder/presentation/form_widgets/sections/title.dart';
-import 'package:gymbro/features/tinder/presentation/form_widgets/sections/training_preferences_section.dart';
+import 'package:gymbro/features/tinder/presentation/form/sections/personal_info_section.dart';
+import 'package:gymbro/features/tinder/presentation/form/save_button.dart';
+import 'package:gymbro/features/tinder/presentation/form/sections/title.dart';
+import 'package:gymbro/features/tinder/presentation/form/sections/training_preferences_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'sections/contact_section.dart';
