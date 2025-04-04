@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
 import 'package:gymbro/core/providers/app_settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/core/theme/app_theme.dart';
