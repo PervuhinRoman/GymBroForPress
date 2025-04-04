@@ -29,16 +29,5 @@ class MapScreen extends StatelessWidget {
         ],
       ),
     );
-    // return
-    //   Scaffold(
-    //       body: Center(
-    //         child: PercentageIndicator(
-    //           percentage: 80,
-    //           height: 150,
-    //           width: 200,
-    //           title: "Низкая загруженность",
-    //           subtitle: "Есть более свободные",
-    //         ),
-    //       ));
   }
 }
