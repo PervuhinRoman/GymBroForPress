@@ -198,46 +198,39 @@ final swipeProvider =
       if (isMatch) {
         final matchData = responseData['match'] as Map<String, dynamic>;
         final matchId = matchData['id']?.toString() ?? '';
+        await ref.read(matchesControllerProvider.notifier).processNewMatch(matchData);
+        
+        final usersList = await ref.read(usersProvider.future);
+        final currentUserId = request.swiperId;
+        final partnerId = matchData['user1Id'] == currentUserId ? matchData['user2Id'] : matchData['user1Id'];
+        
+        User? matchedUser;
+        try {
+          matchedUser = usersList.firstWhere(
+            (user) => user.id == partnerId,
+            orElse: () => throw Exception('Matched user not found'),
+          );
+        } catch (e) {
+          print('Error finding matched user: $e');
+          return SwipeResult(
+            isMatch: true,
+            hasError: true,
+            errorMessage: 'Matched user not found: $e',
+          );
+        }
+        
         final matchHistoryController = MatchHistoryController();
         await matchHistoryController.initialize();
 
         if (!matchHistoryController.isMatchShown(matchId)) {
           await matchHistoryController.markMatchAsShown(matchId);
 
-          await ref.read(matchesControllerProvider.notifier).processNewMatch(matchData);
-          
-          final usersList = await ref.read(usersProvider.future);
-          
-          final currentUserId = request.swiperId;
-          final partnerId = matchData['user1Id'] == currentUserId ? matchData['user2Id'] : matchData['user1Id'];
-          
-          final matchedUser = usersList.firstWhere(
-            (user) => user.id == partnerId,
-            orElse: () => throw Exception('Matched user not found'),
-          );
-
           return SwipeResult(
             isMatch: true,
             matchedUser: matchedUser,
           );
         } else {
-          final usersList = await ref.read(usersProvider.future);
-          final currentUserId = request.swiperId;
-          final partnerId = matchData['user1Id'] == currentUserId ? matchData['user2Id'] : matchData['user1Id'];
-          
-          try {
-            final matchedUser = usersList.firstWhere(
-              (user) => user.id == partnerId,
-              orElse: () => throw Exception('Matched user not found'),
-            );
-            
-            return SwipeResult(
-              isMatch: true,
-              matchedUser: matchedUser,
-            );
-          } catch (e) {
-            print('Error finding matched user: $e');
-          }
+          return SwipeResult(isMatch: true);
         }
       }
 

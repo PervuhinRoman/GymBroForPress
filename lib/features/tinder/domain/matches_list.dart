@@ -395,55 +395,65 @@ class MatchesController extends StateNotifier<UserMatchesState> {
       if (currentUser == null) {
         return;
       }
-
+      
       final currentUserId = currentUser.uid;
-
+      
       if (!matchData.containsKey('user1Id') || !matchData.containsKey('user2Id')) {
         return;
       }
-
+      
       final user1Id = matchData['user1Id'].toString();
       final user2Id = matchData['user2Id'].toString();
-
+      
       if (user1Id != currentUserId && user2Id != currentUserId) {
         return;
       }
-
+      
       final partnerId = user1Id == currentUserId ? user2Id : user1Id;
-
       final users = await ref.read(usersProvider.future);
       final usersMap = {for (var user in users) user.id: user};
-
+      
       final matchedUser = usersMap[partnerId];
       if (matchedUser == null) {
         return;
       }
-
+      
       final existingMatchIndex = state.matches
           .indexWhere((match) => match.user.id == partnerId);
-
+      
       if (existingMatchIndex == -1) {
+        final matchId = 'match_${partnerId}_${DateTime.now().millisecondsSinceEpoch}';
         final match = UserMatches(
-          id: 'match_${partnerId}_${DateTime.now().millisecondsSinceEpoch}',
+          id: matchId,
           user: matchedUser,
           dateTime: DateTime.now(),
           isRead: false,
           message: 'Вы нашли тренировочного партнера! ${matchedUser.name} также хочет тренироваться с вами.',
         );
-
-        // Добавляем матч и сохраняем
+        
         final updatedMatches = [...state.matches, match];
         state = state.copyWith(
           matches: updatedMatches,
           error: null,
         );
-
+        
         final sortedMatches = [...state.matches]
           ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
-
+        
         state = state.copyWith(matches: sortedMatches);
         await _saveMatchesList();
       } else {
+        final match = state.matches[existingMatchIndex];
+        print('Матч с пользователем $partnerId уже существует (ID: ${match.id})');
+        
+        if (!match.isRead) {
+          final updatedMatches = [...state.matches];
+          updatedMatches[existingMatchIndex] = match.copyWith(
+            dateTime: DateTime.now(),
+          );
+          state = state.copyWith(matches: updatedMatches);
+          await _saveMatchesList();
+        }
       }
     } catch (e) {
     }
