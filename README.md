@@ -31,7 +31,7 @@ GymBro — это инновационное мобильное приложен
 Перечень технологий, используемых в проекте:
 - **Язык программирования:**:Dart.
 - **Фреймворки:** Flutter.
-- **База данных:** sqflite, сервер на Golang.
+- **Хранение данных:** sqflite, сервер на Golang.
 - **Инструменты DevOps:** CI/CD, linter,
 - **DI, State manager**: riverpod, 
 - **Прочее:**: REST API, SharedPreferences, Firebase, Yandex mapkit,
