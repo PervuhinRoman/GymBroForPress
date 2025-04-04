@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
 import 'package:gymbro/core/utils/preference_service.dart';
 import 'package:gymbro/core/widgets/training_template.dart';
-import 'package:gymbro/features/calendar/bd.dart';
+import 'package:gymbro/features/calendar/models/bd.dart';
+import 'package:gymbro/features/calendar/models/dot_on_map_model.dart';
 import 'package:gymbro/features/calendar/models/training_model.dart';
 import 'package:gymbro/features/calendar/presentation/tags.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-class CalendarController {
-  CalendarController() {
-    PreferencesService.init();
-  }
-
+class CalendarService {
   int selectedTrainingIndex = 0;
 
   DateTime focusedDay = DateTime.parse(PreferencesService.getFocusedDay());
@@ -22,6 +19,8 @@ class CalendarController {
 
   final newEventController = TextEditingController();
   final newTimeEventController = TextEditingController();
+
+  List<String> gyms = [];
 
   Map<DateTime, List<TrainingTemplate>> events = {};
 
@@ -50,6 +49,21 @@ class CalendarController {
   void changeFocusedDay(DateTime day) {
     PreferencesService.setFocusedDay(DateFormat('yyyy-MM-dd').format(day));
     focusedDay = day;
+  }
+
+  Future<void> loadFavouriteGyms() async {
+    List<DotOnMapModel> newGyms =
+        await DatabaseHelper.instance.getFavouriteDots();
+    gyms = newGyms.map((dot) => dot.id).toList();
+  }
+
+  Future<void> updateGym(String id, bool isFavourite) async {
+    await DatabaseHelper.instance.updateDotFavourite(id, isFavourite);
+    await loadFavouriteGyms();
+    if (!gyms.contains(selectedGym)) {
+      selectedGym = null;
+      await PreferencesService.setSelectedGym(null);
+    }
   }
 
   Future<void> loadAllEventsFromDB() async {
@@ -139,8 +153,6 @@ class CalendarController {
     return events[normalizedDay] ?? [];
   }
 
-  List<String> gyms = [];
-
   void addGym(String gym) {
     gyms.add(gym);
   }
@@ -166,6 +178,17 @@ class CalendarController {
     );
     final normalizedDay = normalizeDate(selectedDay);
     events[normalizedDay] = [...(events[normalizedDay] ?? []), newEvent];
+  }
+
+  Future<void> saveGym(
+      String id, String latitude, String longitude, bool isFavourite) async {
+    final modelMy = DotOnMapModel(
+        longitude: longitude,
+        latitude: latitude,
+        isFavourite: isFavourite,
+        id: id);
+
+    await DatabaseHelper.instance.createDot(modelMy);
   }
 
   void dispose() {

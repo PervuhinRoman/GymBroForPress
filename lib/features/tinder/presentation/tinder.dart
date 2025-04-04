@@ -20,44 +20,12 @@ class TinderScreen extends ConsumerWidget {
     final usersAsync = ref.watch(u.usersProvider);
     final cardState = ref.watch(cardStateProvider);
     final usersState = ref.watch(u.usersControllerProvider);
-    final lastUpdatedFormatted = DateFormat.Hm().format(usersState.lastUpdated);
 
     return Scaffold(
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Updated: $lastUpdatedFormatted',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    if (usersState.isLoading)
-                      Container(
-                        margin: const EdgeInsets.only(left: 8),
-                        width: 16,
-                        height: 16,
-                        child: const CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                  ],
-                ),
-                usersAsync.when(
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, __) => const SizedBox.shrink(),
-                  data: (users) {
-                    if (users.isEmpty) return const SizedBox.shrink();
-                    return Text(
-                      '${cardState.currentIndex + 1}/${users.length}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    );
-                  },
-                ),
-              ],
-            ),
           ),
           
           Expanded(

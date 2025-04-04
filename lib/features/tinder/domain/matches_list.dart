@@ -185,14 +185,10 @@ class MatchesController extends StateNotifier<UserMatchesState> {
         Uri.parse('$_serverUrl/matches'),  // без параметров
       ];
 
-      // Переменные для хранения ответа
       String? responseBody;
       int statusCode = 400;
 
-      // Пробуем GET запросы
       for (var endpoint in endpointsToTry) {
-        try {
-          print('Trying endpoint: $endpoint');
           final response = await http.get(
             endpoint,
             headers: {'Content-Type': 'application/json'},
@@ -202,18 +198,12 @@ class MatchesController extends StateNotifier<UserMatchesState> {
           statusCode = response.statusCode;
 
           if (statusCode == 200) {
-            print('Success with endpoint: $endpoint');
             break;
           }
-        } catch (e) {
-          print('Error with endpoint $endpoint: $e');
-        }
+
       }
 
-      // Если GET запросы не сработали, пробуем POST запрос
       if (statusCode != 200 || responseBody == null) {
-        try {
-          print('Trying POST request to /matches');
           final response = await http.post(
             Uri.parse('$_serverUrl/matches'),
             headers: {'Content-Type': 'application/json'},
@@ -223,16 +213,11 @@ class MatchesController extends StateNotifier<UserMatchesState> {
           responseBody = response.body;
           statusCode = response.statusCode;
 
-          if (statusCode == 200) {
-            print('Success with POST request');
-          }
-        } catch (e) {
-          print('Error with POST request: $e');
-        }
+
+
       }
 
-      // Проверяем результат всех попыток
-      if (statusCode != 200 || responseBody == null) {
+      if (statusCode != 200) {
         state = state.copyWith(
           error: 'Failed to load matches: $statusCode',
           isLoading: false,
@@ -241,11 +226,8 @@ class MatchesController extends StateNotifier<UserMatchesState> {
         return;
       }
 
-      // Сохраняем ответ для отладки
       state = state.copyWith(lastServerResponse: responseBody);
-      print('Matches response: $responseBody');
 
-      // Парсим JSON
       dynamic matchesData;
       try {
         matchesData = jsonDecode(responseBody);
@@ -300,7 +282,6 @@ class MatchesController extends StateNotifier<UserMatchesState> {
         }
       }
 
-      print('Extracted ${matchMaps.length} match objects');
 
       if (matchMaps.isEmpty) {
         state = state.copyWith(isLoading: false);
@@ -310,45 +291,34 @@ class MatchesController extends StateNotifier<UserMatchesState> {
       // Создаем объекты матчей
       List<Match> matches = [];
       for (var matchMap in matchMaps) {
-        try {
           if (matchMap.containsKey('user1Id') && matchMap.containsKey('user2Id')) {
             final user1Id = matchMap['user1Id'].toString();
             final user2Id = matchMap['user2Id'].toString();
             matches.add(Match(user1Id: user1Id, user2Id: user2Id));
           }
-        } catch (e) {
-          print('Error creating Match from $matchMap: $e');
-        }
+
       }
 
-      // Фильтруем матчи текущего пользователя
       final userMatches = matches.where((match) =>
           match.user1Id == currentUserId || match.user2Id == currentUserId).toList();
 
-      print('Found ${userMatches.length} matches for user $currentUserId');
 
       if (userMatches.isEmpty) {
         state = state.copyWith(isLoading: false);
         return;
       }
 
-      // Получаем информацию о пользователях
       final users = await ref.read(usersProvider.future);
-      print('Loaded ${users.length} users');
 
       final usersMap = {for (var user in users) user.id: user};
-      print('Available user IDs: ${usersMap.keys.join(', ')}');
 
-      // Обрабатываем каждый матч
       for (var match in userMatches) {
         final partnerId = match.user1Id == currentUserId ? match.user2Id : match.user1Id;
 
         if (partnerId == currentUserId) {
-          print('Skipping self-match for user $currentUserId');
           continue;
         }
 
-        print('Processing match with partner ID: $partnerId');
 
         final matchedUser = usersMap[partnerId];
         if (matchedUser != null) {
@@ -356,7 +326,6 @@ class MatchesController extends StateNotifier<UserMatchesState> {
               .indexWhere((match) => match.user.id == partnerId);
 
           if (existingMatchIndex == -1) {
-            print('Creating match notification for user $partnerId (${matchedUser.name})');
             final match = UserMatches(
               id: 'match_${partnerId}_${DateTime.now().millisecondsSinceEpoch}',
               user: matchedUser,
@@ -370,14 +339,11 @@ class MatchesController extends StateNotifier<UserMatchesState> {
               error: null,
             );
           } else {
-            print('Match for user $partnerId already exists');
           }
         } else {
-          print('WARNING: User $partnerId not found in users list');
         }
       }
 
-      // Сортируем матчи по времени
       final sortedMatches = [...state.matches]
         ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
@@ -388,7 +354,6 @@ class MatchesController extends StateNotifier<UserMatchesState> {
 
       await _saveMatchesList();
     } catch (e) {
-      print('Error loading matches: $e');
       state = state.copyWith(
         error: 'Error loading matches: $e',
         isLoading: false,
@@ -433,41 +398,31 @@ class MatchesController extends StateNotifier<UserMatchesState> {
 
       final currentUserId = currentUser.uid;
 
-      // Проверка валидности данных матча
       if (!matchData.containsKey('user1Id') || !matchData.containsKey('user2Id')) {
-        print('Некорректные данные матча: $matchData');
         return;
       }
 
-      // Получаем ID партнера
       final user1Id = matchData['user1Id'].toString();
       final user2Id = matchData['user2Id'].toString();
 
-      // Убеждаемся, что один из ID - это ID текущего пользователя
       if (user1Id != currentUserId && user2Id != currentUserId) {
-        print('Матч не содержит текущего пользователя: $currentUserId');
         return;
       }
 
-      // Определяем ID партнера
       final partnerId = user1Id == currentUserId ? user2Id : user1Id;
 
-      // Получаем список пользователей и находим партнера
       final users = await ref.read(usersProvider.future);
       final usersMap = {for (var user in users) user.id: user};
 
       final matchedUser = usersMap[partnerId];
       if (matchedUser == null) {
-        print('Партнер не найден: $partnerId');
         return;
       }
 
-      // Проверяем, есть ли уже такой матч
       final existingMatchIndex = state.matches
           .indexWhere((match) => match.user.id == partnerId);
 
       if (existingMatchIndex == -1) {
-        // Создаем новый матч
         final match = UserMatches(
           id: 'match_${partnerId}_${DateTime.now().millisecondsSinceEpoch}',
           user: matchedUser,
@@ -483,17 +438,14 @@ class MatchesController extends StateNotifier<UserMatchesState> {
           error: null,
         );
 
-        // Сортируем
         final sortedMatches = [...state.matches]
           ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
         state = state.copyWith(matches: sortedMatches);
         await _saveMatchesList();
       } else {
-        print('Матч с пользователем $partnerId уже существует');
       }
     } catch (e) {
-      print('Ошибка при обработке нового матча: $e');
     }
   }
 

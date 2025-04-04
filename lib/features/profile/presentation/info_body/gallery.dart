@@ -1,9 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:gymbro/features/profile/domain/photo_widget_service.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
+import 'package:gymbro/features/profile/presentation/info_body/photo_widget.dart';
 import 'info_wrapper.dart';
+import 'dart:io';
 
-ShaderCallback galleryShaderCallback() {
+ShaderCallback galleryShaderCallback = () {
   final Color op = Colors.white.withAlpha(255);
   final Color tr = Colors.white.withAlpha(0);
   final double trStop = 0.01;
@@ -15,29 +18,20 @@ ShaderCallback galleryShaderCallback() {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ).createShader(bounds);
-}
+}.call();
 
 class Gallery extends StatelessWidget implements InfoBody {
   const Gallery({
     super.key,
-    required this.photosUrls,
+    required this.photoPaths,
   });
 
-  final List<String>? photosUrls;
+  final List<String>? photoPaths;
   static const double _vertPadding = 16.0;
 
   @override
   Widget build(BuildContext context) {
     final contextTheme = Theme.of(context);
-
-    // TODO: catch exceptional behaviour
-    print(photosUrls);
-
-    if (photosUrls == null) {
-      print("no photos(");
-      return Placeholder();
-    }
-    // TODO END;
 
     return ColoredBox(
       color: contextTheme.colorScheme.secondary,
@@ -46,8 +40,8 @@ class Gallery extends StatelessWidget implements InfoBody {
         child: Stack(
           children: [
             ShaderMask(
-              shaderCallback: galleryShaderCallback(),
-              child: GalleryCarousel(photosUrls: photosUrls),
+              shaderCallback: galleryShaderCallback,
+              child: GalleryCarousel(photoPaths: photoPaths),
             ),
           ]
         ),
@@ -59,10 +53,10 @@ class Gallery extends StatelessWidget implements InfoBody {
 class GalleryCarousel extends StatelessWidget {
   const GalleryCarousel({
     super.key,
-    required this.photosUrls,
+    required this.photoPaths,
   });
 
-  final List<String>? photosUrls;
+  final List<String>? photoPaths;
 
   @override
   Widget build(BuildContext context) {
@@ -73,18 +67,8 @@ class GalleryCarousel extends StatelessWidget {
         enlargeCenterPage: true,
         viewportFraction: 0.4,
       ),
-      items: photosUrls!.map((path) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: AspectRatio(
-            aspectRatio: 9/16,
-            child: Image.asset(
-              path,
-              fit: BoxFit.cover, 
-              width: double.infinity,
-            ),
-          ),
-        );
+      items: photoPaths!.map((path) {
+        return PhotoWidget(imagePath: path);
       }).toList(),
     );
   }

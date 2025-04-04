@@ -1,36 +1,55 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:gymbro/core/_dev/debug_tools.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/profile/domain/profile_body_service.dart';
+import 'package:gymbro/features/profile/presentation/field_notifier.dart';
 import 'package:gymbro/features/profile/presentation/profile_header.dart';
-import 'info_body/gallery_block.dart';
-import 'info_body/entries_block.dart';
+import 'info_body/gallery.dart';
+import 'info_body/entries.dart';
 import 'info_body/info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
+import 'package:gymbro/features/profile/presentation/profile_configs.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'editable_display_text.dart';
 
-class ProfileBody extends StatelessWidget {
-  const ProfileBody({
-    super.key,
-  });
+class ProfileBody extends StatefulWidget {
+  const ProfileBody({super.key});
 
-  static const double pbgHeight = 60.0;
+  @override
+  _ProfileBodyState createState() => _ProfileBodyState();
+}
 
-  static const double radius = 110;
-  static const double leftPadding = 45;
-  static const double topRelPadding = 0.4;
+class _ProfileBodyState extends State<ProfileBody> {
+  List<String> photoPaths = [];
 
-  static const double ibSepHeight = 10;
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedImages();
+  }
+
+  Future<void> _loadSavedImages() async {
+    List<File> savedImages = await getSavedImages();
+    setState(() {
+      photoPaths = savedImages.map((file) => file.path).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
             ProfileBackGround(),
             ProfileHeader(),
-            DebugBox(
-              height: pbgHeight + (radius * (1-topRelPadding)),
-              width: leftPadding,
+            SizedBox(
+              height: ProfileBodyConfig.pbgHeight + (ProfileBodyConfig.radius * (1-ProfileBodyConfig.topRelPadding)),
+              width: ProfileBodyConfig.leftPadding,
             ),
           ],
         ),
@@ -38,31 +57,45 @@ class ProfileBody extends StatelessWidget {
         // Basically, just need a "ручка"
         InfoWrapper(
           header: 'General Info',
-          optionalButton: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-    
-            }
-          ), 
+          optionalButton: EditButton(), 
           infoBody: Entries(
-            infoTuples: [
-              ['+7 (800) 555-35-35', 'Phone Number'],
-              ['The quick red fox jumps over the lazy brown dog and the lively white cat', 'Bio'],
-              ['@user', 'User Tag'],
+            infoClauses: [
+              InfoClause('Phone Number',  phoneProvider),
+              InfoClause('Bio',           bioProvider),
+              InfoClause('User Tag',      tagProvider),
             ],
           )
         ),
         InfoWrapper(
           header: 'Progress in Pictures',
+          optionalButton: IconButton(
+            icon: Icon(Icons.image_search, color: Theme.of(context).colorScheme.onPrimary,),
+            onPressed: () async {
+              await pickAndSaveImage(ImageSource.gallery);
+              _loadSavedImages();
+            }
+          ), 
           infoBody: Gallery(
-            photosUrls: [
-              'assets/images/dog.jpeg',
-              'assets/images/cat.jpeg',
-              'assets/images/myles.jpeg',
-            ],
+            photoPaths: photoPaths,
           ),
         ),
       ]
+    );
+  }
+}
+
+class EditButton extends ConsumerWidget {
+  const EditButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary,),
+      onPressed: () {
+        ref.read(editModeProvider.notifier).toggleEditMode();
+      },
     );
   }
 }

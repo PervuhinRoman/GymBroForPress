@@ -79,8 +79,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           _selectedIndex == 0
               ? l10n.homePageTitle
               : _selectedIndex == 1
-                  ? l10n.workoutPageTitle
-                  : 'AI-trainer',
+              ? l10n.workoutPageTitle
+              : 'AI-trainer',
           style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w500),
@@ -102,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    const ProfilePage(),
+                const ProfilePage(),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   final fadeTween = Tween<double>(begin: 0.0, end: 1.0);
@@ -112,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   );
                 },
               )
-              ),
+          ),
         ),
         actions: [
           if (_selectedIndex == 1) ...[
@@ -126,6 +126,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   onPressed: () {
                     Navigator.push(
                       context,
+
+
                       MaterialPageRoute(
                         builder: (context) => const MatchesListScreen(),
                       ),
@@ -135,13 +137,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Создаю тестовое уведомление...')),
                     );
-                    
+
                     ref.read(u.usersProvider.future).then((users) {
                       if (users.isNotEmpty) {
                         final testUser = users.first;
                         ref.read(matchesControllerProvider.notifier)
                             .createTestMatch(testUser);
-                        
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Тестовое уведомление создано')),
                         );

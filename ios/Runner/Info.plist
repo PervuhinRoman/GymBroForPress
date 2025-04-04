@@ -2,6 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <!-- REVERSED_CLIENT_ID from GoogleService-Info.plist -->
+      <string>com.googleusercontent.apps.273998046310-c70cjp8nm4ohq0937ovvb8jpebfe2inl</string>
+    </array>
+  </dict>
+</array>
     <key>MAPKIT_API_KEY</key>
     <string>7fc1859f-c483-4a45-b8a2-ff45cfc15299</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -47,5 +59,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSUserTrackingUsageDescription</key>
+<string>This identifier will be used to deliver personalized services to you.</string>
 </dict>
 </plist>

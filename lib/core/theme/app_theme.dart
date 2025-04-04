@@ -75,7 +75,8 @@ class AppTheme {
         onError: Colors.white,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF2C2C2C),
+        backgroundColor: AppColors.violetPrimary, 
+        // backgroundColor: Color(0xFF2C2C2C),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
