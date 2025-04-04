@@ -12,7 +12,20 @@
           "package_name": "com.example.gymbro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "273998046310-2ieqrldl3nq57h9k1v5ur5s12eebki3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gymbro",
+            "certificate_hash": "6e54d3a39ce52046affaab394dd759d8b8332b27"
+          }
+        },
+        {
+          "client_id": "273998046310-aooba9r1ghkplbjslko0bls9d0f9nsln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCQaE76KncP9ESLjY3cvjrQJm_yePJRCY0"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273998046310-aooba9r1ghkplbjslko0bls9d0f9nsln.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "273998046310-c70cjp8nm4ohq0937ovvb8jpebfe2inl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gymbro"
+              }
+            }
+          ]
         }
       }
     }

@@ -76,7 +76,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                   // Google Sign In Button
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        final user = await _authService.signInWithGoogle();
+                        if (user != null && mounted) {
+                          Navigator.pushNamed(context, RouteNames.home);
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      } finally {
+                        setState(() => _isLoading = false);
+                      }
+                    },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
