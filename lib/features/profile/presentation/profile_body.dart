@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gymbro/features/profile/domain/profile_body_service.dart';
 import 'package:gymbro/features/profile/presentation/profile_header.dart';
 import 'info_body/gallery.dart';
 import 'info_body/entries.dart';
@@ -82,38 +83,5 @@ class _ProfileBodyState extends State<ProfileBody> {
         ),
       ]
     );
-  }
-}
-
-Future<List<File>> getSavedImages() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final imageDirectory = Directory('${directory.path}/personal_images');
-  if (!await imageDirectory.exists()) {
-    await imageDirectory.create(recursive: true);
-  }
-  final List<FileSystemEntity> files = imageDirectory.listSync();
-
-  return files.whereType<File>().toList();
-}
-
-Future<void> saveImage(XFile image) async {
-  Directory appDir = await getApplicationDocumentsDirectory();
-  Directory imageDir = Directory('${appDir.path}/personal_images');
-  if (!await imageDir.exists()) {
-    await imageDir.create(recursive: true);
-  }
-  String newPath = '${imageDir.path}/${image.name}';
-
-  await File(image.path).copy(newPath);
-}
-
-Future<void> pickAndSaveImage(ImageSource source) async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? image = await picker.pickImage(source: source);
-
-  if (image != null) {
-    await saveImage(image);
-  } else {
-    print('No image selected');
   }
 }

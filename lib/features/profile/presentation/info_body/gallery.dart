@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbro/features/profile/presentation/info_body/photo_widget_service.dart';
+import 'package:gymbro/features/profile/domain/photo_widget_service.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import 'package:gymbro/features/profile/presentation/info_body/photo_widget.dart';
 import 'info_wrapper.dart';

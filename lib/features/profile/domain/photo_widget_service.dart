@@ -6,12 +6,9 @@ class PhotoWidgetService {
       final file = File(imagePath);
       if (await file.exists()) {
         await file.delete();
-        print('Image deleted from: $imagePath');
-      } else {
-        print('Image does not exist');
-      }
+      } 
     } catch (e) {
-      print('Error deleting image: $e');
+      // Womp-womp
     }
   }
 }
