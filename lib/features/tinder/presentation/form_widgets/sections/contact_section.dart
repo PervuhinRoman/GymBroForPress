@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../custom_text_input_field.dart';
+import '../form_input_field.dart';
 
 class ContactSection extends StatelessWidget {
   final TextEditingController contactController;

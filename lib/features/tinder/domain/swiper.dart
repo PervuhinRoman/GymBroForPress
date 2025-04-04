@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // AI refactored and checked after by myself
+// but after merge happened and matches_list has extremelly similar code
+// ToDo: refactor properly
 import 'user.dart';
 import 'matches_list.dart';
 

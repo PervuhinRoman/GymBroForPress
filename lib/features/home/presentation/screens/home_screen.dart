@@ -14,7 +14,7 @@ import '../../../tinder/domain/form_service.dart';
 import '../../../tinder/presentation/tinder.dart';
 import '../../../tinder/domain/matches_list.dart';
 import '../../../tinder/domain/user.dart' as u;
-import '../../../tinder/presentation/notifications/matches_screen.dart';
+import '../../../tinder/presentation/matchesList/matches_screen.dart';
 
 class HomeScreenArgs {
   final Function(Locale) setLocale;

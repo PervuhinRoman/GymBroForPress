@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../custom_text_input_field.dart';
+import '../form_input_field.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
@@ -35,7 +35,7 @@ class TrainingPreferencesSection extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), // spacer analogue
             FormInputField(
               controller: hoursController,
               label: l10n.trainingTime,
