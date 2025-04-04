@@ -7,7 +7,7 @@
   "@homePageTitle": {
     "description": "Title for the home page"
   },
-  "workoutPageTitle": "Workouts",
+  "workoutPageTitle": "GymBro",
   "@workoutPageTitle": {
     "description": "Title for the workout page"
   },
