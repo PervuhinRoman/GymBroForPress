@@ -219,19 +219,11 @@ final swipeProvider =
           );
         }
         
-        final matchHistoryController = MatchHistoryController();
-        await matchHistoryController.initialize();
-
-        if (!matchHistoryController.isMatchShown(matchId)) {
-          await matchHistoryController.markMatchAsShown(matchId);
-
-          return SwipeResult(
-            isMatch: true,
-            matchedUser: matchedUser,
-          );
-        } else {
-          return SwipeResult(isMatch: true);
-        }
+        print('Match found with user: ${matchedUser.name}. Returning match info.');
+        return SwipeResult(
+          isMatch: true,
+          matchedUser: matchedUser,
+        );
       }
 
       return SwipeResult(isMatch: false);

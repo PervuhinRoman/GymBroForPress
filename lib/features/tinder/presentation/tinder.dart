@@ -85,6 +85,7 @@ class TinderScreen extends ConsumerWidget {
 
     if (currentUser == null) return;
 
+    print('Handling swipe: ${isRightSwipe ? 'right (like)' : 'left (dislike)'} for user ${users[currentIndex].name}');
     cardStateNotifier.animateCardAway(isRightSwipe);
 
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -96,18 +97,28 @@ class TinderScreen extends ConsumerWidget {
         isLike: isRightSwipe,
       );
 
+      print('Sending swipe request: ${request.swiperId} -> ${request.targetId}, isLike: ${request.isLike}');
       ref.read(swipeProvider(request).future).then((result) {
+        print('Swipe result received: isMatch=${result.isMatch}, hasError=${result.hasError}, matchedUser=${result.matchedUser != null ? result.matchedUser!.name : 'null'}');
+        
         if (result.hasError) {
+          print('Swipe error: ${result.errorMessage}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${l10n.error}: ${result.errorMessage}')),
           );
         }
 
         if (result.isMatch && result.matchedUser != null) {
+          print('Showing match popup for user: ${result.matchedUser!.name}');
           showDialog(
             context: context,
             barrierDismissible: false,
             builder: (ctx) => MatchPopup(matchedUser: result.matchedUser!),
+          );
+        } else if (result.isMatch) {
+          print('Match found but user info is missing! Cannot show match popup.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('У вас новый матч!')),
           );
         }
 
