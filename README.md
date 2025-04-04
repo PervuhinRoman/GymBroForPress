@@ -34,7 +34,7 @@ GymBro — это инновационное мобильное приложен
 - **Хранение данных:** sqflite, сервер на Golang.
 - **Инструменты DevOps:** CI/CD, linter,
 - **DI, State manager**: riverpod, 
-- **Прочее:**: REST API, SharedPreferences, Firebase, Yandex mapkit,
+- **Прочее**: REST API, SharedPreferences, Firebase, Yandex mapkit,
 
 ## Примеры использования
 
