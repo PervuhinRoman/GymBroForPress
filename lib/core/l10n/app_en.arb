@@ -48,6 +48,23 @@
     "description": "General profile info header"
   },
 
+  "showAppSettings": "Show app settings",
+  "changeLanguage": "Change language",
+  "changeAppTheme": "Change app theme",
+  "signOut": "Sign out",
+  "selectAppTheme": "Select app theme",
+  "systemAppTheme": "System",
+  "lightAppTheme": "Light",
+  "darkAppTheme": "Dark",
+  "selectLanguage": "Select language",
+
+  "generalProfileInfo": "General profile info",
+  "phone": "Phone number",
+  "bio": "Bio",
+  "tag": "User tag",
+  "progressInPictures": "Your progress in pictures",
+
+  
   "welcomeDescription": "IMPROVE PHYSICAL HEALTH WITH GymBro SIMPLY AND EFFECTIVELY",
   "signUp": "Sign Up",
   "accountExistence": "Already have an account? ",
