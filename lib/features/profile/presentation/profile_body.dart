@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymbro/features/profile/domain/profile_body_service.dart';
+import 'package:gymbro/features/profile/presentation/field_notifier.dart';
 import 'package:gymbro/features/profile/presentation/profile_header.dart';
 import 'info_body/gallery.dart';
 import 'info_body/entries.dart';
@@ -11,6 +13,7 @@ import 'package:gymbro/features/profile/presentation/profile_configs.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'editable_display_text.dart';
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});
@@ -54,17 +57,12 @@ class _ProfileBodyState extends State<ProfileBody> {
         // Basically, just need a "ручка"
         InfoWrapper(
           header: 'General Info',
-          optionalButton: IconButton(
-            icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary,),
-            onPressed: () {
-              
-            }
-          ), 
+          optionalButton: EditButton(), 
           infoBody: Entries(
             infoClauses: [
-              InfoClause('Phone Number',  '+7 (800) 555-35-35'),
-              InfoClause('Bio',           'The quick red fox jumps over the lazy brown dog and the lively white cat'),
-              InfoClause('User Tag',      '@user'),
+              InfoClause('Phone Number',  phoneProvider),
+              InfoClause('Bio',           bioProvider),
+              InfoClause('User Tag',      tagProvider),
             ],
           )
         ),
@@ -82,6 +80,22 @@ class _ProfileBodyState extends State<ProfileBody> {
           ),
         ),
       ]
+    );
+  }
+}
+
+class EditButton extends ConsumerWidget {
+  const EditButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary,),
+      onPressed: () {
+        ref.read(editModeProvider.notifier).toggleEditMode();
+      },
     );
   }
 }

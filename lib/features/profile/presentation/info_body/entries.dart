@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gymbro/features/profile/presentation/field_notifier.dart';
 import 'package:gymbro/features/profile/presentation/info_body/info_body_adapter.dart';
 import 'info_wrapper.dart';
 import 'package:gymbro/core/widgets/double_text.dart';
+import 'package:gymbro/features/profile/presentation/editable_display_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Entries extends StatelessWidget implements InfoBody {
   const Entries({
@@ -27,10 +30,10 @@ class Entries extends StatelessWidget implements InfoBody {
 class InfoClause {
   const InfoClause(
     this.label,
-    this.info,
+    this.fieldProvider,
   );
 
-  final String info;
+  final StateNotifierProvider<FieldNotifier, String> fieldProvider;
   final String label;
 }
 
@@ -42,35 +45,13 @@ class InfoEntry extends StatelessWidget {
 
   final InfoClause infoClause;
 
-  static const double _ibLeftPadding = 8.0;
-
   @override
   Widget build(BuildContext context) {
-    final ThemeData contextTheme = Theme.of(context);
-
     return Column(
       children: [
-        ColoredBox(
-          color: contextTheme.colorScheme.secondary,
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Expanded(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: _ibLeftPadding),
-                    child: DoubleTextDisplay(
-                      topText: infoClause.info,
-                      topColor: contextTheme.colorScheme.onSecondary,
-
-                      bottomText: infoClause.label,
-                      bottomColor: Color.lerp(contextTheme.colorScheme.onSecondary, Colors.grey, 0.3),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
+        EditableDisplayField(
+          label: infoClause.label, 
+          fieldProvider: infoClause.fieldProvider
         ),
       ]
     );

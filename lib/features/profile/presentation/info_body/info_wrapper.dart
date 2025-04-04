@@ -15,7 +15,7 @@ class InfoWrapper extends StatelessWidget {
   });
 
   final String header;
-  final IconButton? optionalButton;
+  final Widget? optionalButton;
   final InfoBody infoBody;
 
   @override
@@ -48,7 +48,7 @@ class InfoHeader extends StatelessWidget {
   });
 
   final String header;
-  final IconButton? sideButton;
+  final Widget? sideButton;
 
   final double _ihLeftPadding = 16.0;
 
