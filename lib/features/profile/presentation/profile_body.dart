@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'editable_display_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class ProfileBody extends StatefulWidget {
   const ProfileBody({super.key});
@@ -40,6 +42,7 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       children: [
         Stack(
@@ -56,18 +59,18 @@ class _ProfileBodyState extends State<ProfileBody> {
 
         // Basically, just need a "ручка"
         InfoWrapper(
-          header: 'General Info',
+          header: l10n.generalProfileInfo,
           optionalButton: EditButton(), 
           infoBody: Entries(
             infoClauses: [
-              InfoClause('Phone Number',  phoneProvider),
-              InfoClause('Bio',           bioProvider),
-              InfoClause('User Tag',      tagProvider),
+              InfoClause(l10n.phone,  phoneProvider),
+              InfoClause(l10n.bio,    bioProvider),
+              InfoClause(l10n.tag,    tagProvider),
             ],
           )
         ),
         InfoWrapper(
-          header: 'Progress in Pictures',
+          header: l10n.progressInPictures,
           optionalButton: IconButton(
             icon: Icon(Icons.image_search, color: Theme.of(context).colorScheme.onPrimary,),
             onPressed: () async {
