@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymbro/features/calendar/domain/calendar_service.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../presentation/gym_place.dart';
 import 'gym_place_provider.dart';
@@ -10,6 +11,11 @@ class MapObjectsService {
   final Ref _ref;
 
   MapObjectsService(this._ref);
+  // CalendarService calendarService = CalendarService();
+  //
+  // void setMapObjectsList() async {
+  //   await calendarService.saveGym("Gym9", "43.406907", "39.949572", true);
+  // }
 
   Future<List<GymPlace>> getMapObjectsList(TapCallback<PlacemarkMapObject> tapFunc) async {
     // TODO: получение избранных плейсов из Firestore
@@ -47,6 +53,7 @@ class MapObjectsService {
           tapFunc: tapFunc
       ),
     ];
+
     
     // Store the gyms in the provider
     _ref.read(gymPlaceStateProvider.notifier).setPlaces(gyms);

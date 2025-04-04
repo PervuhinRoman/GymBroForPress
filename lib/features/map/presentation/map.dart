@@ -28,6 +28,7 @@ class _MapState extends ConsumerState<Map> {
   }
 
   void _loadMapObjects() async {
+    //MapObjectsService mapObjectsService = MapObjectsService(_ref);
     await ref.read(mapServiceProvider).getMapObjectsList(_handlePlacemarkTap);
   }
 

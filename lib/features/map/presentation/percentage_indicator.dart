@@ -17,8 +17,8 @@ class PercentageIndicator extends StatelessWidget {
   const PercentageIndicator({
     Key? key,
     required this.percentage,
-    this.title = '',
-    this.subtitle = '',
+    this.title = 'Загруженность',
+    this.subtitle = 'Рекомендация',
     this.height = 160,
     this.width = 160,
     this.borderRadius = 32,
@@ -63,48 +63,50 @@ class PercentageIndicator extends StatelessWidget {
           ),
 
           // Колонка с текстом
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: height * 0.08,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Процент
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: Text(
-                    '$percentage%',
-                    style: TextStyle(
-                      fontSize: percentageFontSize,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF3B3B3B),
-                      height: 1.0,
+          FittedBox(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: height * 0.08,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Процент
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    child: Text(
+                      '$percentage%',
+                      style: TextStyle(
+                        fontSize: percentageFontSize,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF3B3B3B),
+                        height: 1.0,
+                      ),
                     ),
                   ),
-                ),
 
-                // Заголовок (жирный)
-                if (title.isNotEmpty) ...[
-                  Text(title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  // Заголовок (жирный)
+                  if (title.isNotEmpty) ...[
+                    Text(title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
 
-                // Подзаголовок (обычный)
-                if (subtitle.isNotEmpty) ...[
-                  SizedBox(height: height * 0.01),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  // Подзаголовок (обычный)
+                  if (subtitle.isNotEmpty) ...[
+                    SizedBox(height: height * 0.01),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ],

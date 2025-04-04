@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbro/core/theme/app_colors.dart';
+import 'package:gymbro/features/map/presentation/percentage_indicator.dart';
 
 class CustomRowOfElements extends StatefulWidget {
   final double screenWidth;
@@ -31,14 +32,18 @@ class _CustomRowOfElementsState extends State<CustomRowOfElements> {
         ),
         Flexible(
           flex: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.greenPrimary,
-            ),
+          child: PercentageIndicator(percentage: 80,
             height: widget.screenWidth / 2.7,
             width: widget.screenWidth / 2.7,
           ),
+          // child: Container(
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(20),
+          //     color: AppColors.greenPrimary,
+          //   ),
+          //   height: widget.screenWidth / 2.7,
+          //   width: widget.screenWidth / 2.7,
+          // ),
         )
       ],
     );
